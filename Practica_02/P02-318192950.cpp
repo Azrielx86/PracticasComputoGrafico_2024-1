@@ -159,34 +159,34 @@ void CrearLetrasyFiguras()
 		-2.0f, -6.0f, 0.0f, 0.0f, 0.3f, 0.4f,
 	};
 
-	GLfloat letra_c_array[] = {
-		1.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		1.0f, -6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		2.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		1.0f, -6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		2.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		2.0f, -6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		3.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		4.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		3.0f, -6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		4.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		3.0f, -6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		4.0f, -6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		2.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		2.0f, 4.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		2.5f, 3.5f, 0.0f, 0.9f, 0.2f, 0.2f,
-		2.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		2.5f, 3.5f, 0.0f, 0.9f, 0.2f, 0.2f,
-		2.5f, 5.5f, 0.0f, 0.9f, 0.2f, 0.2f,
-		3.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		2.5f, 3.5f, 0.0f, 0.9f, 0.2f, 0.2f,
-		2.5f, 5.5f, 0.0f, 0.9f, 0.2f, 0.2f,
-		3.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-		2.5f, 3.5f, 0.0f, 0.9f, 0.2f, 0.2f,
-		3.0f, 4.0f, 0.0f, 0.9f, 0.2f, 0.2f,
-	};
+    GLfloat letra_m_array[] = {
+            1.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            1.0f, -6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            2.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            1.0f, -6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            2.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            2.0f, -6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            3.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            4.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            3.0f, -6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            4.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            3.0f, -6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            4.0f, -6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            2.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            2.0f, 4.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            2.5f, 3.5f, 0.0f, 0.9f, 0.2f, 0.2f,
+            2.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            2.5f, 3.5f, 0.0f, 0.9f, 0.2f, 0.2f,
+            2.5f, 5.5f, 0.0f, 0.9f, 0.2f, 0.2f,
+            3.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            2.5f, 3.5f, 0.0f, 0.9f, 0.2f, 0.2f,
+            2.5f, 5.5f, 0.0f, 0.9f, 0.2f, 0.2f,
+            3.0f, 6.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+            2.5f, 3.5f, 0.0f, 0.9f, 0.2f, 0.2f,
+            3.0f, 4.0f, 0.0f, 0.9f, 0.2f, 0.2f,
+    };
 
-	GLfloat letra_m_array[] = {
+	GLfloat letra_c_array[] = {
 		6.0f, 6.0f, 0.0f, 0.9f, 0.8f, 0.3f,
 		7.0f, 6.0f, 0.0f, 0.9f, 0.8f, 0.3f,
 		6.0f, -6.0f, 0.0f, 0.9f, 0.8f, 0.3f,
@@ -206,21 +206,22 @@ void CrearLetrasyFiguras()
 		8.0f, -4.0f, 0.0f, 0.9f, 0.8f, 0.3f,
 		8.0f, -6.0f, 0.0f, 0.9f, 0.8f, 0.3f,
 	};
+    
 	// clang-format on
 	auto letra_e = new MeshColor();
-	letra_e->CreateMeshColor(letra_e_array, 540);
+	letra_e->CreateMeshColor(letra_e_array, 144);
 	meshColorMap["LetraE"] = letra_e;
 
 	auto letra_u = new MeshColor();
-	letra_u->CreateMeshColor(letra_u_array, 540);
+	letra_u->CreateMeshColor(letra_u_array, 144);
 	meshColorMap["LetraU"] = letra_u;
 
 	auto letra_m = new MeshColor();
-	letra_m->CreateMeshColor(letra_m_array, 540);
+	letra_m->CreateMeshColor(letra_m_array, 144);
 	meshColorMap["LetraM"] = letra_m;
 
 	auto letra_c = new MeshColor();
-	letra_c->CreateMeshColor(letra_c_array, 540);
+	letra_c->CreateMeshColor(letra_c_array, 108);
 	meshColorMap["LetraC"] = letra_c;
 }
 
