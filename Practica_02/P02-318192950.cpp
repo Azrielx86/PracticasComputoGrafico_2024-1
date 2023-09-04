@@ -3,23 +3,14 @@
 // instalados en Linux, o con vcpkg en Windows.
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#else
+#include <glew.h>
+#include <glfw3.h>
+#endif
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#else
-// Para Visual Studio sin vcpkg.
-#include <glew.h>
-#include <glfw3.h>
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
-#include <gtc/type_ptr.hpp>
-#endif
 #include <map>
-
-// Comentar o descomentar para cambiar entre los
-// objetos que se van a renderizar.
-// O definirlo en CMake.
-// #define LETRAS
 
 #include "Mesh.h"
 #include "Shader.h"
@@ -29,10 +20,8 @@ Window mainWindow;
 
 // Una coleccion cadena-mesh, con la cual se podra acceder al objeto mesh
 // desde un nombre, en lugar de indices.
-// De igual manera se agregaron meshColorMap y shaderMap.
 std::map<std::string, MeshColor *> meshColorMap;
 std::map<std::string, Mesh *> meshMap;
-std::map<std::string, Shader> shaderMap;
 
 // Vertex Shader
 static const char *vShader = "shaders/shader.vert";
@@ -41,11 +30,14 @@ static const char *vShaderColor = "shaders/shadercolor.vert";
 static const char *fShaderColor = "shaders/shadercolor.frag";
 
 // shaders nuevos se crearan aqui
+std::map<std::string, Shader> shaderMap;
 static const char *vShaderRojo = "shaders/shader_rojo.vert";
 static const char *vShaderAzul = "shaders/shader_azul.vert";
 static const char *vShaderVerde = "shaders/shader_verde.vert";
 static const char *vShaderCafe = "shaders/shader_cafe.vert";
 static const char *vShaderVerdeObscuro = "shaders/shader_verde_obscuro.vert";
+
+// color cafe: 0.478, 0.255, 0.067
 
 // Piramide triangular regular
 void CreaPiramide()
@@ -214,7 +206,7 @@ void CrearLetrasyFiguras()
 		8.0f, -4.0f, 0.0f, 0.9f, 0.8f, 0.3f,
 		8.0f, -6.0f, 0.0f, 0.9f, 0.8f, 0.3f,
 	};
-
+    
 	// clang-format on
 	auto letra_e = new MeshColor();
 	letra_e->CreateMeshColor(letra_e_array, 144);
@@ -267,7 +259,7 @@ void CreateShaders()
 /**
  * Función para utilizar un shader desde el shaderMap
  */
-void UseShader(const char *shaderName, GLuint &uniformModel, GLuint &uniformProjection)
+void UseShader(const char*shaderName, GLuint &uniformModel, GLuint &uniformProjection)
 {
 	shaderMap[shaderName].useShader();
 	uniformModel = shaderMap[shaderName].getModelLocation();
@@ -284,45 +276,44 @@ int main()
 	CreateShaders();
 	GLuint uniformProjection;
 	GLuint uniformModel;
-	//	glm::mat4 projection = glm::perspective(glm::radians(60.0f), mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f);
+//	glm::mat4 projection = glm::perspective(glm::radians(60.0f), mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f);
 	glm::mat4 projection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 100.0f);
 	// Loop mientras no se cierra la ventana
 	while (!mainWindow.getShouldClose())
 	{
 		glfwPollEvents();
-
+		
 #ifdef LETRAS
 		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Se agrega limpiar el buffer de profundidad
-		// Para las letras hay que usar el segundo set de shaders con ndice 1 en ShaderList
-		shaderMap["VertexColor"].useShader();
-		uniformModel = shaderMap["VertexColor"].getModelLocation();
-		uniformProjection = shaderMap["VertexColor"].getProjectLocation();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Inicializar matriz de dimensin 4x4 que servir como matriz de modelo para almacenar las transformaciones geomtricas
+		UseShader("VertexColor", uniformModel, uniformProjection);
+
+		// Inicializar matriz de dimensin 4x4 que servir como matriz de modelo
+		// para almacenar las transformaciones geomtricas
 		glm::mat4 model(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -4.0f));
+		model = glm::translate(model, glm::vec3(0.3f, 0.0f, -4.0f));
 		model = glm::scale(model, glm::vec3(0.12f, 0.12f, 0.12f));
 		glUniformMatrix4fv((GLint) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv((GLint) uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		meshColorMap["LetraE"]->RenderMeshColor();
 
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -4.0f));
+		model = glm::translate(model, glm::vec3(0.1f, 0.0f, -4.0f));
 		model = glm::scale(model, glm::vec3(0.12f, 0.12f, 0.12f));
 		glUniformMatrix4fv((GLint) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv((GLint) uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		meshColorMap["LetraU"]->RenderMeshColor();
 
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -4.0f));
+		model = glm::translate(model, glm::vec3(-0.1f, 0.0f, -4.0f));
 		model = glm::scale(model, glm::vec3(0.12f, 0.12f, 0.12f));
 		glUniformMatrix4fv((GLint) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv((GLint) uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		meshColorMap["LetraM"]->RenderMeshColor();
 
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -4.0f));
+		model = glm::translate(model, glm::vec3(-0.3f, 0.0f, -4.0f));
 		model = glm::scale(model, glm::vec3(0.12f, 0.12f, 0.12f));
 		glUniformMatrix4fv((GLint) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv((GLint) uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
@@ -331,8 +322,8 @@ int main()
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		UseShader("ShaderRojo", uniformModel, uniformProjection);
-
+		UseShader("ShaderRojo",uniformModel, uniformProjection);
+		
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -0.15f, -5.0f));
 		model = glm::scale(model, glm::vec3(0.65f, 0.85f, 0.65f));
@@ -342,75 +333,71 @@ int main()
 
 		// Tejado
 		UseShader("ShaderAzul", uniformModel, uniformProjection);
-
+		
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.52f, -4.0f));
 		model = glm::scale(model, glm::vec3(1.0f, 0.5f, 1.0f));
 		glUniformMatrix4fv((GLint) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv((GLint) uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		meshMap["Piramide"]->RenderMesh();
-
+		
 		// Puerta central
-		UseShader("ShaderVerde", uniformModel, uniformProjection);
-
+		UseShader("ShaderVerde",uniformModel, uniformProjection);
+		
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -0.4f, -4.5f));
 		model = glm::scale(model, glm::vec3(0.25f, 0.35f, 0.25f));
 		glUniformMatrix4fv((GLint) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv((GLint) uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		meshMap["Cubo"]->RenderMesh();
-
+		
 		// Ventana izquierda
-		UseShader("ShaderVerde", uniformModel, uniformProjection);
-
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(-0.17f, 0.05f, -4.5f));
 		model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
 		glUniformMatrix4fv((GLint) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv((GLint) uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		meshMap["Cubo"]->RenderMesh();
-
+		
 		// Ventana derecha
-		UseShader("ShaderVerde", uniformModel, uniformProjection);
-
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.17f, 0.05f, -4.5f));
 		model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
 		glUniformMatrix4fv((GLint) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv((GLint) uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		meshMap["Cubo"]->RenderMesh();
-
+		
 		// Pino izquierdo
-		UseShader("ShaderCafe", uniformModel, uniformProjection);
-
+		UseShader("ShaderCafe",uniformModel, uniformProjection);
+		
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(-0.7f, -0.55f, -5.0f));
 		model = glm::scale(model, glm::vec3(0.2f, 0.3f, 0.2f));
 		glUniformMatrix4fv((GLint) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv((GLint) uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		meshMap["Cubo"]->RenderMesh();
-
+		
 		UseShader("ShaderVerdeObscuro", uniformModel, uniformProjection);
-
+		
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(-0.7f, 0.0f, -5.0f));
 		model = glm::scale(model, glm::vec3(0.45f, 0.8f, 0.45f));
 		glUniformMatrix4fv((GLint) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv((GLint) uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		meshMap["Piramide"]->RenderMesh();
-
+		
 		// Pino Derecho
-		UseShader("ShaderCafe", uniformModel, uniformProjection);
-
+		UseShader("ShaderCafe",uniformModel, uniformProjection);
+		
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.7f, -0.55f, -5.0f));
 		model = glm::scale(model, glm::vec3(0.2f, 0.3f, 0.2f));
 		glUniformMatrix4fv((GLint) uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv((GLint) uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		meshMap["Cubo"]->RenderMesh();
-
+		
 		UseShader("ShaderVerdeObscuro", uniformModel, uniformProjection);
-
+		
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.7f, 0.0f, -5.0f));
 		model = glm::scale(model, glm::vec3(0.45f, 0.8f, 0.45f));
