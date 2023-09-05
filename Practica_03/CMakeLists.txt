@@ -28,7 +28,7 @@ endif ()
 
 add_definitions(-DLETRAS)
 
-add_executable(main E03_318192950.cpp 
+add_executable(main E03-318192950.cpp 
         Camera.cpp 
         Mesh.cpp 
         Shader.cpp

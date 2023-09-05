@@ -217,12 +217,12 @@ void CrearCilindro(int res, float R)
 	Mesh *cilindro = new Mesh();
 	cilindro->CreateMeshGeometry(vertices, indices, vertices.size(), indices.size());
 	meshList.push_back(cilindro);
+	meshMap["Cilindro"] = cilindro;
 }
 
 // función para crear un cono
 void CrearCono(int res, float R)
 {
-
 	// constantes utilizadas en los ciclos for
 	int n, i;
 	// cálculo del paso interno en la circunferencia y variables que almacenarán cada coordenada de cada vértice
@@ -268,6 +268,7 @@ void CrearCono(int res, float R)
 	Mesh *cono = new Mesh();
 	cono->CreateMeshGeometry(vertices, indices, vertices.size(), res + 2);
 	meshList.push_back(cono);
+	meshMap["Cono"] = cono;
 }
 
 // función para crear pirámide cuadrangular unitaria
@@ -333,8 +334,6 @@ void CreateShaders()
 
 glm::vec3 ColorFromRGB(int r, int g, int b)
 {
-	if (r > 255 || g > 255 || b > 255)
-		throw std::exception();
 	float rn = r / 255.0f;
 	float rg = g / 255.0f;
 	float rb = b / 255.0f;
@@ -349,7 +348,7 @@ int main()
 
 	CrearCubo();                 // índice 0 en MeshList
 	CrearPiramideTriangular();   // índice 1 en MeshList
-	CrearCilindro(5, 1.0f);      // índice 2 en MeshList
+	CrearCilindro(26, 1.0f);      // índice 2 en MeshList
 	CrearCono(25, 2.0f);         // índice 3 en MeshList
 	CrearPiramideCuadrangular(); // índice 4 en MeshList
 	CreateShaders();
@@ -403,16 +402,14 @@ int main()
 		uniformProjection = shaderMap["Shader"].getProjectLocation();
 		uniformView = shaderMap["Shader"].getViewLocation();
 		uniformColor = shaderMap["Shader"].getColorLocation();
-		
+
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
+		// Plano
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, -1.0f, -4.0f));
+		model = glm::translate(model, glm::vec3(0.0f, -0.5f, -4.0f));
 		model = glm::scale(model, glm::vec3(-2.0f, 1.0f, -2.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getrotax()), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getrotay()), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getrotaz()), glm::vec3(0.0f, 0.0f, 1.0f));
 		color = ColorFromRGB(220, 220, 220);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
@@ -421,26 +418,107 @@ int main()
 		// casa
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -4.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getrotax()), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getrotay()), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getrotaz()), glm::vec3(0.0f, 0.0f, 1.0f));
 		color = ColorFromRGB(220, 20, 60);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		meshMap["Cubo"]->RenderMesh();
 
-
 		// techo
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.5f, 1.0f, -4.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getrotax()), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getrotay()), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getrotaz()), glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.8f, -4.0f));
+		model = glm::scale(model, glm::vec3(1.5f, 0.8f, 1.5f));
 		color = ColorFromRGB(65, 105, 225);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		meshMap["PiramideCuadrada"]->RenderMesh();
 
+		// Puerta
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, -0.2f, -3.5));
+		model = glm::scale(model, glm::vec3(0.5f, 0.6f, 0.1f));
+		color = ColorFromRGB(0, 255, 0);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshMap["Cubo"]->RenderMesh();
+		
+		// Ventanas lateral izquierdo
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-0.47f, 0.1f, -4.2f));
+		model = glm::scale(model, glm::vec3(0.1f, 0.3f, 0.3f));
+		color = ColorFromRGB(0, 255, 0);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshMap["Cubo"]->RenderMesh();
+		
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-0.47f, 0.1f, -3.8f));
+		model = glm::scale(model, glm::vec3(0.1f, 0.3f, 0.3f));
+		color = ColorFromRGB(0, 255, 0);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshMap["Cubo"]->RenderMesh();
+		
+		// Ventanas lateral derecho
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.47f, 0.1f, -4.2f));
+		model = glm::scale(model, glm::vec3(0.1f, 0.3f, 0.3f));
+		color = ColorFromRGB(0, 255, 0);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshMap["Cubo"]->RenderMesh();
+		
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.47f, 0.1f, -3.8f));
+		model = glm::scale(model, glm::vec3(0.1f, 0.3f, 0.3f));
+		color = ColorFromRGB(0, 255, 0);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshMap["Cubo"]->RenderMesh();
+		
+		// Ventana trasera
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -4.4));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+		color = ColorFromRGB(30, 144, 255);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshMap["Cilindro"]->RenderMeshGeometry();
+		
+		// Pino izquierdo
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-1.5f, -0.3f, -3.0f));
+		model = glm::scale(model, glm::vec3(0.2f, 0.4f, 0.2f));
+		color = ColorFromRGB(139, 69, 19);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshMap["Cilindro"]->RenderMeshGeometry();
+		
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-1.5f, 0.4f, -3.0f));
+		model = glm::scale(model, glm::vec3(0.2f, 1.0f, 0.2f));
+		color = ColorFromRGB(34, 139, 34);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshMap["Cono"]->RenderMeshGeometry();
+		
+		// Pino derecho
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(1.5f, -0.3f, -3.0f));
+		model = glm::scale(model, glm::vec3(0.2f, 0.4f, 0.2f));
+		color = ColorFromRGB(139, 69, 19);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshMap["Cilindro"]->RenderMeshGeometry();
+		
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(1.5f, 0.4f, -3.0f));
+		model = glm::scale(model, glm::vec3(0.2f, 1.0f, 0.2f));
+		color = ColorFromRGB(34, 139, 34);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshMap["Cono"]->RenderMeshGeometry();
+		
 		glUseProgram(0);
 		mainWindow.swapBuffers();
 	}

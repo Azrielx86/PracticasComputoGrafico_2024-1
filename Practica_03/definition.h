@@ -1,9 +1,9 @@
 /*
-* definition.h
-*Basado en el código creado por
-*  Created on: 06/09/2016
-*      Author: reynaldo Martell
-*/
+ * definition.h
+ *Basado en el código creado por
+ *  Created on: 06/09/2016
+ *      Author: reynaldo Martell
+ */
 
 #ifndef HEADERS_DEFINITION_H_
 #define HEADERS_DEFINITION_H_
@@ -17,16 +17,19 @@
 #else
 #include <glew.h>
 #include <glfw3.h>
+#include <glm.hpp>
 #include <gtc/random.hpp>
 #endif
 #include <iostream>
 
-typedef struct _VertexColor {
-
-	_VertexColor() {
+typedef struct _VertexColor
+{
+	_VertexColor()
+	{
 	}
 
-	_VertexColor(glm::vec3 position, glm::vec3 color) {
+	_VertexColor(glm::vec3 position, glm::vec3 color)
+	{
 		this->position = position;
 		this->color = color;
 	}
@@ -35,7 +38,7 @@ typedef struct _VertexColor {
 	glm::vec3 color;
 } VertexColor;
 
-//typedef struct _VertexLightColor {
+// typedef struct _VertexLightColor {
 //
 //	_VertexLightColor() {
 //	}
@@ -49,9 +52,9 @@ typedef struct _VertexColor {
 //	glm::vec3 position;
 //	glm::vec3 color;
 //	glm::vec3 normal;
-//} VertexLightColor;
+// } VertexLightColor;
 //
-//typedef struct _VertexLightTexture {
+// typedef struct _VertexLightTexture {
 //
 //	_VertexLightTexture() {
 //	}
@@ -66,9 +69,10 @@ typedef struct _VertexColor {
 //	glm::vec3 position;
 //	glm::vec2 texture;
 //	glm::vec3 normal;
-//} VertexLightTexture;
+// } VertexLightTexture;
 
-enum MODEL_MODE {
+enum MODEL_MODE
+{
 	VERTEX,
 	VERTEX_COLOR,
 	VERTEX_TEXTURE,
