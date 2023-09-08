@@ -92,6 +92,38 @@ void CreatePyramid()
 	meshMap["Pyramid"] = pyramid;
 }
 
+void CreatePolygon()
+{
+	// clang-format off
+	std::vector<GLfloat> vertex = {
+// 		x				z				y
+//		Cara superior
+		0.0f,			0.707107f, 		1.0f,  // Superior		[0]
+		-0.866025,		0.707107f, 		-0.5f, // Izquierda		[1]
+		0.866025f,		0.707107,		-0.5f, // Derecha		[2]
+// 		Cara inferior
+		0.0f,			-0.707107f,		-1.0f, // Inferior		[3]
+		-0.866025f, 	-0.707107f,		0.5f,  // Izquierda		[4]
+		0.866025f,		-0.707107f,		0.5f,  // Derecha		[5]
+	};
+	
+	std::vector<unsigned int> idx = {
+		0, 1, 2, // Cara superior
+		0, 4, 5, // Lateral Superior
+		0, 4, 1, // Lateral Izquierdo +
+		0, 5, 2, // Lateral Derecho +
+		3, 4, 5, // Cara inferior
+		3, 1, 2, // Lateral Inferior
+		1, 4, 3, // Lateral Izquierdo -
+		3, 2, 5, // Lateral Derecho -
+	};
+	// clang-format on
+
+	auto polygon = new Mesh();
+	polygon->CreateMeshGeometry(vertex, idx, vertex.size(), idx.size());
+	meshMap["Polygon"] = polygon;
+}
+
 void CreateShaders()
 {
 	auto shader1 = new Shader();
@@ -113,6 +145,47 @@ glm::vec3 ColorFromRGB(int r, int g, int b)
 	return {rn, rg, rb};
 }
 
+void CrearCubo()
+{
+	// clang-format off
+	unsigned int cubo_indices[] = {
+	    // front
+	    0, 1, 2,
+	    2, 3, 0,
+	    // right
+	    1, 5, 6,
+	    6, 2, 1,
+	    // back
+	    7, 6, 5,
+	    5, 4, 7,
+	    // left
+	    4, 0, 3,
+	    3, 7, 4,
+	    // bottom
+	    4, 5, 1,
+	    1, 0, 4,
+	    // top
+	    3, 2, 6,
+	    6, 7, 3};
+
+	GLfloat cubo_vertices[] = {
+	    // front
+	    -0.5f, -0.5f, 0.5f,
+	    0.5f, -0.5f, 0.5f,
+	    0.5f, 0.5f, 0.5f,
+	    -0.5f, 0.5f, 0.5f,
+	    // back
+	    -0.5f, -0.5f, -0.5f,
+	    0.5f, -0.5f, -0.5f,
+	    0.5f, 0.5f, -0.5f,
+	    -0.5f, 0.5f, -0.5f};
+	// clang-format on
+	Mesh *cubo = new Mesh();
+	cubo->CreateMesh(cubo_vertices, cubo_indices, 24, 36);
+	meshList.push_back(cubo);
+	meshMap["Cubo"] = cubo;
+}
+
 int main()
 {
 	mainWindow = Window(800, 600);
@@ -120,11 +193,13 @@ int main()
 	// Cilindro y cono reciben resolución (slices, rebanadas) y Radio de circunferencia de la base y tapa
 
 	CreatePyramid();
+	CreatePolygon();
 	CreateShaders();
 	CreatePlane();
+	CrearCubo();
 
 #if __linux__
-	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.6f, 0.8f);
+	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.4f, 0.8f);
 #else
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.3f, 0.3f);
 #endif
@@ -176,12 +251,12 @@ int main()
 				for (int k = 0; k < 3 - j - i; k++) // Profundidad
 				{
 					float x = i + (0.9 * i) + (0.9 * j) + (0.9 * k);
-					float y = j + (0.7 * j); // Altura
+					float y = j + (0.6 * j);             // Altura
 					float z = k + (0.7 * k) + (0.7 * j); // Profundidad
 					model = glm::mat4(1.0);
 					model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 					model = glm::translate(model, glm::vec3(x, y, z));
-					color = ColorFromRGB(i * 120, j * 120, k * 120);
+					color = ColorFromRGB(i * 160, j * 160, k * 160);
 					glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 					meshMap["Pyramid"]->RenderMeshGeometry();
@@ -189,9 +264,30 @@ int main()
 			}
 		}
 
+		// Polígonos
+		for (int i = 0; i < 2; i++)
+		{
+			for (int j = 0; j < 2 - i; j++) // Altura
+			{
+				for (int k = 0; k < 2 - j - i; k++) // Profundidad
+				{
+					float x = i + (0.9 * i) + (0.9 * j) + (0.9 * k) + 0.95;
+					float y = j + (0.6 * j) + 0.7;             // Altura
+					float z = k + (0.7 * k) + (0.7 * j) + 1.1; // Profundidad
+					model = glm::mat4(1.0);
+					model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+					model = glm::translate(model, glm::vec3(x, y, z));
+					color = ColorFromRGB(i * 180, j * 180, k * 180);
+					glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					meshMap["Polygon"]->RenderMesh();
+				}
+			}
+		}
+
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, -0.4f, 0.0f));
-		model = glm::scale(model, glm::vec3(-2.0f, 1.0f, -2.0f));
+		model = glm::translate(model, glm::vec3(0.0f, -0.8f, 0.0f));
+		model = glm::scale(model, glm::vec3(4.0f, 1.0f, 4.0f));
 		color = ColorFromRGB(220, 220, 220);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
