@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_definitions(-DCMAKE_PROJECT)
 # FIND PACKAGES FOR OpenGL, GLFW and GLEW
+set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 if (OpenGL_FOUND)
     message(STATUS "OpenGL Found")
@@ -28,12 +29,13 @@ endif ()
 
 add_definitions(-DLETRAS)
 
-add_executable(main E03-318192950.cpp 
+add_executable(main P03-318192950.cpp
         Camera.cpp 
         Mesh.cpp 
         Shader.cpp
         Sphere.cpp
-        Window.cpp)
+        Window.cpp
+)
 
 if (UNIX)
     target_link_libraries(main glfw OpenGL::GL GLEW)

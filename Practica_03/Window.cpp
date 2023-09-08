@@ -26,7 +26,7 @@ int Window::Initialise()
 	// Inicialización de GLFW
 	if (!glfwInit())
 	{
-		printf("Falló inicializar GLFW");
+		printf("Fallo inicializar GLFW");
 		glfwTerminate();
 		return 1;
 	}
@@ -60,7 +60,7 @@ int Window::Initialise()
 
 	if (glewInit() != GLEW_OK)
 	{
-		printf("Falló inicialización de GLEW");
+		printf("Fallo inicializacion de GLEW");
 		glfwDestroyWindow(mainWindow);
 		glfwTerminate();
 		return 1;
@@ -75,6 +75,7 @@ int Window::Initialise()
 	glfwSetWindowUserPointer(mainWindow, this);
 
 	glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	return 0;
 }
 
 void Window::createCallbacks()
