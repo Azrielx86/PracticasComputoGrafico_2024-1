@@ -124,6 +124,50 @@ void CreatePolygon()
 	meshMap["Polygon"] = polygon;
 }
 
+void CreateTriangle()
+{
+	// clang-format off
+	std::vector<GLfloat> vertex = {
+// 		x				z				y
+//		-0.69282f, 		0.030897f, 		-0.399999f,
+//		0.69282f,		0.030897f,		-0.399999f,
+//		0.0f,			0.030897f,		0.799996f,
+//
+//		-0.69282f, 		-0.030897f, 	-0.399999f,
+//		0.69282f,		-0.030897f,		-0.399999f,
+//		0.0f,			-0.030897f,		0.799996f,
+		
+// 		Cara superior
+		-0.69282f, 		-0.005718f, 	0.147714f, // Izquierdo		[0]
+		0.69282f, 		-0.005718f, 	0.147714f, // Derecho		[1]
+		0.0f,			-0.005718f, 	1.34771f,  // Superior		[2]
+//		Cara inferior
+		-0.69282f, 		-0.067512f, 	0.147714f, // -Izquierdo	[3]
+		0.69282f, 		-0.067512f,		0.147714f, // -Derecho		[4]
+		0.0f,			-0.067512f, 	1.34771f,  // -Superior		[5]
+	};
+	
+	std::vector<unsigned int> idx = {
+// Caras
+		0, 1, 2, 
+		3, 4, 5,
+// Borde inferior
+		0, 1, 4,
+		0, 3, 4,
+// Borde derecho
+		2, 1, 4,
+		2, 4, 5,
+// Borde izquierdo
+		2, 0, 5,
+		0, 3, 5,
+	};
+	// clang-format on
+
+	auto triangle = new Mesh();
+	triangle->CreateMeshGeometry(vertex, idx, vertex.size(), idx.size());
+	meshMap["Triangle"] = triangle;
+}
+
 void CreateShaders()
 {
 	auto shader1 = new Shader();
@@ -145,47 +189,6 @@ glm::vec3 ColorFromRGB(int r, int g, int b)
 	return {rn, rg, rb};
 }
 
-void CrearCubo()
-{
-	// clang-format off
-	unsigned int cubo_indices[] = {
-	    // front
-	    0, 1, 2,
-	    2, 3, 0,
-	    // right
-	    1, 5, 6,
-	    6, 2, 1,
-	    // back
-	    7, 6, 5,
-	    5, 4, 7,
-	    // left
-	    4, 0, 3,
-	    3, 7, 4,
-	    // bottom
-	    4, 5, 1,
-	    1, 0, 4,
-	    // top
-	    3, 2, 6,
-	    6, 7, 3};
-
-	GLfloat cubo_vertices[] = {
-	    // front
-	    -0.5f, -0.5f, 0.5f,
-	    0.5f, -0.5f, 0.5f,
-	    0.5f, 0.5f, 0.5f,
-	    -0.5f, 0.5f, 0.5f,
-	    // back
-	    -0.5f, -0.5f, -0.5f,
-	    0.5f, -0.5f, -0.5f,
-	    0.5f, 0.5f, -0.5f,
-	    -0.5f, 0.5f, -0.5f};
-	// clang-format on
-	Mesh *cubo = new Mesh();
-	cubo->CreateMesh(cubo_vertices, cubo_indices, 24, 36);
-	meshList.push_back(cubo);
-	meshMap["Cubo"] = cubo;
-}
-
 int main()
 {
 	mainWindow = Window(800, 600);
@@ -196,7 +199,7 @@ int main()
 	CreatePolygon();
 	CreateShaders();
 	CreatePlane();
-	CrearCubo();
+	CreateTriangle();
 
 #if __linux__
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.4f, 0.8f);
@@ -243,6 +246,7 @@ int main()
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
+#ifndef XD
 		// Piramides
 		for (int i = 0; i < 3; i++)
 		{
@@ -259,7 +263,7 @@ int main()
 					color = ColorFromRGB(i * 160, j * 160, k * 160);
 					glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-					meshMap["Pyramid"]->RenderMeshGeometry();
+					meshMap["Pyramid"]->RenderMesh();
 				}
 			}
 		}
@@ -284,14 +288,41 @@ int main()
 				}
 			}
 		}
+#endif
+		
+		float rotate = 0.0f;
+		for (int i = 0; i < 5; i+=2)
+		{
+			rotate = 0.0f;
+//			for (int j = 0; j < 3 - i; j++) // Altura
+//			{
+				for (int k = 0; k < 5 - i; k++) // Profundidad
+				{
+					float x = (i >> 1) + (0.9 * (i >> 1)) + (0.9 * (k / 2.0f)) + ((rotate != 0) ? 0.45f : 0.0f);
+					float y = 0;             // Altura
+					float z = (k / 2.0f) + (0.7 * (k / 2.0f)) + ((rotate != 0) ? 0.8f : 0.0f); // Profundidad
+					model = glm::mat4(1.0);
+					model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+					model = glm::translate(model, glm::vec3(x, y, z));
+//				    if (rotate != 0.0f)
+//						model = glm::translate(model, glm::vec3(mainWindow.getrotax() * 0.1, 0.0f, 0.0f));
+				    model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 1.0f, 0.0f));
+					color = (rotate == 0.0f) ? ColorFromRGB(255, 255, 255) : ColorFromRGB(123, 123, 123);
+					glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					meshMap["Triangle"]->RenderMesh();
+				    rotate = (rotate == 0.0f) ? 180.0f : 0.0f;
+				}
+//			}
+		}
 
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, -0.8f, 0.0f));
-		model = glm::scale(model, glm::vec3(4.0f, 1.0f, 4.0f));
-		color = ColorFromRGB(220, 220, 220);
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		meshMap["Plane"]->RenderMesh();
+//		model = glm::mat4(1.0);
+//		model = glm::translate(model, glm::vec3(0.0f, -0.8f, 0.0f));
+//		model = glm::scale(model, glm::vec3(4.0f, 1.0f, 4.0f));
+//		color = ColorFromRGB(220, 220, 220);
+//		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+//		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+//		meshMap["Plane"]->RenderMesh();
 
 		glUseProgram(0);
 		mainWindow.swapBuffers();
