@@ -1,4 +1,5 @@
 #pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCDFAInspection"
 #pragma ide diagnostic ignored "hicpp-multiway-paths-covered"
 #pragma ide diagnostic ignored "cppcoreguidelines-narrowing-conversions"
 // semestres 2024-1 práctica 3: Modelado Geométrico y Cámara Sintética.
@@ -28,6 +29,8 @@
 
 using std::vector;
 
+// #define INTENTO_CARAS
+
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 static double limitFPS = 1.0 / 60.0;
@@ -43,6 +46,9 @@ Sphere sp = Sphere(1.0, 20, 20); // recibe radio, slices, stacks
 std::map<std::string, Mesh *> meshMap;
 std::map<std::string, Shader> shaderMap;
 
+/**
+ * Funcion para crear una piramide
+ */
 void CreatePyramid()
 {
 	// clang-format off
@@ -67,6 +73,9 @@ void CreatePyramid()
 	meshMap["Pyramid"] = pyramid;
 }
 
+/**
+ * Funcion para crear los poligonos centrales
+ */
 void CreatePolygon()
 {
 	// clang-format off
@@ -99,19 +108,13 @@ void CreatePolygon()
 	meshMap["Polygon"] = polygon;
 }
 
+/**
+ * Funcion para crear un triangulo en tres dimensiones
+ */
 void CreateTriangle()
 {
 	// clang-format off
 	std::vector<GLfloat> vertex = {
-// 		x				z				y
-//		-0.69282f, 		0.030897f, 		-0.399999f,
-//		0.69282f,		0.030897f,		-0.399999f,
-//		0.0f,			0.030897f,		0.799996f,
-//
-//		-0.69282f, 		-0.030897f, 	-0.399999f,
-//		0.69282f,		-0.030897f,		-0.399999f,
-//		0.0f,			-0.030897f,		0.799996f,
-		
 // 		Cara superior
 		-0.69282f, 		-0.005718f, 	0.147714f, // Izquierdo		[0]
 		0.69282f, 		-0.005718f, 	0.147714f, // Derecho		[1]
@@ -156,6 +159,11 @@ void CreateShaders()
 	shaderMap["ShaderColor"] = *shader2;
 }
 
+/**
+ * Funcion para convertir valores de rgb de 255 a valores en el
+ * rango de 0 a 1.
+ * @return vec3 Con el color normalizado.
+ */
 glm::vec3 ColorFromRGB(int r, int g, int b)
 {
 	float rn = r / 255.0f;
@@ -175,7 +183,7 @@ int main()
 	CreateShaders();
 	CreateTriangle();
 
-#if __linux__
+#if __linux__ // Debido a que en Linux ocurre que la cámara es menos sensible.
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.4f, 0.8f);
 #else
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.3f, 0.3f);
@@ -220,8 +228,11 @@ int main()
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
-		color = ColorFromRGB(40, 40, 40);
-		// Piramides
+		/*
+		 * Generacion de las piramides, consiste en un loop anidado, similar a como se
+		 * dibujaria una piramide en 2D. De esta manera se logra una aproximacion cercana a
+		 * el Pyraminx.
+		 */
 		for (int i = 0; i < 3; i++)
 		{
 			for (int j = 0; j < 3 - i; j++) // Altura
@@ -238,6 +249,12 @@ int main()
 					glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 					meshMap["Pyramid"]->RenderMesh();
+#ifndef INTENTO_CARAS
+					/**
+					 * Para dibujar las caras, los triangulos se "duplican" y se escalan a una menor
+					 * escala, posteriormente dependiendo de la cara se trasladan para sobresalir
+					 * un poco, y para asignarles su color.
+					 */
 					for (int fc = 0; fc <= 4; ++fc)
 					{
 						auto modelInner = model;
@@ -273,11 +290,14 @@ int main()
 						glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelInner));
 						meshMap["Pyramid"]->RenderMesh();
 					}
+#endif
 				}
 			}
 		}
 
-		// Polígonos
+		/**
+		 * Para dibujar los polígonos restantes, se realiza un procedimiento similar al de las pirámides.
+		 */
 		for (int i = 0; i < 2; i++)
 		{
 			for (int j = 0; j < 2 - i; j++) // Altura
@@ -295,6 +315,7 @@ int main()
 					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 					meshMap["Polygon"]->RenderMesh();
 
+#ifndef INTENTO_CARAS
 					for (int fc = 0; fc <= 4; ++fc)
 					{
 						auto modelInner = model;
@@ -310,7 +331,7 @@ int main()
 						case 2:
 							if (j != 0)
 								break;
-							modelInner = glm::translate(modelInner, glm::vec3(0.0f, -0.02f, 0.15f));
+							modelInner = glm::translate(modelInner, glm::vec3(0.0f, -0.2f, 0.0f));
 							color = ColorFromRGB(255, 255, 0);
 							break;
 						case 3:
@@ -330,10 +351,12 @@ int main()
 						glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelInner));
 						meshMap["Polygon"]->RenderMesh();
 					}
+#endif
 				}
 			}
 		}
 
+#ifdef INTENTO_CARAS
 		float rotate;
 		color = ColorFromRGB(255, 255, 0);
 		for (int i = 0; i < 5; i += 2)
@@ -354,7 +377,6 @@ int main()
 				rotate = (rotate == 0.0f) ? 180.0f : 0.0f;
 			}
 		}
-#if INTENTO_CARAS
 		//		Cara Azul
 		color = ColorFromRGB(0, 0, 255);
 		for (int i = 0; i < 5; i += 2)
