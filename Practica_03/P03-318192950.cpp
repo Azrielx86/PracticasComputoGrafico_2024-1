@@ -28,15 +28,11 @@
 
 using std::vector;
 
-// Dimensiones de la ventana
-// const float toRadians = 3.14159265f / 180.0; // grados a radianes
-const float PI = 3.14159265f;
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 static double limitFPS = 1.0 / 60.0;
 Camera camera;
 Window mainWindow;
-vector<Mesh *> meshList;
 vector<Shader> shaderList;
 // Vertex Shader
 static const char *vShader = "shaders/shader.vert";
@@ -46,27 +42,6 @@ Sphere sp = Sphere(1.0, 20, 20); // recibe radio, slices, stacks
 
 std::map<std::string, Mesh *> meshMap;
 std::map<std::string, Shader> shaderMap;
-
-void CreatePlane()
-{
-	// clang-format off
-	unsigned int plane_idx[] = {
-	    0,1,2,
-	    1,2,3,
-	};
-
-	GLfloat plane_vertex[] = {
-	    5.0f, 0.0f, 5.0f,
-	    5.0f, 0.0f, -5.0f,
-	    -5.0f, 0.0f, 5.0f,
-	    -5.0f, 0.0f, -5.0f
-	};
-	// clang-format on
-
-	Mesh *plane = new Mesh();
-	plane->CreateMesh(plane_vertex, plane_idx, 12, 6);
-	meshMap["Plane"] = plane;
-}
 
 void CreatePyramid()
 {
@@ -198,7 +173,6 @@ int main()
 	CreatePyramid();
 	CreatePolygon();
 	CreateShaders();
-	CreatePlane();
 	CreateTriangle();
 
 #if __linux__
@@ -246,7 +220,7 @@ int main()
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
-#ifndef XD
+		color = ColorFromRGB(40, 40, 40);
 		// Piramides
 		for (int i = 0; i < 3; i++)
 		{
@@ -260,10 +234,45 @@ int main()
 					model = glm::mat4(1.0);
 					model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 					model = glm::translate(model, glm::vec3(x, y, z));
-					color = ColorFromRGB(i * 160, j * 160, k * 160);
+					color = ColorFromRGB(40, 40, 40);
 					glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 					meshMap["Pyramid"]->RenderMesh();
+					for (int fc = 0; fc <= 4; ++fc)
+					{
+						auto modelInner = model;
+						modelInner = glm::scale(modelInner, {0.8f, 0.8f, 0.8f});
+						switch (fc)
+						{
+						case 1:
+							if (k != 0)
+								break;
+							modelInner = glm::translate(modelInner, glm::vec3(0.0f, 0.15f, -0.02f));
+							color = ColorFromRGB(220, 20, 60);
+							break;
+						case 2:
+							if (j != 0)
+								break;
+							modelInner = glm::translate(modelInner, glm::vec3(0.0f, -0.02f, 0.15f));
+							color = ColorFromRGB(255, 255, 0);
+							break;
+						case 3:
+							if (i != 0)
+								break;
+							modelInner = glm::translate(modelInner, glm::vec3(-0.1f, 0.15f, 0.2f));
+							color = ColorFromRGB(0, 220, 0);
+							break;
+						case 4:
+							if (i == 0 && j == 0 && k == 0 || i == 1 && j == 0 && k == 0 || i == 0 && j == 1 && k == 0 || i == 0 && j == 0 && k == 1)
+								break;
+							modelInner = glm::translate(modelInner, glm::vec3(0.15f, 0.15f, 0.2f));
+							color = ColorFromRGB(0, 0, 220);
+							break;
+						}
+						glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+						glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelInner));
+						meshMap["Pyramid"]->RenderMesh();
+					}
 				}
 			}
 		}
@@ -281,49 +290,118 @@ int main()
 					model = glm::mat4(1.0);
 					model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 					model = glm::translate(model, glm::vec3(x, y, z));
-					color = ColorFromRGB(i * 180, j * 180, k * 180);
+					color = ColorFromRGB(40, 40, 40);
 					glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 					meshMap["Polygon"]->RenderMesh();
+
+					for (int fc = 0; fc <= 4; ++fc)
+					{
+						auto modelInner = model;
+						modelInner = glm::scale(modelInner, {0.8f, 0.8f, 0.8f});
+						switch (fc)
+						{
+						case 1:
+							if (k != 0)
+								break;
+							modelInner = glm::translate(modelInner, glm::vec3(0.0f, 0.15f, -0.2f));
+							color = ColorFromRGB(220, 20, 60);
+							break;
+						case 2:
+							if (j != 0)
+								break;
+							modelInner = glm::translate(modelInner, glm::vec3(0.0f, -0.02f, 0.15f));
+							color = ColorFromRGB(255, 255, 0);
+							break;
+						case 3:
+							if (i != 0)
+								break;
+							modelInner = glm::translate(modelInner, glm::vec3(-0.15f, 0.15f, 0.2f));
+							color = ColorFromRGB(0, 220, 0);
+							break;
+						case 4:
+							if (k == 0 && i == 0 && j == 0)
+								break;
+							modelInner = glm::translate(modelInner, glm::vec3(0.2f, 0.15f, 0.2f));
+							color = ColorFromRGB(0, 0, 220);
+							break;
+						}
+						glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+						glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelInner));
+						meshMap["Polygon"]->RenderMesh();
+					}
 				}
 			}
 		}
-#endif
-		
-		float rotate = 0.0f;
-		for (int i = 0; i < 5; i+=2)
+
+		float rotate;
+		color = ColorFromRGB(255, 255, 0);
+		for (int i = 0; i < 5; i += 2)
 		{
 			rotate = 0.0f;
-//			for (int j = 0; j < 3 - i; j++) // Altura
-//			{
-				for (int k = 0; k < 5 - i; k++) // Profundidad
-				{
-					float x = (i >> 1) + (0.9 * (i >> 1)) + (0.9 * (k / 2.0f)) + ((rotate != 0) ? 0.45f : 0.0f);
-					float y = 0;             // Altura
-					float z = (k / 2.0f) + (0.7 * (k / 2.0f)) + ((rotate != 0) ? 0.8f : 0.0f); // Profundidad
-					model = glm::mat4(1.0);
-					model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
-					model = glm::translate(model, glm::vec3(x, y, z));
-//				    if (rotate != 0.0f)
-//						model = glm::translate(model, glm::vec3(mainWindow.getrotax() * 0.1, 0.0f, 0.0f));
-				    model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 1.0f, 0.0f));
-					color = (rotate == 0.0f) ? ColorFromRGB(255, 255, 255) : ColorFromRGB(123, 123, 123);
-					glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-					meshMap["Triangle"]->RenderMesh();
-				    rotate = (rotate == 0.0f) ? 180.0f : 0.0f;
-				}
-//			}
+			for (int j = 0; j < 5 - i; j++) // Profundidad
+			{
+				float x = (i >> 1) + (0.9 * (i >> 1)) + (0.9 * (j / 2.0f)) + ((rotate != 0) ? 0.45f : 0.0f);
+				float y = 0;                                                               // Altura
+				float z = (j / 2.0f) + (0.7 * (j / 2.0f)) + ((rotate != 0) ? 0.8f : 0.0f); // Profundidad
+				model = glm::mat4(1.0);
+				model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+				model = glm::translate(model, glm::vec3(x, y, z));
+				model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 1.0f, 0.0f));
+				glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+				glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+				meshMap["Triangle"]->RenderMesh();
+				rotate = (rotate == 0.0f) ? 180.0f : 0.0f;
+			}
+		}
+#if INTENTO_CARAS
+		//		Cara Azul
+		color = ColorFromRGB(0, 0, 255);
+		for (int i = 0; i < 5; i += 2)
+		{
+			rotate = 0.0f;
+			for (int j = 0; j < 5 - i; j++) // Profundidad
+			{
+				float x = (i >> 1) + (0.9 * (i >> 1)) + (0.9 * (j / 2.0f)) + ((rotate != 0) ? 0.45f : 0.0f);
+				float y = 0.1f;                                                            // Altura
+				float z = (j / 2.0f) + (0.7 * (j / 2.0f)) + ((rotate != 0) ? 0.8f : 0.0f); // Profundidad
+				model = glm::mat4(1.0);
+				model = glm::rotate(model, glm::radians(-67.0f), {1.0f, 0.0f, 0.0f});
+				model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+				model = glm::translate(model, glm::vec3(x, y, z));
+				model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 1.0f, 0.0f));
+				glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+				glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+				meshMap["Triangle"]->RenderMesh();
+				rotate = (rotate == 0.0f) ? 180.0f : 0.0f;
+			}
 		}
 
-//		model = glm::mat4(1.0);
-//		model = glm::translate(model, glm::vec3(0.0f, -0.8f, 0.0f));
-//		model = glm::scale(model, glm::vec3(4.0f, 1.0f, 4.0f));
-//		color = ColorFromRGB(220, 220, 220);
-//		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-//		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-//		meshMap["Plane"]->RenderMesh();
-
+		//		Cara Roja
+		color = ColorFromRGB(220, 20, 60);
+		for (int i = 0; i < 5; i += 2)
+		{
+			rotate = 0.0f;
+			for (int j = 0; j < 5 - i; j++) // Profundidad
+			{
+				float x = (i >> 1) + (0.9 * (i >> 1)) + (0.9 * (j / 2.0f)) + ((rotate != 0) ? 0.45f : 0.0f) - 2;
+				float y = 0.1f;                                                            // Altura
+				float z = (j / 2.0f) + (0.7 * (j / 2.0f)) + ((rotate != 0) ? 0.8f : 0.0f); // Profundidad
+				model = glm::mat4(1.0);
+				model = glm::rotate(model, glm::radians(0.0f + mainWindow.getrotax()), {1.0f, 0.0f, 0.0f});
+				model = glm::rotate(model, glm::radians(0.0f + mainWindow.getrotaz()), {0.0f, 0.0f, 1.0f});
+				model = glm::rotate(model, glm::radians(0.0f + mainWindow.getrotay()), {0.0f, 1.0f, 0.0f});
+				model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+				model = glm::translate(model, glm::vec3(x, y, z));
+				model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 1.0f, 0.0f));
+				glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+				glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+				meshMap["Triangle"]->RenderMesh();
+				rotate = (rotate == 0.0f) ? 180.0f : 0.0f;
+				printf("%f, %f, %f\n", mainWindow.getrotax(), mainWindow.getrotay(), mainWindow.getrotaz());
+			}
+		}
+#endif
 		glUseProgram(0);
 		mainWindow.swapBuffers();
 	}
