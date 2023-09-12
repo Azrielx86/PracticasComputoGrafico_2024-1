@@ -298,7 +298,7 @@ glm::vec3 ColorRGB(int r, int g, int b) { return {r / 255.0f, g / 255.0f, b / 25
 
 int main()
 {
-//	mainWindow = Window(800, 600);
+	//	mainWindow = Window(800, 600);
 	mainWindow = Window(1280, 720);
 	mainWindow.Initialise();
 	// Cilindro y cono reciben resolución (slices, rebanadas) y Radio de circunferencia de la base y tapa
@@ -359,12 +359,26 @@ int main()
 		// para reiniciar la matriz de modelo con valor de la matriz identidad
 		model = glm::mat4(1.0);
 		// AQUÍ SE DIBUJA LA CABINA, LA BASE, LAS 4 LLANTAS
+		model = glm::translate(model, {0.0f, 6.0f, 0.0f});
+		modelaux = model;
+		model = glm::scale(model, {4.5f, 2.0f, 2.5f});
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = ColorRGB(7, 59, 76);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshList[0]->RenderMesh();
 
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(-2.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion1()), glm::vec3(0.0f, 0.0f, 1.0f));
+		modelaux = model;
+		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		sp.render();
+
+		model = modelaux;
 		// SE EMPIEZA EL DIBUJO DEL BRAZO
 		// ====================================== articulación 1
-		model = glm::translate(model, glm::vec3(0.0f, 6.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion1()), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(-1.0f, 2.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(-2.0f, 2.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(135.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		modelaux = model;
 		model = glm::scale(model, glm::vec3(5.0f, 1.0f, 1.0f));
@@ -430,7 +444,6 @@ int main()
 
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
-//		model = glm::rotate(model, glm::radians(145.0f), {1.0f, 0.0f, 0.0f});
 		modelaux = model;
 		model = glm::scale(model, {1.5f, -1.5f, 1.5f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
