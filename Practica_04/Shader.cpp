@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Shader.h"
 
 
@@ -32,7 +33,7 @@ std::string Shader::ReadFile(const char* fileLocation)
 	std::ifstream fileStream(fileLocation, std::ios::in);
 	if (!fileStream.is_open())
 	{
-		printf("Falló en leer el archivo: %s", fileLocation);
+		printf("Fallï¿½ en leer el archivo: %s", fileLocation);
 		return "";
 	}
 	std::string line = "";
@@ -60,8 +61,8 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 												   //Para terminar de linkear el programa y ver que no tengamos errores
 	GLint result = 0;
 	GLchar eLog[1024] = { 0 };
-	glLinkProgram(shaderID);//se linkean los shaders a la tarjeta gráfica
-						  //verificaciones y prevención de errores
+	glLinkProgram(shaderID);//se linkean los shaders a la tarjeta grï¿½fica
+						  //verificaciones y prevenciï¿½n de errores
 	glGetProgramiv(shaderID, GL_LINK_STATUS, &result);
 	if (!result)
 	{
@@ -112,7 +113,7 @@ void Shader::ClearShader()
 {
 	if (!shaderID)
 	{ 
-		glDeleteProgram(shaderID);//borra programa de la tarjeta gráfica
+		glDeleteProgram(shaderID);//borra programa de la tarjeta grï¿½fica
 		shaderID = 0;
 	}
 	uniformModel = 0;
@@ -120,7 +121,7 @@ void Shader::ClearShader()
 	uniformView = 0;
 	uniformColor = 0;
 }
-void Shader:: AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType) //Función para agregar los shaders a la tarjeta gráfica
+void Shader:: AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType) //Funciï¿½n para agregar los shaders a la tarjeta grï¿½fica
 																			 //the Program recibe los datos de theShader
 
 {
@@ -129,11 +130,11 @@ void Shader:: AddShader(GLuint theProgram, const char* shaderCode, GLenum shader
 	theCode[0] = shaderCode;//shaderCode es el texto que se le pasa a theCode
 	GLint codeLength[1];
 	codeLength[0] = strlen(shaderCode);//longitud del texto
-	glShaderSource(theShader, 1, theCode, codeLength);//Se le asigna al shader el código
+	glShaderSource(theShader, 1, theCode, codeLength);//Se le asigna al shader el cï¿½digo
 	glCompileShader(theShader);//Se comila el shader
 	GLint result = 0;
 	GLchar eLog[1024] = { 0 };
-	//verificaciones y prevención de errores
+	//verificaciones y prevenciï¿½n de errores
 	glGetShaderiv(theShader, GL_COMPILE_STATUS, &result);
 	if (!result)
 	{
@@ -141,7 +142,7 @@ void Shader:: AddShader(GLuint theProgram, const char* shaderCode, GLenum shader
 		printf("EL error al compilar el shader %d es: %s \n", shaderType, eLog);
 		return;
 	}
-	glAttachShader(theProgram, theShader);//Si no hubo problemas se asigna el shader a theProgram el cual asigna el código a la tarjeta gráfica
+	glAttachShader(theProgram, theShader);//Si no hubo problemas se asigna el shader a theProgram el cual asigna el cï¿½digo a la tarjeta grï¿½fica
 }
 
 Shader::~Shader()

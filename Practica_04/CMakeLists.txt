@@ -1,4 +1,4 @@
-# File by Azrielx86 (Edgar Chalico)
+
 cmake_minimum_required(VERSION 3.7.2)
 project(main)
 set(CMAKE_CXX_STANDARD 17)
@@ -31,6 +31,10 @@ if (NOT UNIX)
     include_directories(C:/dev/vcpkg/packages/glfw3_x86-windows/include/GLFW)
     include_directories(C:/dev/vcpkg/packages/glew_x86-windows/include/GL)
     include_directories(C:/dev/vcpkg/packages/glm_x86-windows/include/glm)
+else()
+    include_directories(/usr/include/GLFW)
+    include_directories(/usr/include/GL)
+    include_directories(/usr/include/glm)
 endif ()
 
 add_executable(main E04-318192950.cpp

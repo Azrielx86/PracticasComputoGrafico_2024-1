@@ -3,18 +3,18 @@
 #pragma ide diagnostic ignored "UnusedValue"
 #pragma ide diagnostic ignored "hicpp-multiway-paths-covered"
 #pragma ide diagnostic ignored "cppcoreguidelines-narrowing-conversions"
-// semestre 2024-1 práctica 4: Modelado Jerárquico.
-// el uso de matrices adicionales para almacenar información de transformaciones geométricas que se quiere
-// heredar entre diversas instancias para que estén unidas
+// semestre 2024-1 prï¿½ctica 4: Modelado Jerï¿½rquico.
+// el uso de matrices adicionales para almacenar informaciï¿½n de transformaciones geomï¿½tricas que se quiere
+// heredar entre diversas instancias para que estï¿½n unidas
 #include <cmath>
 #include <glew.h>
 #include <glfw3.h>
 #include <vector>
 // glm
 #include <glm.hpp>
-#include <gtc\matrix_transform.hpp>
-#include <gtc\type_ptr.hpp>
-// clases para dar orden y limpieza al còdigo
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
+// clases para dar orden y limpieza al cï¿½digo
 #include "Camera.h"
 #include "Mesh.h"
 #include "Shader.h"
@@ -79,7 +79,7 @@ void CrearCubo()
 	meshList.push_back(cubo);
 }
 
-// Pirámide triangular regular
+// Pirï¿½mide triangular regular
 void CrearPiramideTriangular()
 {
 	// clang-format off
@@ -103,20 +103,20 @@ void CrearPiramideTriangular()
 	meshList.push_back(obj1);
 }
 /*
-Crear cilindro y cono con arreglos dinámicos vector creados en el Semestre 2023 - 1 : por Sánchez Pérez Omar Alejandro
+Crear cilindro y cono con arreglos dinï¿½micos vector creados en el Semestre 2023 - 1 : por Sï¿½nchez Pï¿½rez Omar Alejandro
 */
 void CrearCilindro(int res, float R)
 {
 
 	// constantes utilizadas en los ciclos for
 	int n, i;
-	// cálculo del paso interno en la circunferencia y variables que almacenarán cada coordenada de cada vértice
+	// cï¿½lculo del paso interno en la circunferencia y variables que almacenarï¿½n cada coordenada de cada vï¿½rtice
 	GLfloat dt = 2 * PI / res, x, z, y = -0.5f;
 
 	vector<GLfloat> vertices;
 	vector<unsigned int> indices;
 
-	// ciclo for para crear los vértices de las paredes del cilindro
+	// ciclo for para crear los vï¿½rtices de las paredes del cilindro
 	for (n = 0; n <= (res); n++)
 	{
 		if (n != res)
@@ -124,7 +124,7 @@ void CrearCilindro(int res, float R)
 			x = R * cos((n) *dt);
 			z = R * sin((n) *dt);
 		}
-		// caso para terminar el círculo
+		// caso para terminar el cï¿½rculo
 		else
 		{
 			x = R * cos((0) * dt);
@@ -200,7 +200,7 @@ void CrearCilindro(int res, float R)
 		}
 	}
 
-	// Se generan los indices de los vértices
+	// Se generan los indices de los vï¿½rtices
 	for (i = 0; i < vertices.size(); i++)
 		indices.push_back(i);
 
@@ -210,13 +210,13 @@ void CrearCilindro(int res, float R)
 	meshList.push_back(cilindro);
 }
 
-// función para crear un cono
+// funciï¿½n para crear un cono
 void CrearCono(int res, float R)
 {
 
 	// constantes utilizadas en los ciclos for
 	int n, i;
-	// cálculo del paso interno en la circunferencia y variables que almacenarán cada coordenada de cada vértice
+	// cï¿½lculo del paso interno en la circunferencia y variables que almacenarï¿½n cada coordenada de cada vï¿½rtice
 	GLfloat dt = 2 * PI / res, x, z, y = -0.5f;
 
 	vector<GLfloat> vertices;
@@ -227,7 +227,7 @@ void CrearCono(int res, float R)
 	vertices.push_back(0.5);
 	vertices.push_back(0.0);
 
-	// ciclo for para crear los vértices de la circunferencia del cono
+	// ciclo for para crear los vï¿½rtices de la circunferencia del cono
 	for (n = 0; n <= (res); n++)
 	{
 		x = R * cos((n) *dt);
@@ -261,7 +261,7 @@ void CrearCono(int res, float R)
 	meshList.push_back(cono);
 }
 
-// función para crear pirámide cuadrangular unitaria
+// funciï¿½n para crear pirï¿½mide cuadrangular unitaria
 void CrearPiramideCuadrangular()
 {
 	// clang-format off
@@ -301,13 +301,13 @@ int main()
 	//	mainWindow = Window(800, 600);
 	mainWindow = Window(1280, 720);
 	mainWindow.Initialise();
-	// Cilindro y cono reciben resolución (slices, rebanadas) y Radio de circunferencia de la base y tapa
+	// Cilindro y cono reciben resoluciï¿½n (slices, rebanadas) y Radio de circunferencia de la base y tapa
 
-	CrearCubo();                 // índice 0 en MeshList
-	CrearPiramideTriangular();   // índice 1 en MeshList
-	CrearCilindro(5, 1.0f);      // índice 2 en MeshList
-	CrearCono(25, 2.0f);         // índice 3 en MeshList
-	CrearPiramideCuadrangular(); // índice 4 en MeshList
+	CrearCubo();                 // ï¿½ndice 0 en MeshList
+	CrearPiramideTriangular();   // ï¿½ndice 1 en MeshList
+	CrearCilindro(5, 1.0f);      // ï¿½ndice 2 en MeshList
+	CrearCono(25, 2.0f);         // ï¿½ndice 3 en MeshList
+	CrearPiramideCuadrangular(); // ï¿½ndice 4 en MeshList
 	CreateShaders();
 
 	camera = Camera(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.3f, 0.3f);
@@ -337,7 +337,7 @@ int main()
 		lastTime = now;
 		// Recibir eventos del usuario
 		glfwPollEvents();
-		// Cámara
+		// Cï¿½mara
 		camera.keyControl(mainWindow.getsKeys(), deltaTime);
 		camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 
@@ -353,12 +353,12 @@ int main()
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
-		// Creando el brazo de una grúa
-		// articulacion1 hasta articulación5 sólo son puntos de rotación o articulación, en este caso no dibujaremos esferas que los representen
+		// Creando el brazo de una grï¿½a
+		// articulacion1 hasta articulaciï¿½n5 sï¿½lo son puntos de rotaciï¿½n o articulaciï¿½n, en este caso no dibujaremos esferas que los representen
 
 		// para reiniciar la matriz de modelo con valor de la matriz identidad
 		model = glm::mat4(1.0);
-		// AQUÍ SE DIBUJA LA CABINA, LA BASE, LAS 4 LLANTAS
+		// AQUï¿½ SE DIBUJA LA CABINA, LA BASE, LAS 4 LLANTAS
 		model = glm::translate(model, {0.0f, 6.0f, 0.0f});
 		modelaux = model;
 		model = glm::scale(model, {4.5f, 2.0f, 2.5f});
@@ -377,7 +377,7 @@ int main()
 
 		model = modelaux;
 		// SE EMPIEZA EL DIBUJO DEL BRAZO
-		// ====================================== articulación 1
+		// ====================================== articulaciï¿½n 1
 		model = glm::translate(model, glm::vec3(-2.0f, 2.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(135.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		modelaux = model;
@@ -388,13 +388,13 @@ int main()
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		meshList[0]->RenderMesh();
 
-		// para descartar la escala que no quiero heredar se carga la información de la matrix auxiliar
-		//  ==================================== articulación 2
+		// para descartar la escala que no quiero heredar se carga la informaciï¿½n de la matrix auxiliar
+		//  ==================================== articulaciï¿½n 2
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(2.5f, 0.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion2()), glm::vec3(0.0f, 0.0f, 1.0f));
 		modelaux = model;
-		// dibujar una pequeña esfera
+		// dibujar una pequeï¿½a esfera
 		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		sp.render();
@@ -407,16 +407,16 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		color = ColorRGB(255, 209, 102);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color)); // para cambiar el color del objetos
-		meshList[0]->RenderMesh();                            // dibuja cubo y pirámide triangular
+		meshList[0]->RenderMesh();                            // dibuja cubo y pirï¿½mide triangular
 
-		// =================================== articulación 3 extremo derecho del segundo brazo
+		// =================================== articulaciï¿½n 3 extremo derecho del segundo brazo
 		model = modelaux;
 		color = ColorRGB(6, 214, 160);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color)); // para cambiar el color del objetos
 		model = glm::translate(model, glm::vec3(0.0f, -2.5f, 0.0f));
 		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion3()), glm::vec3(0.0f, 0.0f, 1.0f));
 		modelaux = model;
-		// dibujar una pequeña esfera
+		// dibujar una pequeï¿½a esfera
 		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		sp.render();
@@ -428,16 +428,16 @@ int main()
 		modelaux = model;
 		model = glm::scale(model, glm::vec3(1.0f, 5.0f, 1.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		meshList[0]->RenderMesh(); // dibuja cubo y pirámide triangular
+		meshList[0]->RenderMesh(); // dibuja cubo y pirï¿½mide triangular
 
-		//		 ======================================================= Cuarta articulación
+		//		 ======================================================= Cuarta articulaciï¿½n
 		model = modelaux;
 		color = ColorRGB(17, 138, 178);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color)); // para cambiar el color del objetos
 		model = glm::translate(model, glm::vec3(0.0f, -2.5f, 0.0f));
 		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion4()), glm::vec3(1.0f, 0.0f, 0.0f));
 		modelaux = model;
-		// dibujar una pequeña esfera
+		// dibujar una pequeï¿½a esfera
 		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		sp.render();
@@ -447,7 +447,7 @@ int main()
 		modelaux = model;
 		model = glm::scale(model, {1.5f, -1.5f, 1.5f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		meshList[0]->RenderMesh(); // dibuja cubo y pirámide triangular
+		meshList[0]->RenderMesh(); // dibuja cubo y pirï¿½mide triangular
 
 		glUseProgram(0);
 		mainWindow.swapBuffers();
