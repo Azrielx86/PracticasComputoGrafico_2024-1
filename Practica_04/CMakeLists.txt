@@ -45,11 +45,10 @@ add_executable(main E04-318192950.cpp
         Window.cpp
 )
 
+    file(COPY shaders DESTINATION ${CMAKE_BINARY_DIR})
 if (UNIX)
     target_link_libraries(main glfw OpenGL::GL GLEW)
-    file(COPY shaders DESTINATION ${CMAKE_BINARY_DIR})
 else ()
     target_link_libraries(main PRIVATE GLEW::GLEW)
     target_link_libraries(main PRIVATE glfw)
-    file(COPY shaders DESTINATION ${CMAKE_BINARY_DIR}/Debug)
 endif ()
