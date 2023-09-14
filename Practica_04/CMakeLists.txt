@@ -37,7 +37,7 @@ else()
     include_directories(/usr/include/glm)
 endif ()
 
-add_executable(main E04-318192950.cpp
+add_executable(main P04-318192950.cpp
         Camera.cpp
         Mesh.cpp
         Shader.cpp

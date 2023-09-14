@@ -21,6 +21,15 @@
 #include "Sphere.h"
 #include "Window.h"
 
+enum Figures
+{
+	FIG_CUBO,
+	FIG_PIRAMIDE_TRIANG,
+	FIG_CILINDRO,
+	FIG_CONO,
+	FIG_PIRAMIDE_CUAD
+};
+
 using std::vector;
 
 // grados a radianes
@@ -305,7 +314,7 @@ int main()
 
 	CrearCubo();                 // �ndice 0 en MeshList
 	CrearPiramideTriangular();   // �ndice 1 en MeshList
-	CrearCilindro(25, 1.0f);      // �ndice 2 en MeshList
+	CrearCilindro(25, 1.0f);     // �ndice 2 en MeshList
 	CrearCono(25, 2.0f);         // �ndice 3 en MeshList
 	CrearPiramideCuadrangular(); // �ndice 4 en MeshList
 	CreateShaders();
@@ -331,7 +340,6 @@ int main()
 
 	while (!mainWindow.getShouldClose())
 	{
-
 		GLfloat now = glfwGetTime();
 		deltaTime = now - lastTime;
 		deltaTime += (now - lastTime) / limitFPS;
@@ -354,153 +362,99 @@ int main()
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
-		// Creando el brazo de una gr�a
-		// articulacion1 hasta articulaci�n5 s�lo son puntos de rotaci�n o articulaci�n, en este caso no dibujaremos esferas que los representen
+		// Eje z
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, {0.0f, 0.0f, 50.0f});
+		model = glm::scale(model, {0.1f, 0.1f, 100.0f});
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = ColorRGB(0, 0, 255);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshList[FIG_CUBO]->RenderMesh();
 
-		// para reiniciar la matriz de modelo con valor de la matriz identidad
-		model = glm::mat4(1.0);
-		// AQU� SE DIBUJA LA CABINA, LA BASE, LAS 4 LLANTAS
-		model = glm::translate(model, {0.0f, 6.0f, 0.0f});
+		// Eje x
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, {50.0f, 0.0f, 0.0f});
+		model = glm::scale(model, {100.0f, 0.1f, 0.1f});
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = ColorRGB(255, 0, 0);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshList[FIG_CUBO]->RenderMesh();
+
+		// Eje z
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, {0.0f, 50.0f, 0.0f});
+		model = glm::scale(model, {0.1f, 100.0f, 0.1f});
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = ColorRGB(0, 255, 0);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshList[FIG_CUBO]->RenderMesh();
+
+		// Cuerpo robot
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, {0.0f, 5.0f, -4.0f});
+		modelBaseAux = modelaux = model;
+		model = glm::scale(model, {3.8f, 1.8f, 2.2f});
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = ColorRGB(220, 20, 60);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshList[FIG_CUBO]->RenderMesh();
+
+		// Pie derecho (?)
+		model = modelBaseAux;
+		model = glm::translate(model, {-1.2f, -0.4f, -1.2});
+		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion1()), {0.0f, 0.0f, 1.0f});
 		modelaux = model;
-		modelBaseAux = model;
-		model = glm::scale(model, {4.5f, 2.0f, 2.5f});
+		model = glm::scale(model, {0.5f, 0.5f, 0.5f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = ColorRGB(7, 59, 76);
+		color = ColorRGB(20, 220, 60);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		meshList[0]->RenderMesh();
-
-		model = modelaux;
-		model = glm::translate(model, glm::vec3(-2.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion1()), glm::vec3(0.0f, 0.0f, 1.0f));
-		modelaux = model;
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		sp.render();
-
-		// DIBUJADO DE LA BASE Y LAS RUEDAS
-		model = modelBaseAux;
-		model = glm::translate(model, {0.0f, -1.25f, 0.0f});
-		modelBaseAux = model;
-		model = glm::scale(model, {4.75f, 1.8f, 2.75f});
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = ColorRGB(25, 25, 112);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		meshList[4]->RenderMeshGeometry();
-		
-		// Rueda 1
-		model = modelBaseAux;
-		model = glm::translate(model, {2.3f, -0.75f, 1.5f});
-		model = glm::rotate(model, glm::radians(90.0f), {1.0f, 0.0f, 0.0f});
-		model = glm::scale(model, {1.2f, 0.8f, 1.2f});
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = ColorRGB(105, 105, 105);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		meshList[2]->RenderMeshGeometry();
-		
-		// Rueda 2
-		model = modelBaseAux;
-		model = glm::translate(model, {-2.3f, -0.75f, 1.5f});
-		model = glm::rotate(model, glm::radians(90.0f), {1.0f, 0.0f, 0.0f});
-		model = glm::scale(model, {1.2f, 0.8f, 1.2f});
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = ColorRGB(105, 105, 105);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		meshList[2]->RenderMeshGeometry();
-		
-		// Rueda 3
-		model = modelBaseAux;
-		model = glm::translate(model, {2.3f, -0.75f, -1.5f});
-		model = glm::rotate(model, glm::radians(90.0f), {1.0f, 0.0f, 0.0f});
-		model = glm::scale(model, {1.2f, 0.8f, 1.2f});
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = ColorRGB(105, 105, 105);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		meshList[2]->RenderMeshGeometry();
-		
-		// Rueda 4
-		model = modelBaseAux;
-		model = glm::translate(model, {-2.3f, -0.75f, -1.5f});
-		model = glm::rotate(model, glm::radians(90.0f), {1.0f, 0.0f, 0.0f});
-		model = glm::scale(model, {1.2f, 0.8f, 1.2f});
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = ColorRGB(105, 105, 105);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		meshList[2]->RenderMeshGeometry();
-		
-		// ================================
-		model = modelaux;
-		// SE EMPIEZA EL DIBUJO DEL BRAZO
-		// ====================================== articulaci�n 1
-		model = glm::translate(model, glm::vec3(-2.0f, 2.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(135.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		modelaux = model;
-		model = glm::scale(model, glm::vec3(5.0f, 1.0f, 1.0f));
-
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = ColorRGB(239, 71, 111);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		meshList[0]->RenderMesh();
-
-		// para descartar la escala que no quiero heredar se carga la informaci�n de la matrix auxiliar
-		//  ==================================== articulaci�n 2
-		model = modelaux;
-		model = glm::translate(model, glm::vec3(2.5f, 0.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion2()), glm::vec3(0.0f, 0.0f, 1.0f));
-		modelaux = model;
-		// dibujar una peque�a esfera
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		sp.render();
 
 		model = modelaux;
-		// segundo brazo
-		model = glm::translate(model, glm::vec3(0.0f, -2.5f, 0.0f));
+		model = glm::translate(model, {0.0f, -0.8f, 0.0});
 		modelaux = model;
-		model = glm::scale(model, glm::vec3(1.0f, 5.0f, 1.0f));
+		model = glm::scale(model, {0.8f, 1.6f, 0.8f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = ColorRGB(255, 209, 102);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color)); // para cambiar el color del objetos
-		meshList[0]->RenderMesh();                            // dibuja cubo y pir�mide triangular
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshList[FIG_CUBO]->RenderMesh();
 
-		// =================================== articulaci�n 3 extremo derecho del segundo brazo
 		model = modelaux;
-		color = ColorRGB(6, 214, 160);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color)); // para cambiar el color del objetos
-		model = glm::translate(model, glm::vec3(0.0f, -2.5f, 0.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion3()), glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::translate(model, {0.0f, -0.8f, 0.0f});
+		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion2()), {0.0f, 0.0f, 1.0f});
 		modelaux = model;
-		// dibujar una peque�a esfera
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		model = glm::scale(model, {0.4f, 0.4f, 0.4f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		sp.render();
-
-		// instancias para completar el brazo y  la cabina
-		model = modelaux;
-		model = glm::translate(model, glm::vec3(1.8f, 1.8f, 0.0f));
-		model = glm::rotate(model, glm::radians(135.0f), {0.0f, 0.0f, 1.0f});
-		modelaux = model;
-		model = glm::scale(model, glm::vec3(1.0f, 5.0f, 1.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		meshList[0]->RenderMesh(); // dibuja cubo y pir�mide triangular
-
-		//		 ======================================================= Cuarta articulaci�n
-		model = modelaux;
-		color = ColorRGB(17, 138, 178);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color)); // para cambiar el color del objetos
-		model = glm::translate(model, glm::vec3(0.0f, -2.5f, 0.0f));
-		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion4()), glm::vec3(1.0f, 0.0f, 0.0f));
-		modelaux = model;
-		// dibujar una peque�a esfera
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = ColorRGB(20, 60, 220);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		sp.render();
 
 		model = modelaux;
-		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+		model = glm::translate(model, {0.0f, -0.8f, 0.0});
 		modelaux = model;
-		model = glm::scale(model, {1.5f, -1.5f, 1.5f});
+		model = glm::scale(model, {0.8f, 1.6f, 0.8f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		meshList[0]->RenderMesh(); // dibuja cubo y pir�mide triangular
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshList[FIG_CUBO]->RenderMesh();
+
+		// Pie izquierdo trasero
+		model = modelBaseAux;
+		model = glm::translate(model, {-1.2f, -0.4f, 1.2});
+		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion1()), {0.0f, 0.0f, 1.0f});
+		modelaux = model;
+		model = glm::scale(model, {0.5f, 0.5f, 0.5f});
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = ColorRGB(20, 220, 60);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		sp.render();
+
+		model = modelaux;
+		model = glm::translate(model, {0.0f, -0.8f, 0.0});
+		modelaux = model;
+		model = glm::scale(model, {0.8f, 1.6f, 0.8f});
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = ColorRGB(20, 220, 60);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshList[FIG_CUBO]->RenderMesh();
 
 		glUseProgram(0);
 		mainWindow.swapBuffers();
