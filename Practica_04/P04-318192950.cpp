@@ -316,7 +316,7 @@ int main()
 
 	CrearCubo();                 // �ndice 0 en MeshList
 	CrearPiramideTriangular();   // �ndice 1 en MeshList
-	CrearCilindro(160, 1.0f);     // �ndice 2 en MeshList
+	CrearCilindro(160, 1.0f);    // �ndice 2 en MeshList
 	CrearCono(25, 2.0f);         // �ndice 3 en MeshList
 	CrearPiramideCuadrangular(); // �ndice 4 en MeshList
 	CreateShaders();
@@ -378,12 +378,16 @@ int main()
 		art3 = (sin(glfwGetTime() * 35 * 0.05f) * 30) - 15.0f;
 		art4 = (sin(glfwGetTime() * 35 * 0.02f) * 20) - 20.0f;
 		art5 = (sin(glfwGetTime() * 35 * 0.05f) * 30) + 25.0f;
-		art6 = (sin(glfwGetTime() * 35 * 0.02f) * 20) + 25.0f;
+		art6 = (sin(glfwGetTime() * 35 * 0.02f) * 30) - 15.0f;
 #else
-		art1 = (sin(mainWindow.getarticulacion1() * 0.05f) * 30) + 20.0f;
-		art2 = (sin(mainWindow.getarticulacion2() * 0.02f) * 20) - 20.0f;
+		art1 = (sin(mainWindow.getarticulacion1() * 0.05f) * 30);
+//		+ 20.0f;
+		art2 = (sin(mainWindow.getarticulacion2() * 0.02f) * 20) + 20.f;
+//		- 20.0f;
 		art3 = (sin(mainWindow.getarticulacion3() * 0.05f) * 30) - 20.0f;
 		art4 = (sin(mainWindow.getarticulacion4() * 0.02f) * 20) - 20.0f;
+		art5 = (sin(mainWindow.getarticulacion5() * 0.05f) * 30) - 145.0f;
+		art6 = (sin(mainWindow.getarticulacion6() * 0.02f) * 30) - 15.0f;
 #endif
 
 #ifdef DRAW_AXIS
@@ -629,7 +633,7 @@ int main()
 		// Orejas ===========================================================================================
 		color = ColorRGB(85, 130, 139);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		
+
 		model = modelaux;
 		model = glm::translate(model, {-0.2f, 1.5f, -0.75f});
 		model = glm::rotate(model, glm::radians(-60.0f), {1.0f, 0.0f, 0.0f});
@@ -638,7 +642,7 @@ int main()
 		model = glm::scale(model, {1.7f, 1.7f, 1.7f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		meshList[FIG_PIRAMIDE_TRIANG]->RenderMesh();
-		
+
 		model = modelaux;
 		model = glm::translate(model, {-0.2f, 1.5f, 0.75f});
 		model = glm::rotate(model, glm::radians(-30.0f), {1.0f, 0.0f, 0.0f});
@@ -651,14 +655,53 @@ int main()
 		// Gafas pro
 		color = ColorRGB(135, 187, 162);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		
+
 		model = modelaux;
 		model = glm::translate(model, {0.2f, 0.4f, 0.0f});
 		model = glm::rotate(model, glm::radians(225.0f), {0.0f, 0.0f, 1.0f});
 		model = glm::scale(model, {1.2f, 1.0f, 1.3f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		meshList[FIG_CILINDRO]->RenderMeshGeometry();
-		
+
+		// Cola
+		color = ColorRGB(59, 96, 100);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+
+		model = modelBaseAux;
+		model = glm::translate(model, {-2.2f, 0.8f, 0.0});
+		model = glm::rotate(model, glm::radians(art5), {0.0f, 0.0f, 1.0f});
+		modelaux = model;
+		model = glm::scale(model, {0.5f, 0.5f, 0.5f});
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		sp.render();
+
+		model = modelaux;
+		model = glm::translate(model, {0.0f, -0.8f, 0.0});
+		modelaux = model;
+		model = glm::scale(model, {0.8f, 1.8f, 0.8f});
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshList[FIG_CUBO]->RenderMesh();
+
+		color = ColorRGB(85, 130, 139);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+
+		model = modelaux;
+		model = glm::translate(model, {0.0f, -1.0f, 0.0});
+		model = glm::rotate(model, glm::radians(art6), {0.0f, 0.0f, 1.0f});
+		modelaux = model;
+		model = glm::scale(model, {0.4f, 0.4f, 0.4f});
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		sp.render();
+
+		model = modelaux;
+		model = glm::translate(model, {0.0f, -0.8f, 0.0});
+		modelaux = model;
+		model = glm::scale(model, {0.8f, 1.8f, 0.8f});
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		meshList[FIG_CUBO]->RenderMesh();
+
 		glUseProgram(0);
 		mainWindow.swapBuffers();
 	}

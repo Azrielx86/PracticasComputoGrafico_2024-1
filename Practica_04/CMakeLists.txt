@@ -10,8 +10,8 @@ set(CMAKE_CXX_STANDARD 17)
 # ./vcpkg install glfw3:x64-windows glfw3:x86-windows glew:x64-windows glew:x86-windows glm:x64-windows glm:x86-windows
 
 add_definitions(-DCMAKE_PROJECT)
-add_definitions(-DDRAW_AXIS)
-add_definitions(-DANIM_AUTO)
+#add_definitions(-DDRAW_AXIS)
+#add_definitions(-DANIM_AUTO)
 
 # FIND PACKAGES FOR OpenGL, GLFW and GLEW
 set(OpenGL_GL_PREFERENCE GLVND)
