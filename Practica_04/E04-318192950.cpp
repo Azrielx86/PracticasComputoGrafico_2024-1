@@ -305,12 +305,16 @@ int main()
 
 	CrearCubo();                 // �ndice 0 en MeshList
 	CrearPiramideTriangular();   // �ndice 1 en MeshList
-	CrearCilindro(25, 1.0f);      // �ndice 2 en MeshList
+	CrearCilindro(10, 1.0f);     // �ndice 2 en MeshList
 	CrearCono(25, 2.0f);         // �ndice 3 en MeshList
 	CrearPiramideCuadrangular(); // �ndice 4 en MeshList
 	CreateShaders();
 
-	camera = Camera(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.3f, 0.3f);
+#if __linux__ // Debido a que en Linux ocurre que la cámara es menos sensible.
+	camera = Camera(glm::vec3(10.0f, 10.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.5f, 0.9f);
+#else
+	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.3f, 0.3f);
+#endif
 
 	GLuint uniformProjection = 0;
 	GLuint uniformModel = 0;
@@ -386,47 +390,51 @@ int main()
 		color = ColorRGB(25, 25, 112);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		meshList[4]->RenderMeshGeometry();
-		
+
 		// Rueda 1
 		model = modelBaseAux;
 		model = glm::translate(model, {2.3f, -0.75f, 1.5f});
 		model = glm::rotate(model, glm::radians(90.0f), {1.0f, 0.0f, 0.0f});
+		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion7()), {0.0f, 1.0f, 0.0f});
 		model = glm::scale(model, {1.2f, 0.8f, 1.2f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		color = ColorRGB(105, 105, 105);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		meshList[2]->RenderMeshGeometry();
-		
+
 		// Rueda 2
 		model = modelBaseAux;
 		model = glm::translate(model, {-2.3f, -0.75f, 1.5f});
 		model = glm::rotate(model, glm::radians(90.0f), {1.0f, 0.0f, 0.0f});
+		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion8()), {0.0f, 1.0f, 0.0f});
 		model = glm::scale(model, {1.2f, 0.8f, 1.2f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		color = ColorRGB(105, 105, 105);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		meshList[2]->RenderMeshGeometry();
-		
+
 		// Rueda 3
 		model = modelBaseAux;
 		model = glm::translate(model, {2.3f, -0.75f, -1.5f});
 		model = glm::rotate(model, glm::radians(90.0f), {1.0f, 0.0f, 0.0f});
+		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion9()), {0.0f, 1.0f, 0.0f});
 		model = glm::scale(model, {1.2f, 0.8f, 1.2f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		color = ColorRGB(105, 105, 105);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		meshList[2]->RenderMeshGeometry();
-		
+
 		// Rueda 4
 		model = modelBaseAux;
 		model = glm::translate(model, {-2.3f, -0.75f, -1.5f});
 		model = glm::rotate(model, glm::radians(90.0f), {1.0f, 0.0f, 0.0f});
+		model = glm::rotate(model, glm::radians(mainWindow.getarticulacion10()), {0.0f, 1.0f, 0.0f});
 		model = glm::scale(model, {1.2f, 0.8f, 1.2f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		color = ColorRGB(105, 105, 105);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		meshList[2]->RenderMeshGeometry();
-		
+
 		// ================================
 		model = modelaux;
 		// SE EMPIEZA EL DIBUJO DEL BRAZO
