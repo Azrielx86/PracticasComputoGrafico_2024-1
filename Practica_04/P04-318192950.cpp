@@ -372,7 +372,7 @@ int main()
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
-#ifdef ANIM_AUTO
+#ifdef ANIM_AUTO // Para la primera fase del proyecto, ya no mueve todas las articulaciones
 		art1 = (sin(glfwGetTime() * 35 * 0.05f) * 30) + 15.0f;
 		art2 = (sin(glfwGetTime() * 35 * 0.02f) * 20) - 20.0f;
 		art3 = (sin(glfwGetTime() * 35 * 0.05f) * 30) - 15.0f;
@@ -380,19 +380,19 @@ int main()
 		art5 = (sin(glfwGetTime() * 35 * 0.05f) * 30) + 25.0f;
 		art6 = (sin(glfwGetTime() * 35 * 0.02f) * 30) - 15.0f;
 #else
-		art1 = (sin(mainWindow.getarticulacion1() * 0.05f) * 30);
-		art2 = (sin(mainWindow.getarticulacion2() * 0.02f) * 20) + 20.f;
-		art3 = (sin(mainWindow.getarticulacion3() * 0.05f) * 30) - 20.0f;
-		art4 = (sin(mainWindow.getarticulacion4() * 0.02f) * 20) - 20.0f;
-		art5 = (sin(mainWindow.getarticulacion5() * 0.05f) * 30) - 145.0f;
-		art6 = (sin(mainWindow.getarticulacion6() * 0.02f) * 30) - 15.0f;
+		art1 = (sin(mainWindow.getarticulacion1() * 0.05f) * 30);          // Pie trasero izquierdo 1
+		art2 = (sin(mainWindow.getarticulacion2() * 0.02f) * 20) + 20.f;   // Pie trasero izquierdo 2
+		art3 = (sin(mainWindow.getarticulacion3() * 0.05f) * 30) - 20.0f;  // Pie trasero derecho 1
+		art4 = (sin(mainWindow.getarticulacion4() * 0.02f) * 20) - 20.0f;  // Pie trasero derecho 2
+		art5 = (sin(mainWindow.getarticulacion5() * 0.05f) * 30) - 145.0f; // Cola 1
+		art6 = (sin(mainWindow.getarticulacion6() * 0.02f) * 30) - 15.0f;  // Cola 2
 		art7 = (sin(mainWindow.getarticulacion7() * 0.05f) * 30) - 15.0f;  // Pie izquiero delantero 1
 		art8 = (sin(mainWindow.getarticulacion8() * 0.02f) * 20) + 20.f;   // Pie izquierdo delantero 2
 		art9 = (sin(mainWindow.getarticulacion9() * 0.02f) * 30) - 15.0f;  // Pie derecho delantero 1
 		art10 = (sin(mainWindow.getarticulacion10() * 0.02f) * 20) + 20.f; // Pie derecho delantero 2
 #endif
 
-#ifdef DRAW_AXIS
+#ifdef DRAW_AXIS // Ejes del espacio tridimensional (para poder posicionarse mejor, los hubiera usado desde la práctica pasada...)
 		// ==================================================================================================
 		// Eje z
 		model = glm::mat4(1.0f);
