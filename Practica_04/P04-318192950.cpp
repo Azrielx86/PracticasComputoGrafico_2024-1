@@ -346,7 +346,7 @@ int main()
 
 	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f); // inicializar Color para enviar a variable Uniform;
 
-	float art1, art2, art3, art4, art5, art6;
+	float art1, art2, art3, art4, art5, art6, art7, art8, art9, art10;
 
 	while (!mainWindow.getShouldClose())
 	{
@@ -381,13 +381,15 @@ int main()
 		art6 = (sin(glfwGetTime() * 35 * 0.02f) * 30) - 15.0f;
 #else
 		art1 = (sin(mainWindow.getarticulacion1() * 0.05f) * 30);
-//		+ 20.0f;
 		art2 = (sin(mainWindow.getarticulacion2() * 0.02f) * 20) + 20.f;
-//		- 20.0f;
 		art3 = (sin(mainWindow.getarticulacion3() * 0.05f) * 30) - 20.0f;
 		art4 = (sin(mainWindow.getarticulacion4() * 0.02f) * 20) - 20.0f;
 		art5 = (sin(mainWindow.getarticulacion5() * 0.05f) * 30) - 145.0f;
 		art6 = (sin(mainWindow.getarticulacion6() * 0.02f) * 30) - 15.0f;
+		art7 = (sin(mainWindow.getarticulacion7() * 0.05f) * 30) - 15.0f;  // Pie izquiero delantero 1
+		art8 = (sin(mainWindow.getarticulacion8() * 0.02f) * 20) + 20.f;   // Pie izquierdo delantero 2
+		art9 = (sin(mainWindow.getarticulacion9() * 0.02f) * 30) - 15.0f;  // Pie derecho delantero 1
+		art10 = (sin(mainWindow.getarticulacion10() * 0.02f) * 20) + 20.f; // Pie derecho delantero 2
 #endif
 
 #ifdef DRAW_AXIS
@@ -524,7 +526,7 @@ int main()
 		// Pierna izquierdo delantera =======================================================================================
 		model = modelBaseAux;
 		model = glm::translate(model, {1.4f, 0.2f, -1.6});
-		model = glm::rotate(model, glm::radians(art3), {0.0f, 0.0f, 1.0f});
+		model = glm::rotate(model, glm::radians(art7), {0.0f, 0.0f, 1.0f});
 		modelaux = model;
 		model = glm::scale(model, {0.6f, 0.6f, 0.6f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -542,7 +544,7 @@ int main()
 
 		model = modelaux;
 		model = glm::translate(model, {0.0f, -0.8f, 0.0f});
-		model = glm::rotate(model, glm::radians(art4), {0.0f, 0.0f, 1.0f});
+		model = glm::rotate(model, glm::radians(art8), {0.0f, 0.0f, 1.0f});
 		modelaux = model;
 		model = glm::scale(model, {0.4f, 0.4f, 0.4f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -569,7 +571,7 @@ int main()
 		// Pierna derecha delantera =======================================================================================
 		model = modelBaseAux;
 		model = glm::translate(model, {1.4f, 0.2f, 1.6});
-		model = glm::rotate(model, glm::radians(-art1), {0.0f, 0.0f, 1.0f});
+		model = glm::rotate(model, glm::radians(art9), {0.0f, 0.0f, 1.0f});
 		modelaux = model;
 		model = glm::scale(model, {0.6f, 0.6f, 0.6f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -587,7 +589,7 @@ int main()
 
 		model = modelaux;
 		model = glm::translate(model, {0.0f, -0.8f, 0.0f});
-		model = glm::rotate(model, glm::radians(art2), {0.0f, 0.0f, 1.0f});
+		model = glm::rotate(model, glm::radians(art10), {0.0f, 0.0f, 1.0f});
 		modelaux = model;
 		model = glm::scale(model, {0.4f, 0.4f, 0.4f});
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
