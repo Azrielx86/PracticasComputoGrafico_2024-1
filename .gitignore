@@ -6,5 +6,5 @@ include/
 lib/
 *.dll
 *.exe
-.idea/
 *.zip
+.cache/

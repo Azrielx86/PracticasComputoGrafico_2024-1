@@ -1,0 +1,13 @@
+{
+    "vcpkg.general.enable": true,
+    "vcpkg.target.hostTriplet": "x86-windows",
+    "vcpkg.target.defaultTriplet": "",
+    "vcpkg.target.useStaticLib": false,
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+    },
+    "vcpkg.target.installDependencies": true,
+    "vcpkg.target.preferSystemLibs": false,
+    "vcpkg.target.useManifest": false
+}
