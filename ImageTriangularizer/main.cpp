@@ -6,9 +6,7 @@
 #include <opencv2/core/utils/logger.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2\opencv.hpp>
-#include <set>
+#include <opencv2/opencv.hpp>
 #include <vector>
 
 typedef cv::Point3_<uint8_t> Pixel;
@@ -16,7 +14,7 @@ typedef cv::Point3_<uint8_t> Pixel;
 // https://stackoverflow.com/a/34734939/5008845
 void reduceColor_kmeans(const cv::Mat &src, cv::Mat &dst)
 {
-	int K = 32;
+	int K = 8;
 	int n = src.rows * src.cols;
 	cv::Mat data = src.reshape(1, n);
 	data.convertTo(data, CV_32F);
@@ -74,7 +72,7 @@ cv::Mat get_mask_img(cv::Mat &img, Pixel c)
 			auto p = img.at<Pixel>(i, j);
 			if (!(p.x == c.x && p.y == c.y && p.z == c.z))
 			{
-				output.at<Pixel>(i, j) = Pixel (0, 0, 0);
+				output.at<Pixel>(i, j) = Pixel(0, 0, 0);
 			}
 		}
 	}
