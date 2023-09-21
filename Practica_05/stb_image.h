@@ -1885,7 +1885,7 @@ stbi_inline static int stbi__jpeg_get_bit(stbi__jpeg *j)
 }
 
 // given a value that's at position X in the zigzag stream,
-// where does it appear in the 8x8 matrix coded as row-major?
+// where does it appear in the 8x8 model coded as row-major?
 static stbi_uc stbi__jpeg_dezigzag[64+15] =
 {
     0,  1,  8, 16,  9,  2,  3, 10,

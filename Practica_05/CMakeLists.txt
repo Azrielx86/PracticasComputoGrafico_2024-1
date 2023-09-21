@@ -43,7 +43,7 @@ else()
     include_directories(/usr/include/glm)
 endif ()
 
-add_executable(main E05-318192950.cpp
+add_executable(main P05-318192950.cpp
         Window.cpp
         Camera.cpp
         DirectionalLight.cpp
@@ -57,6 +57,7 @@ add_executable(main E05-318192950.cpp
         Sphere.cpp
         SpotLight.cpp
         Texture.cpp
+        ModelMatrix.cpp
 )
 
     file(COPY shaders DESTINATION ${CMAKE_BINARY_DIR})
