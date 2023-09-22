@@ -1,4 +1,4 @@
-# File by Azrielx86 (Edgar Chalico)
+
 cmake_minimum_required(VERSION 3.7.2)
 project(main)
 set(CMAKE_CXX_STANDARD 17)
@@ -60,11 +60,11 @@ add_executable(main P05-318192950.cpp
         ModelMatrix.cpp
 )
 
-    file(COPY shaders DESTINATION ${CMAKE_BINARY_DIR})
-    file(COPY Models DESTINATION ${CMAKE_BINARY_DIR})
-    file(COPY Textures DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY shaders DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY Models DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY Textures DESTINATION ${CMAKE_BINARY_DIR})
 if (UNIX)
-    target_link_libraries(main glfw OpenGL::GL GLEW)
+    target_link_libraries(main glfw OpenGL::GL GLEW assimp::assimp)
 else ()
     target_link_libraries(main PRIVATE GLEW::GLEW)
     target_link_libraries(main PRIVATE glfw)

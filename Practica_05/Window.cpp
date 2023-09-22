@@ -23,7 +23,7 @@ int Window::Initialise()
 	// Inicialización de GLFW
 	if (!glfwInit())
 	{
-		printf("Falló inicializar GLFW");
+		printf("Fallo inicializar GLFW");
 		glfwTerminate();
 		return 1;
 	}
@@ -35,7 +35,7 @@ int Window::Initialise()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 	// CREAR VENTANA
-	mainWindow = glfwCreateWindow(width, height, "Practica XX: Nombre de la practica", NULL, NULL);
+	mainWindow = glfwCreateWindow(width, height, "Practica 05: Optimizacion y Carga de Modelos", NULL, NULL);
 
 	if (!mainWindow)
 	{
@@ -57,7 +57,7 @@ int Window::Initialise()
 
 	if (glewInit() != GLEW_OK)
 	{
-		printf("Falló inicialización de GLEW");
+		printf("Fallo inicializacion de GLEW");
 		glfwDestroyWindow(mainWindow);
 		glfwTerminate();
 		return 1;
@@ -202,7 +202,7 @@ void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, in
 		if (theWindow->anguloCofre <= 45)
 			theWindow->anguloCofre += 3.0f;
 	}
-	
+
 	if (key == GLFW_KEY_L)
 	{
 		if (theWindow->anguloCofre > 0)

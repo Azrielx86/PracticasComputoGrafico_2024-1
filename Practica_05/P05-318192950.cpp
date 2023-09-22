@@ -23,8 +23,8 @@ Pr?ctica 5: Optimizaci?n y Carga de Modelos
 #include <glew.h>
 #include <glfw3.h>
 
-#include <gtc\matrix_transform.hpp>
-#include <gtc\type_ptr.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
 // para probar el importer
 // #include<assimp/Importer.hpp>
 
