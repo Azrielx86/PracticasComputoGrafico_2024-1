@@ -13,16 +13,19 @@ ModelMatrix &ModelMatrix::setMatrix(glm::mat4 &origin)
 	this->model = origin;
 	return *this;
 }
+
 ModelMatrix &ModelMatrix::addTranslation(float x, float y, float z)
 {
 	model = glm::translate(model, {x, y, z});
 	return *this;
 }
+
 ModelMatrix &ModelMatrix::addScale(float x, float y, float z)
 {
 	model = glm::scale(model, {x, y, z});
 	return *this;
 }
+
 ModelMatrix &ModelMatrix::saveActualState(glm::mat4 &output)
 {
 	output = this->model;

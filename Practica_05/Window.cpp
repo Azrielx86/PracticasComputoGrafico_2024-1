@@ -139,52 +139,75 @@ void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, in
 		if (theWindow->anguloPatas[Articulation::FRONT_LEFT] < 45.0f)
 			theWindow->anguloPatas[Articulation::FRONT_LEFT] += 10;
 	}
-	
+
 	if (key == GLFW_KEY_H)
 	{
 		if (theWindow->anguloPatas[Articulation::FRONT_LEFT] > -45.0f)
 			theWindow->anguloPatas[Articulation::FRONT_LEFT] -= 10;
 	}
-	
+
 	// Para delantera derecha
 	if (key == GLFW_KEY_J)
 	{
 		if (theWindow->anguloPatas[Articulation::FRONT_RIGHT] < 45.0f)
 			theWindow->anguloPatas[Articulation::FRONT_RIGHT] += 10;
 	}
-	
+
 	if (key == GLFW_KEY_K)
 	{
 		if (theWindow->anguloPatas[Articulation::FRONT_RIGHT] > -45.0f)
 			theWindow->anguloPatas[Articulation::FRONT_RIGHT] -= 10;
 	}
-	
+
 	// Pata trasera izquierda
 	if (key == GLFW_KEY_N)
 	{
 		if (theWindow->anguloPatas[Articulation::BACK_LEFT] < 45.0f)
 			theWindow->anguloPatas[Articulation::BACK_LEFT] += 10;
 	}
-	
+
 	if (key == GLFW_KEY_M)
 	{
 		if (theWindow->anguloPatas[Articulation::BACK_LEFT] > -45.0f)
 			theWindow->anguloPatas[Articulation::BACK_LEFT] -= 10;
 	}
-	
+
 	// Para trasera derecha
 	if (key == GLFW_KEY_I)
 	{
 		if (theWindow->anguloPatas[Articulation::BACK_RIGHT] < 45.0f)
 			theWindow->anguloPatas[Articulation::BACK_RIGHT] += 10;
 	}
-	
+
 	if (key == GLFW_KEY_O)
 	{
 		if (theWindow->anguloPatas[Articulation::BACK_RIGHT] > -45.0f)
 			theWindow->anguloPatas[Articulation::BACK_RIGHT] -= 10;
 	}
+
+	if (key == GLFW_KEY_UP)
+	{
+		theWindow->posVehiculo += 0.2f;
+		theWindow->rotaRuedas += 25.0f;
+	}
+
+	if (key == GLFW_KEY_DOWN)
+	{
+		theWindow->posVehiculo -= 0.2f;
+		theWindow->rotaRuedas -= 25.0f;
+	}
+
+	if (key == GLFW_KEY_P)
+	{
+		if (theWindow->anguloCofre <= 45)
+			theWindow->anguloCofre += 3.0f;
+	}
 	
+	if (key == GLFW_KEY_L)
+	{
+		if (theWindow->anguloCofre > 0)
+			theWindow->anguloCofre -= 3.0f;
+	}
 
 	if (key >= 0 && key < 1024)
 	{
@@ -223,5 +246,20 @@ Window::~Window()
 {
 	glfwDestroyWindow(mainWindow);
 	glfwTerminate();
+}
+
+GLfloat Window::getPosVehiculo() const
+{
+	return posVehiculo;
+}
+
+GLfloat Window::getRotaRuedas() const
+{
+	return rotaRuedas;
+}
+
+GLfloat Window::getAnguloCofre() const
+{
+	return anguloCofre;
 }
 #pragma warning(pop)

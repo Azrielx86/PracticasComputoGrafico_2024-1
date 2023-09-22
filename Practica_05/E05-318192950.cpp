@@ -35,7 +35,6 @@ Pr?ctica 5: Optimizaci?n y Carga de Modelos
 #include "Sphere.h"
 #include "Window.h"
 
-const float toRadians = 3.14159265f / 180.0f;
 // float angulocola = 0.0f;
 Window mainWindow;
 std::vector<Mesh *> meshList;

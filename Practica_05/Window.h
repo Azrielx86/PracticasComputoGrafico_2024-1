@@ -23,6 +23,9 @@ class Window
 	GLfloat getmuevex() { return muevex; }
 	GLfloat getangulocola() { return angulocola; }
 	GLfloat getAnguloPata(Articulation pata) { return anguloPatas[pata]; }
+	GLfloat getPosVehiculo() const;
+	GLfloat getRotaRuedas() const;
+	GLfloat getAnguloCofre() const;
 	bool getShouldClose()
 	{
 		return glfwWindowShouldClose(mainWindow);
@@ -44,6 +47,9 @@ class Window
 	GLfloat muevex;
 	GLfloat angulocola = 0.0f;
 	GLfloat anguloPatas[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+	GLfloat posVehiculo = 0.0f;
+	GLfloat anguloCofre = 0.0f;
+	GLfloat rotaRuedas = 0.0f;
 	bool mouseFirstMoved;
 	static void ManejaTeclado(GLFWwindow *window, int key, int code, int action, int mode);
 	static void ManejaMouse(GLFWwindow *window, double xPos, double yPos);

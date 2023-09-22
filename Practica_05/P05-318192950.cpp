@@ -1,4 +1,6 @@
 #pragma warning(push, 0)
+#pragma ide diagnostic ignored "UnusedLocalVariable"
+#pragma ide diagnostic ignored "UnusedValue"
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "modernize-use-emplace"
 #pragma ide diagnostic ignored "modernize-deprecated-headers"
@@ -16,15 +18,11 @@ Pr?ctica 5: Optimizaci?n y Carga de Modelos
 	}
 
 #include <cmath>
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
 #include <vector>
 
 #include <glew.h>
 #include <glfw3.h>
 
-#include <glm.hpp>
 #include <gtc\matrix_transform.hpp>
 #include <gtc\type_ptr.hpp>
 // para probar el importer
@@ -36,17 +34,15 @@ Pr?ctica 5: Optimizaci?n y Carga de Modelos
 #include "ModelMatrix.h"
 #include "Shader_m.h"
 #include "Skybox.h"
-#include "Sphere.h"
 #include "Window.h"
 
-const float toRadians = 3.14159265f / 180.0f;
 // float angulocola = 0.0f;
 Window mainWindow;
 std::vector<Mesh *> meshList;
 std::vector<Shader> shaderList;
 
 Camera camera;
-Model Goddard_M, Goddard_C, Goddard_BR, Goddard_BL, Goddard_FR, Goddard_FL;
+Model car, hood, wheel;
 
 Skybox skybox;
 
@@ -118,23 +114,14 @@ int main()
 
 	camera = Camera(glm::vec3(0.0f, 2.0f, 7.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.3f, 1.0f);
 
-	Goddard_M = Model();
-	Goddard_M.LoadModel("Models/cuerpo.obj");
+	car = Model();
+	car.LoadModel("Models/BMW_no_hood.obj");
 
-	Goddard_C = Model();
-	Goddard_C.LoadModel("Models/cola.obj");
+	hood = Model();
+	hood.LoadModel("Models/BMW_Hood.obj");
 
-	Goddard_FL = Model();
-	Goddard_FL.LoadModel("Models/pata_delantera.obj");
-
-	Goddard_FR = Model();
-	Goddard_FR.LoadModel("Models/pata_delantera.obj");
-
-	Goddard_BL = Model();
-	Goddard_BL.LoadModel("Models/pata_trasera.obj");
-
-	Goddard_BR = Model();
-	Goddard_BR.LoadModel("Models/pata_trasera.obj");
+	wheel = Model();
+	wheel.LoadModel("Models/BMW_Wheel.obj");
 
 	ModelMatrix handler(glm::mat4(1.0f));
 
@@ -193,85 +180,71 @@ int main()
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		meshList[2]->RenderMesh();
 
-		//------------*INICIA DIBUJO DE NUESTROS DEM?S OBJETOS-------------------*
-		// Goddard
-		color = ColorRGB(62, 171, 244);
-
+		//------------ INICIA DIBUJO DEL VEH�CULO -------------------
+		// Veh�culo
+		color = ColorRGB(189, 189, 189);
 		model = glm::mat4(1.0);
-//		model = glm::translate(model, glm::vec3(0.0f, 2.5f, 0.0f));
 		model = handler.setMatrix(model)
-		            .addTranslation(0.0f, 2.5f, 0.0f)
+		            .addTranslation(mainWindow.getPosVehiculo(), 0.2f, 0.0f)
 		            .saveActualState(modelaux)
 		            .getMatrix();
-//		modelaux = model;
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Goddard_M.RenderModel();
-		color = glm::vec3(0.0f, 0.0f, 1.0f);
-		// En sesi?n se separara una parte del modelo de Goddard y se unir? por jeraqu?a al cuerpo
-//		model = modelaux;
+		car.RenderModel();
 
-		// Cola
-		color = ColorRGB(38, 197, 243);
-//		model = glm::translate(model, {-1.5f, -0.2f, 0.0f});
-//		model = glm::rotate(model, glm::radians(mainWindow.getangulocola()), {0.0f, 1.0f, 0.0f});
-		model = handler.setMatrix(modelaux)
-		        .addTranslation(-1.5f, -0.2f, 0.0f)
-		        .addRotationY(mainWindow.getangulocola())
-		        .getMatrix();
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.5f));
-		Goddard_C.RenderModel();
-
-		// Siguientes modelos
-		/* Ejercicio:
-		1.- Separar las 4 patas de Goddard del modelo del cuerpo, unir por medio de jerarqu?a cada pata al cuerpo de Goddard
-		2.- Hacer que al presionar una tecla cada pata pueda rotar un m?ximo de 45? "hacia adelante y hacia atr?s"
-		model = glm::translate(model, {1.0f, -0.4f, 0.6f});
-		model = glm::rotate(model, glm::radians(mainWindow.getAnguloPata(Window::FRONT_RIGHT)), {0.0f, 0.0f, 1.0f});
-		model = modelaux;
-		*/
-
-		// pata delantera derecha
-		color = ColorRGB(112, 43, 158);
+		// Cofre
+		color = ColorRGB(61, 82, 115);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		model = handler.setMatrix(modelaux)
-		        .addTranslation(1.0f, -0.4f, 0.6f)
-		        .addRotationZ(mainWindow.getAnguloPata(Window::Articulation::FRONT_RIGHT))
-		        .getMatrix();
+		            .addTranslation(1.64, 1.53, 0)
+		            .addRotationZ(mainWindow.getAnguloCofre())
+		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Goddard_FR.RenderModel();
+		hood.RenderModel();
 
-		// pata delantera izquierda
-		color = ColorRGB(180, 41, 249);
+		// Rueda derecha trasera
+		color = ColorRGB(0, 0, 0);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		model = modelaux;
-		model = glm::translate(model, {1.0f, -0.4f, -0.6f});
-		model = glm::rotate(model, glm::radians(mainWindow.getAnguloPata(Window::FRONT_LEFT)), {0.0f, 0.0f, 1.0f});
+		model = handler.setMatrix(modelaux)
+		            .addTranslation(-2.8, 0.52, 1.74)
+		            .addRotationZ(mainWindow.getRotaRuedas())
+		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Goddard_FR.RenderModel();
+		wheel.RenderModel();
 
-		// pata trasera derecha
-		color = ColorRGB(156, 67, 248);
+		// Rueda izquierda trasera
+		color = ColorRGB(0, 0, 0);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		model = modelaux;
-		model = glm::translate(model, {-0.6f, -1.1f, 0.6f});
-		model = glm::rotate(model, glm::radians(mainWindow.getAnguloPata(Window::BACK_RIGHT)), {0.0f, 0.0f, 1.0f});
+		model = handler.setMatrix(modelaux)
+		            .addTranslation(-2.8, 0.52, -1.74)
+		            .addRotationZ(mainWindow.getRotaRuedas())
+		            .addRotationX(-180)
+		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Goddard_BR.RenderModel();
+		wheel.RenderModel();
 
-		// pata trasera izquierda
-		color = ColorRGB(133, 93, 247);
+		// Rueda derecha delantera
+		color = ColorRGB(0, 0, 0);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		model = modelaux;
-		model = glm::translate(model, {-0.6f, -1.1f, -0.6f});
-		model = glm::rotate(model, glm::radians(mainWindow.getAnguloPata(Window::BACK_LEFT)), {0.0f, 0.0f, 1.0f});
+		model = handler.setMatrix(modelaux)
+		            .addTranslation(3.11, 0.52, 1.74)
+		            .addRotationZ(mainWindow.getRotaRuedas())
+		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Goddard_BR.RenderModel();
+		wheel.RenderModel();
+
+		// Rueda izquierda delantera
+		color = ColorRGB(0, 0, 0);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		model = handler.setMatrix(modelaux)
+		            .addTranslation(3.11, 0.52, -1.74)
+		            .addRotationZ(mainWindow.getRotaRuedas())
+		            .addRotationX(-180)
+		            .getMatrix();
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		wheel.RenderModel();
 
 		glUseProgram(0);
-
 		mainWindow.swapBuffers();
 	}
 
