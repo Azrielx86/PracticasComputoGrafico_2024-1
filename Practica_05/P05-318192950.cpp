@@ -1,7 +1,7 @@
 #pragma warning(push, 0)
+#pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnusedLocalVariable"
 #pragma ide diagnostic ignored "UnusedValue"
-#pragma clang diagnostic push
 #pragma ide diagnostic ignored "modernize-use-emplace"
 #pragma ide diagnostic ignored "modernize-deprecated-headers"
 #pragma ide diagnostic ignored "cppcoreguidelines-narrowing-conversions"
@@ -180,13 +180,13 @@ int main()
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		meshList[2]->RenderMesh();
 
-		//------------ INICIA DIBUJO DEL VEH�CULO -------------------
-		// Veh�culo
+		//------------ INICIA DIBUJO DEL VEHICULO -------------------
+		// Vehiculo
 		color = ColorRGB(189, 189, 189);
 		model = glm::mat4(1.0);
 		model = handler.setMatrix(model)
 		            .addTranslation(mainWindow.getPosVehiculo(), 0.2f, 0.0f)
-		            .saveActualState(modelaux)
+		            .saveActualState(modelaux) // modelaux = model;
 		            .getMatrix();
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -195,7 +195,7 @@ int main()
 		// Cofre
 		color = ColorRGB(61, 82, 115);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		model = handler.setMatrix(modelaux)
+		model = handler.setMatrix(modelaux) // model = modelaux;
 		            .addTranslation(1.64, 1.53, 0)
 		            .addRotationZ(mainWindow.getAnguloCofre())
 		            .getMatrix();
