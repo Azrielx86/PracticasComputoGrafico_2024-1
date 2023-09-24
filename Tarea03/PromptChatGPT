@@ -4,10 +4,4 @@ Hola ChatGPT, tengo que hacer un programa para mi clase de Computacion Grafica, 
 El objetivo es crear un programa de Dibujo de Circunferencia por Bresenham.
 Se recibe como datos: radio y centro. Deben de desplegar en ventana la circunferencia completa y que se vea de un tamaño de 3/4 partes de la ventana, se asume que la resolución de la ventana es 800x600 píxeles.
 Asume que el centro se eencuentra en (0,0)
-
-// Mejor opción
-Hola ChatGPT, tengo que hacer un programa para mi clase de Computacion Grafica, Utilizo glfw y glew para crear ventanas y poder utilizar OpenGL, estoy programando en el lenguaje de programación C++.
-El objetivo es crear un programa de Dibujo de Circunferencia por Bresenham.
-Se recibe como datos: radio y centro. Deben de desplegar en ventana la circunferencia completa y que se vea de un tamaño de 3/4 partes de la ventana, se asume que la resolución de la ventana es 800x600 píxeles.
-Asume que el centro se eencuentra en (0,0)
 Ajusta el radio para que el círculo centrado en el centro de la pantalla (0,0) abarque únicamente 3/4 de la pantalla
