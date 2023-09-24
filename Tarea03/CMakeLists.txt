@@ -1,13 +1,13 @@
 # File by Azrielx86 (Edgar Chalico)
 cmake_minimum_required(VERSION 3.7.2)
-project(main)
+project(Tarea03)
 set(CMAKE_CXX_STANDARD 17)
 
 # Requires GLEW, OpenGL and GLFW Packages on Linux
-# On Arch Linux: pacman -S glew glfw
+# On Arch Linux: pacman -S glew glfw boost
 
 # Or Windows require install packages with vcpkg with the following command:
-# ./vcpkg install glfw3:x64-windows glfw3:x86-windows glew:x64-windows glew:x86-windows glm:x64-windows glm:x86-windows
+# ./vcpkg install glfw3:x64-windows glfw3:x86-windows glew:x64-windows glew:x86-windows glm:x64-windows glm:x86-windows boost
 
 # FIND PACKAGES FOR OpenGL, GLFW and GLEW
 set(OpenGL_GL_PREFERENCE GLVND)
@@ -31,24 +31,14 @@ if (Boost_FOUND)
     message(STATUS "Boost Found")
 endif ()
 
-if (NOT UNIX)
-    include_directories(C:/dev/vcpkg/packages/glfw3_x86-windows/include/GLFW)
-    include_directories(C:/dev/vcpkg/packages/glew_x86-windows/include/GL)
-    include_directories(C:/dev/vcpkg/packages/glm_x86-windows/include/glm)
-else ()
-    include_directories(/usr/include/GLFW)
-    include_directories(/usr/include/GL)
-    include_directories(/usr/include/glm)
-    include_directories(${Boost_INCLUDE_DIR})
-endif ()
+include_directories(${Boost_INCLUDE_DIR})
 
-add_executable(main ProgramaGPT.cpp
-)
+add_executable(Tarea03 ProgramaGPT_01.cpp)
 
 if (UNIX)
-    target_link_libraries(main glfw OpenGL::GL GLEW ${Boost_LIBRARIES})
+    target_link_libraries(Tarea03 glfw OpenGL::GL GLEW ${Boost_LIBRARIES})
 else ()
-    target_link_libraries(main PRIVATE GLEW::GLEW)
-    target_link_libraries(main PRIVATE glfw)
-    target_link_libraries(main PRIVATE ${Boost_LIBRARIES})
+    target_link_libraries(Tarea03 PRIVATE GLEW::GLEW)
+    target_link_libraries(Tarea03 PRIVATE glfw)
+    target_link_libraries(Tarea03 PRIVATE ${Boost_LIBRARIES})
 endif ()
