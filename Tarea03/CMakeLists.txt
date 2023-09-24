@@ -33,7 +33,7 @@ endif ()
 
 include_directories(${Boost_INCLUDE_DIR})
 
-add_executable(Tarea03 ProgramaGPT_01.cpp)
+add_executable(Tarea03 ProgramaGPT.cpp)
 
 if (UNIX)
     target_link_libraries(Tarea03 glfw OpenGL::GL GLEW ${Boost_LIBRARIES})
