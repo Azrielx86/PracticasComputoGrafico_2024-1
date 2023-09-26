@@ -4,7 +4,7 @@
 
 class Mesh
 {
-public:
+  public:
 	Mesh();
 
 	void CreateMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices);
@@ -13,8 +13,7 @@ public:
 
 	~Mesh();
 
-private:
+  private:
 	GLuint VAO, VBO, IBO;
 	GLsizei indexCount;
 };
-

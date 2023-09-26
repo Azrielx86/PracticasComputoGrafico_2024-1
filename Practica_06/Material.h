@@ -1,10 +1,10 @@
 #pragma once
 
 #include <glew.h>
-//Esta clase está pensada para crear materiales asignables a nuestros diferentes objetos y luces
+// Esta clase está pensada para crear materiales asignables a nuestros diferentes objetos y luces
 class Material
 {
-public:
+  public:
 	Material();
 	Material(GLfloat sIntensity, GLfloat shine);
 
@@ -12,8 +12,7 @@ public:
 
 	~Material();
 
-private: 
+  private:
 	GLfloat specularIntensity;
 	GLfloat shininess;
 };
-

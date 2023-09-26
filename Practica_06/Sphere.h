@@ -15,15 +15,17 @@
 
 #include "definition.h"
 
-class Sphere {
-public:
-	//Sphere(float ratio, int slices, int stacks, MODEL_MODE mode);
+class Sphere
+{
+  public:
+	// Sphere(float ratio, int slices, int stacks, MODEL_MODE mode);
 	Sphere(float ratio, int slices, int stacks);
 	void init();
 	void load();
 	void render();
 	virtual ~Sphere();
-private:
+
+  private:
 	std::vector<VertexColor> vertexC;
 	/*std::vector<VertexLightColor> vertexLC;
 	std::vector<VertexLightTexture> vertexLT;*/
@@ -31,7 +33,7 @@ private:
 	float ratio;
 	int slices;
 	int stacks;
-	//MODEL_MODE mode;
+	// MODEL_MODE mode;
 
 	GLuint VAO, VBO, EBO;
 };

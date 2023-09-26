@@ -1,7 +1,5 @@
 #include "Material.h"
 
-
-
 Material::Material()
 {
 	specularIntensity = 0.0f;

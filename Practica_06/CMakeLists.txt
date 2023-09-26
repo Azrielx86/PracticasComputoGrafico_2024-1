@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.7.2)
 project(Practica06)
 set(CMAKE_CXX_STANDARD 17)
 
+# Opciones para el profiler
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+
 # Requires GLEW, OpenGL and GLFW Packages on Linux
 # On Arch Linux: pacman -S glew glfw
 

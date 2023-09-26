@@ -6,19 +6,18 @@
 #pragma ide diagnostic ignored "modernize-use-emplace"
 /*
 Semestre 2024-1
-Práctica 6: Texturizado
+Practica 6: Texturizado
 */
 // para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
 
-#include <cmath>
 #include <glew.h>
 #include <glfw3.h>
 #include <vector>
 
 #include <glm.hpp>
-#include <gtc\matrix_transform.hpp>
-#include <gtc\type_ptr.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
 // para probar el importer
 // #include<assimp/Importer.hpp>
 
@@ -62,7 +61,7 @@ static const char *vShader = "shaders/shader_texture.vert";
 // Fragment Shader
 static const char *fShader = "shaders/shader_texture.frag";
 
-// cálculo del promedio de las normales para sombreado de Phong
+// c?lculo del promedio de las normales para sombreado de Phong
 void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat *vertices, unsigned int verticeCount, unsigned int vLength, unsigned int normalOffset)
 {
 	for (size_t i = 0; i < indiceCount; i += 3)
@@ -257,8 +256,11 @@ int main()
 	CreateObjects();
 	CrearDado();
 	CreateShaders();
-
+#ifdef __linux__
+	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 1.3f, 1.5f);
+#else
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.3f, 0.5f);
+#endif
 
 	brickTexture = Texture("Textures/brick.png");
 	brickTexture.LoadTextureA();
@@ -277,6 +279,9 @@ int main()
 	Kitt_M.LoadModel("Models/kitt_optimizado.obj");
 	Llanta_M = Model();
 	Llanta_M.LoadModel("Models/llanta_optimizada.obj");
+
+	Dado_M = Model();
+	Dado_M.LoadModel("Models/DadoAnimales.obj");
 
 	std::vector<std::string> skyboxFaces;
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -322,7 +327,7 @@ int main()
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 		glUniform3f(uniformEyePosition, camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
 
-		color = glm::vec3(1.0f, 1.0f, 1.0f); // color blanco, multiplica a la información de color de la textura
+		color = glm::vec3(1.0f, 1.0f, 1.0f); // color blanco, multiplica a la informaci?n de color de la textura
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
@@ -343,20 +348,18 @@ int main()
 
 		// Ejercicio 2:Importar el cubo texturizado en el programa de modelado con
 		// la imagen dado_animales ya optimizada por ustedes
-		/*
-		//Dado importado
+
+		// Dado importado
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-3.0f, 3.0f, -2.0f));
-		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+		model = glm::translate(model, glm::vec3(-3.0f, 3.0f, -3.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Dado_M.RenderModel();
-		*/
 
-		/*Reporte de práctica :
-		Ejercicio 1: Crear un dado de 8 caras y texturizarlo por medio de código
+		/*Reporte de pr?ctica :
+		Ejercicio 1: Crear un dado de 8 caras y texturizarlo por medio de c?digo
 		Ejercicio 2: Importar el modelo de su coche con sus 4 llantas acomodadas
 		y tener texturizadas las 4 llantas (diferenciar caucho y rin)  y
-		texturizar el logo de la Facultad de ingeniería en el cofre de su propio modelo de coche
+		texturizar el logo de la Facultad de ingenier?a en el cofre de su propio modelo de coche
 
 		*/
 		// Instancia del coche

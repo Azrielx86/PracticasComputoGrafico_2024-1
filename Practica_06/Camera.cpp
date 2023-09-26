@@ -16,7 +16,7 @@ Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLf
 	update();
 }
 
-void Camera::keyControl(bool* keys, GLfloat deltaTime)
+void Camera::keyControl(bool *keys, GLfloat deltaTime)
 {
 	GLfloat velocity = moveSpeed * deltaTime;
 
@@ -72,7 +72,6 @@ glm::vec3 Camera::getCameraPosition()
 	return position;
 }
 
-
 glm::vec3 Camera::getCameraDirection()
 {
 	return glm::normalize(front);
@@ -88,7 +87,6 @@ void Camera::update()
 	right = glm::normalize(glm::cross(front, worldUp));
 	up = glm::normalize(glm::cross(right, front));
 }
-
 
 Camera::~Camera()
 {
