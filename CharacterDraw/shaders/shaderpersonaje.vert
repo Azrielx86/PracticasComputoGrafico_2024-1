@@ -8,5 +8,6 @@ void main()
 {
 	// gl_Position=model*projection*vec4(pos.x,pos.y,pos.z,1.0f);
 	gl_Position=projection*model*vec4(pos,1.0f);
+	// gl_Position=projection*vec4(pos,1.0f);
 	vColor=vec4(color,1.0f);
 }
