@@ -133,6 +133,30 @@ void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, in
 			theWindow->angulocola -= 10.0;
 		}
 	}
+	
+	if (key == GLFW_KEY_UP)
+	{
+		theWindow->posVehiculo += 0.2f;
+		theWindow->rotaRuedas += 25.0f;
+	}
+	
+	if (key == GLFW_KEY_DOWN)
+	{
+		theWindow->posVehiculo -= 0.2f;
+		theWindow->rotaRuedas -= 25.0f;
+	}
+
+	if (key == GLFW_KEY_P)
+	{
+		if (theWindow->anguloCofre <= 45)
+			theWindow->anguloCofre += 3.0f;
+	}
+
+	if (key == GLFW_KEY_L)
+	{
+		if (theWindow->anguloCofre > 0)
+			theWindow->anguloCofre -= 3.0f;
+	}
 
 	if (key >= 0 && key < 1024)
 	{
@@ -172,3 +196,19 @@ Window::~Window()
 	glfwDestroyWindow(mainWindow);
 	glfwTerminate();
 }
+
+GLfloat Window::getPosVehiculo() const
+{
+	return posVehiculo;
+}
+
+GLfloat Window::getRotaRuedas() const
+{
+	return rotaRuedas;
+}
+
+GLfloat Window::getAnguloCofre() const
+{
+	return anguloCofre;
+}
+#pragma warning(pop)

@@ -15,6 +15,9 @@ class Window
 	GLfloat getYChange();
 	GLfloat getmuevex() { return muevex; }
 	GLfloat getangulocola() { return angulocola; }
+	GLfloat getPosVehiculo() const;
+	GLfloat getRotaRuedas() const;
+	GLfloat getAnguloCofre() const;
 	bool getShouldClose()
 	{
 		return glfwWindowShouldClose(mainWindow);
@@ -35,6 +38,9 @@ class Window
 	GLfloat xChange;
 	GLfloat yChange;
 	GLfloat muevex;
+	GLfloat posVehiculo = 0.0f;
+	GLfloat anguloCofre = 0.0f;
+	GLfloat rotaRuedas = 0.0f;
 	GLfloat angulocola = 0.0f;
 	bool mouseFirstMoved;
 	static void ManejaTeclado(GLFWwindow *window, int key, int code, int action, int mode);
