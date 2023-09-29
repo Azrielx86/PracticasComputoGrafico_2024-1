@@ -29,11 +29,11 @@ Practica 6: Texturizado
 #include "Camera.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "ModelMatrix.h"
 #include "Shader_m.h"
 #include "Skybox.h"
 #include "Texture.h"
 #include "Window.h"
-#include "ModelMatrix.h"
 
 const float toRadians = 3.14159265f / 180.0f;
 
@@ -76,8 +76,10 @@ void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat
 		unsigned int in0 = indices[i] * vLength;
 		unsigned int in1 = indices[i + 1] * vLength;
 		unsigned int in2 = indices[i + 2] * vLength;
-		glm::vec3 v1(vertices[in1] - vertices[in0], vertices[in1 + 1] - vertices[in0 + 1], vertices[in1 + 2] - vertices[in0 + 2]);
-		glm::vec3 v2(vertices[in2] - vertices[in0], vertices[in2 + 1] - vertices[in0 + 1], vertices[in2 + 2] - vertices[in0 + 2]);
+		glm::vec3 v1(vertices[in1] - vertices[in0], vertices[in1 + 1] - vertices[in0 + 1],
+		             vertices[in1 + 2] - vertices[in0 + 2]);
+		glm::vec3 v2(vertices[in2] - vertices[in0], vertices[in2 + 1] - vertices[in0 + 1],
+		             vertices[in2 + 2] - vertices[in0 + 2]);
 		glm::vec3 normal = glm::cross(v1, v2);
 		normal = glm::normalize(normal);
 
@@ -114,44 +116,44 @@ void CreateObjects()
 	    2, 3, 0,
 	    0, 1, 2};
 	// clang-format off
-	GLfloat vertices[] = {
-		//	x      y      z			u	  v			nx	  ny    nz
-			-1.0f, -1.0f, -0.6f,	0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-			0.0f, -1.0f, 1.0f,		0.5f, 0.0f,		0.0f, 0.0f, 0.0f,
-			1.0f, -1.0f, -0.6f,		1.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f,		0.5f, 1.0f,		0.0f, 0.0f, 0.0f
-	};
+    GLfloat vertices[] = {
+            //	x      y      z			u	  v			nx	  ny    nz
+            -1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
+            1.0f, -1.0f, -0.6f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f
+    };
 
-	unsigned int floorIndices[] = {
-		0, 2, 1,
-		1, 2, 3
-	};
+    unsigned int floorIndices[] = {
+            0, 2, 1,
+            1, 2, 3
+    };
 
-	GLfloat floorVertices[] = {
-		-10.0f, 0.0f, -10.0f,	0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
-		10.0f, 0.0f, -10.0f,	10.0f, 0.0f,	0.0f, -1.0f, 0.0f,
-		-10.0f, 0.0f, 10.0f,	0.0f, 10.0f,	0.0f, -1.0f, 0.0f,
-		10.0f, 0.0f, 10.0f,		10.0f, 10.0f,	0.0f, -1.0f, 0.0f
-	};
+    GLfloat floorVertices[] = {
+            -10.0f, 0.0f, -10.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+            10.0f, 0.0f, -10.0f, 10.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+            -10.0f, 0.0f, 10.0f, 0.0f, 10.0f, 0.0f, -1.0f, 0.0f,
+            10.0f, 0.0f, 10.0f, 10.0f, 10.0f, 0.0f, -1.0f, 0.0f
+    };
 
-	unsigned int vegetacionIndices[] = {
-		0, 1, 2,
-		0, 2, 3,
-		4,5,6,
-		4,6,7
-	};
+    unsigned int vegetacionIndices[] = {
+            0, 1, 2,
+            0, 2, 3,
+            4, 5, 6,
+            4, 6, 7
+    };
 
-	GLfloat vegetacionVertices[] = {
-		-0.5f, -0.5f, 0.0f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-		0.5f, -0.5f, 0.0f,		1.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-		0.5f, 0.5f, 0.0f,		1.0f, 1.0f,		0.0f, 0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f,		0.0f, 1.0f,		0.0f, 0.0f, 0.0f,
+    GLfloat vegetacionVertices[] = {
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 
-		0.0f, -0.5f, -0.5f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-		0.0f, -0.5f, 0.5f,		1.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-		0.0f, 0.5f, 0.5f,		1.0f, 1.0f,		0.0f, 0.0f, 0.0f,
-		0.0f, 0.5f, -0.5f,		0.0f, 1.0f,		0.0f, 0.0f, 0.0f,
-	};
+            0.0f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+    };
 	// clang-format on
 	calcAverageNormals(indices, 12, vertices, 32, 8, 5);
 
@@ -182,106 +184,105 @@ void CreateShaders()
 void CrearCuboDosCaras()
 {
 	// clang-format off
-	unsigned int dado_idx[] = {
-		// front
-		0, 1, 2,
-		1, 3, 2,
-		0, 2, 4,
-		3, 4, 2,
-		0, 5, 1,
-		3, 1, 5,
-		0, 4, 5,
-		3, 5, 4,
-	};
-	//Ejercicio 1: reemplazar con sus dados de 6 caras texturizados, agregar normales
+    unsigned int dado_idx[] = {
+            // front
+            0, 1, 2,
+            1, 3, 2,
+            0, 2, 4,
+            3, 4, 2,
+            0, 5, 1,
+            3, 1, 5,
+            0, 4, 5,
+            3, 5, 4,
+    };
+    //Ejercicio 1: reemplazar con sus dados de 6 caras texturizados, agregar normales
 // average normals
-	GLfloat dado_vtx[] = {
-		// front
-		//x		y		z		S		T			NX		NY		NZ
-	0, -0.5, 0,
-	0.353553, -0, 0.353553,
-	-0.353553, -0, 0.353553,
-	0, 0.5, 0,
-	-0.353553, -0, -0.353553,
-	0.353553, -0, -0.353553,
-	};
+    GLfloat dado_vtx[] = {
+            // front
+            //x		y		z		S		T			NX		NY		NZ
+            0, -0.5, 0,
+            0.353553, -0, 0.353553,
+            -0.353553, -0, 0.353553,
+            0, 0.5, 0,
+            -0.353553, -0, -0.353553,
+            0.353553, -0, -0.353553,
+    };
 	// clang-format on
 	Mesh *dado = new Mesh();
 	dado->CreateMesh(dado_vtx, dado_idx, 192, 36);
 	meshList.push_back(dado);
 }
 
-
 void CrearDado()
 {
 	// clang-format off
-	unsigned int cubo_indices[] = {
-		// front
-		0, 1, 2,
-		2, 3, 0,
-		
-		// back
-		8, 9, 10,
-		10, 11, 8,
+    unsigned int cubo_indices[] = {
+            // front
+            0, 1, 2,
+            2, 3, 0,
 
-		// left
-		12, 13, 14,
-		14, 15, 12,
-		// bottom
-		16, 17, 18,
-		18, 19, 16,
-		// top
-		20, 21, 22,
-		22, 23, 20,
+            // back
+            8, 9, 10,
+            10, 11, 8,
 
-		// right
-		4, 5, 6,
-		6, 7, 4,
+            // left
+            12, 13, 14,
+            14, 15, 12,
+            // bottom
+            16, 17, 18,
+            18, 19, 16,
+            // top
+            20, 21, 22,
+            22, 23, 20,
 
-	};
-	//Ejercicio 1: reemplazar con sus dados de 6 caras texturizados, agregar normales
+            // right
+            4, 5, 6,
+            6, 7, 4,
+
+    };
+    //Ejercicio 1: reemplazar con sus dados de 6 caras texturizados, agregar normales
 // average normals
-	GLfloat cubo_vertices[] = {
-		// front
-		//x		y		z		S		T			NX		NY		NZ
-		-0.5f, -0.5f,  0.5f,	    0.26f,  0.34f,		0.0f,	0.0f,	-1.0f,	//0
-		0.5f, -0.5f,  0.5f,		0.49f,	0.34f,		0.0f,	0.0f,	-1.0f,	//1
-		0.5f,  0.5f,  0.5f,		0.49f,	0.66f,		0.0f,	0.0f,	-1.0f,	//2
-		-0.5f,  0.5f,  0.5f,	    0.26f,	0.66f,		0.0f,	0.0f,	-1.0f,	//3
-		// right
-		//x		y		z		S		T
-		0.5f, -0.5f,  0.5f,	    0.0f,  0.33f,		-1.0f,	0.0f,	0.0f,
-		0.5f, -0.5f,  -0.5f,	    0.25f,	0.33f,		-1.0f,	0.0f,	0.0f,
-		0.5f,  0.5f,  -0.5f,     0.25f,	0.66f,		-1.0f,	0.0f,	0.0f,
-		0.5f,  0.5f,  0.5f,	    0.0f,	0.66f,		-1.0f,	0.0f,	0.0f,
-		// back
-		-0.5f, -0.5f, -0.5f,	    0.5f,  0.33f,		0.0f,	0.0f,	1.0f,
-		0.5f, -0.5f, -0.5f,		0.75f,	0.33f,		0.0f,	0.0f,	1.0f,
-		0.5f,  0.5f, -0.5f,		0.75f,	0.66f,		0.0f,	0.0f,	1.0f,
-		-0.5f,  0.5f, -0.5f,     0.5f,	0.66f,		0.0f,	0.0f,	1.0f,
+    GLfloat cubo_vertices[] = {
+            // front
+            //x		y		z		S		T			NX		NY		NZ
+            -0.5f, -0.5f, 0.5f, 0.26f, 0.34f, 0.0f, 0.0f, -1.0f,    //0
+            0.5f, -0.5f, 0.5f, 0.49f, 0.34f, 0.0f, 0.0f, -1.0f,    //1
+            0.5f, 0.5f, 0.5f, 0.49f, 0.66f, 0.0f, 0.0f, -1.0f,    //2
+            -0.5f, 0.5f, 0.5f, 0.26f, 0.66f, 0.0f, 0.0f, -1.0f,    //3
+            // right
+            //x		y		z		S		T
+            0.5f, -0.5f, 0.5f, 0.0f, 0.33f, -1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, 0.25f, 0.33f, -1.0f, 0.0f, 0.0f,
+            0.5f, 0.5f, -0.5f, 0.25f, 0.66f, -1.0f, 0.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 0.0f, 0.66f, -1.0f, 0.0f, 0.0f,
+            // back
+            -0.5f, -0.5f, -0.5f, 0.5f, 0.33f, 0.0f, 0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f, 0.75f, 0.33f, 0.0f, 0.0f, 1.0f,
+            0.5f, 0.5f, -0.5f, 0.75f, 0.66f, 0.0f, 0.0f, 1.0f,
+            -0.5f, 0.5f, -0.5f, 0.5f, 0.66f, 0.0f, 0.0f, 1.0f,
 
-		// left
-		//x		y		z		S		T
-		-0.5f, -0.5f,  -0.5f,	0.75f, 0.33f,		1.0f,	0.0f,	0.0f,
-		-0.5f, -0.5f,  0.5f,	1.0f,  0.33f,		1.0f,	0.0f,	0.0f,
-		-0.5f,  0.5f,  0.5f,	1.0f,   0.66f,		1.0f,	0.0f,	0.0f,
-		-0.5f,  0.5f,  -0.5f,	0.75f,  0.66f,		1.0f,	0.0f,	0.0f,
+            // left
+            //x		y		z		S		T
+            -0.5f, -0.5f, -0.5f, 0.75f, 0.33f, 1.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, 0.5f, 1.0f, 0.33f, 1.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, 1.0f, 0.66f, 1.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, -0.5f, 0.75f, 0.66f, 1.0f, 0.0f, 0.0f,
 
-		// bottom
-		//x		y		z		S		T
-		-0.5f, -0.5f,  0.5f,	0.50f,  0.0f,		0.0f,	1.0f,	0.0f,
-		0.5f,  -0.5f,  0.5f,	0.75f,	0.0f,		0.0f,	1.0f,	0.0f,
-		 0.5f,  -0.5f,  -0.5f,	0.75f,	0.33f,		0.0f,	1.0f,	0.0f,
-		-0.5f, -0.5f,  -0.5f,	0.50f,	0.33f,		0.0f,	1.0f,	0.0f,
+            // bottom
+            //x		y		z		S		T
+            -0.5f, -0.5f, 0.5f, 0.50f, 0.0f, 0.0f, 1.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, 0.75f, 0.0f, 0.0f, 1.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, 0.75f, 0.33f, 0.0f, 1.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, 0.50f, 0.33f, 0.0f, 1.0f, 0.0f,
 
-		//UP
-		 //x		y		z		S		T
-		 -0.5f, 0.5f,  0.5f,	0.50f,  0.66f,    0.0f,	-1.0f,	0.0f,
-		 0.5f,  0.5f,  0.5f,	0.75f,	  0.66f,		0.0f,	-1.0f,	0.0f,
-		  0.5f, 0.5f,  -0.5f,	0.75f,  1.0f,		0.0f,	-1.0f,	0.0f,
-		 -0.5f, 0.5f,  -0.5f,	0.50f,  1.0f,		0.0f,	-1.0f,	0.0f,
+            //UP
+            //x		y		z		S		T
+            -0.5f, 0.5f, 0.5f, 0.50f, 0.66f, 0.0f, -1.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 0.75f, 0.66f, 0.0f, -1.0f, 0.0f,
+            0.5f, 0.5f, -0.5f, 0.75f, 1.0f, 0.0f, -1.0f, 0.0f,
+            -0.5f, 0.5f, -0.5f, 0.50f, 1.0f, 0.0f, -1.0f, 0.0f,
 
-	};
+    };
 	// clang-format on
 	Mesh *dado = new Mesh();
 	dado->CreateMesh(cubo_vertices, cubo_indices, 192, 36);
@@ -294,7 +295,7 @@ int main()
 	mainWindow.Initialise();
 
 	ModelMatrix handler(glm::mat4(1.0f));
-	
+
 	CreateObjects();
 	CrearDado();
 	CreateShaders();
@@ -316,10 +317,10 @@ int main()
 	dadoTexture.LoadTextureA();
 	logofiTexture = Texture("Textures/escudo_fi_color.tga");
 	logofiTexture.LoadTextureA();
-	
+
 	car = Model();
-	car.LoadModel("Models/Editable.obj");
-	
+	car.LoadModel("Models/BMW_no_hood.obj");
+
 	hood = Model();
 	hood.LoadModel("Models/BMW_Hood.obj");
 
@@ -339,7 +340,8 @@ int main()
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
 	       uniformSpecularIntensity = 0, uniformShininess = 0;
 	GLuint uniformColor = 0;
-	glm::mat4 projection = glm::perspective(45.0f, (GLfloat) mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 1000.0f);
+	glm::mat4 projection = glm::perspective(45.0f, (GLfloat) mainWindow.getBufferWidth() / mainWindow.getBufferHeight(),
+	                                        0.1f, 1000.0f);
 
 	glm::mat4 model(1.0);
 	glm::mat4 modelaux(1.0);
@@ -368,11 +370,12 @@ int main()
 		uniformColor = shaderList[0].getColorLocation();
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
-		glUniform3f(uniformEyePosition, camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
+		glUniform3f(uniformEyePosition, camera.getCameraPosition().x, camera.getCameraPosition().y,
+		            camera.getCameraPosition().z);
 
 		color = glm::vec3(1.0f, 1.0f, 1.0f); // color blanco, multiplica a la informaci?n de color de la textura
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		
+
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(30.0f, 1.0f, 30.0f));
@@ -415,11 +418,11 @@ int main()
 		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		car.RenderModel();
-		
+
 		// Cofre
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		model = handler.setMatrix(modelaux) // model = modelaux;
-		            .addTranslation(1.64, 1.53, 0)
+		            .addTranslation(1.37413, 1.57, 0)
 		            .addRotationZ(mainWindow.getAnguloCofre())
 		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -429,8 +432,8 @@ int main()
 		// Rueda derecha trasera
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		model = handler.setMatrix(modelaux)
-		            .addTranslation(-2.8, 0.52, 1.74)
-		            .addRotationZ(mainWindow.getRotaRuedas())
+		            .addTranslation(-2.92984, 0.52, 1.28414)
+		            .addRotationZ(-mainWindow.getRotaRuedas())
 		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		wheel.RenderModel();
@@ -438,8 +441,8 @@ int main()
 		// Rueda izquierda trasera
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		model = handler.setMatrix(modelaux)
-		            .addTranslation(-2.8, 0.52, -1.74)
-		            .addRotationZ(mainWindow.getRotaRuedas())
+		            .addTranslation(-2.92984, 0.52, -1.28414)
+		            .addRotationZ(-mainWindow.getRotaRuedas())
 		            .addRotationX(-180)
 		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -448,8 +451,8 @@ int main()
 		// Rueda derecha delantera
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		model = handler.setMatrix(modelaux)
-		            .addTranslation(3.11, 0.52, 1.74)
-		            .addRotationZ(mainWindow.getRotaRuedas())
+		            .addTranslation(2.6089, 0.52	, 1.28414)
+		            .addRotationZ(-mainWindow.getRotaRuedas())
 		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		wheel.RenderModel();
@@ -457,8 +460,8 @@ int main()
 		// Rueda izquierda delantera
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		model = handler.setMatrix(modelaux)
-		            .addTranslation(3.11, 0.52, -1.74)
-		            .addRotationZ(mainWindow.getRotaRuedas())
+		            .addTranslation(2.6089, 0.52	, -1.28414)
+		            .addRotationZ(-mainWindow.getRotaRuedas())
 		            .addRotationX(-180)
 		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
