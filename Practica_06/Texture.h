@@ -11,6 +11,7 @@ class Texture
 	void UseTexture();
 	void ClearTexture();
 	~Texture();
+	static void DisableTextures();
 
   private:
 	GLuint textureID;

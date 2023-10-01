@@ -26,7 +26,7 @@ class ModelMatrix
 	 * Establece la matriz de inicio
 	 * @param origin Referencia a una matriz de origen
 	 */
-	ModelMatrix &setMatrix(glm::mat4 &origin);
+	ModelMatrix &setMatrix(const glm::mat4 &origin);
 
 	/**
 	 * Agrega una traslación a la matriz.

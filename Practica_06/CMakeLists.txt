@@ -4,8 +4,10 @@ project(Practica06)
 set(CMAKE_CXX_STANDARD 17)
 
 # Opciones para el profiler
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+if (UNIX)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+endif (UNIX)
 
 # Requires GLEW, OpenGL and GLFW Packages on Linux
 # On Arch Linux: pacman -S glew glfw
@@ -41,7 +43,7 @@ if (NOT UNIX)
     include_directories(C:/dev/vcpkg/packages/glew_x86-windows/include/GL)
     include_directories(C:/dev/vcpkg/packages/glm_x86-windows/include/glm)
     include_directories(C:/dev/vcpkg/packages/assimp_x86-windows/include)
-else()
+else ()
     include_directories(/usr/include/GLFW)
     include_directories(/usr/include/GL)
     include_directories(/usr/include/glm)

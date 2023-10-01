@@ -8,7 +8,7 @@ ModelMatrix::ModelMatrix(const glm::mat4 &model) : model(model) {}
 
 glm::mat4 ModelMatrix::getMatrix() { return model; }
 
-ModelMatrix &ModelMatrix::setMatrix(glm::mat4 &origin)
+ModelMatrix &ModelMatrix::setMatrix(const glm::mat4 &origin)
 {
 	this->model = origin;
 	return *this;
