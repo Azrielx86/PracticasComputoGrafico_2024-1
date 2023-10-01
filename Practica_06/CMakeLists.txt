@@ -64,6 +64,7 @@ add_executable(Practica06 P06-318192950.cpp
         SpotLight.cpp
         Texture.cpp
         ModelMatrix.cpp
+        MultiTexture.cpp
 )
 
 message(STATUS "Copiando archivos de shader")
