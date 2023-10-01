@@ -43,7 +43,7 @@ Window mainWindow;
 std::vector<Mesh *> meshList;
 std::vector<Shader> shaderList;
 
-// No muy útil para esta práctica, pero tal vez en siguientes si
+// No muy ï¿½til para esta prï¿½ctica, pero tal vez en siguientes si
 enum
 {
 	DADO_8F
@@ -433,39 +433,35 @@ int main()
 		pisoTexture.UseTexture();
 		meshList[2]->RenderMesh();
 
-		/*Reporte de pr?ctica :
+		/*Reporte de prasswctica :
 		Ejercicio 1: Crear un dado de 8 caras y texturizarlo por medio de c?digo
 		 */
 		model = handler.setMatrix(glm::mat4(1.0f))
-		            .addTranslation(5.0f, 5.0, 5.0)
-		            .addScale(2.0f, 2.0f, 2.0f)
+		            .translate(5.0f, 5.0, 5.0)
+		            .scale(2.0f, 2.0f, 2.0f)
 		            .getMatrix();
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)); // TODO : Meter esta línea en ModelMatrix.cpp
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)); // TODO : Meter esta lï¿½nea en ModelMatrix.cpp
 		dado8fTexture.UseTexture();
 		meshUoMap.at(DADO_8F)->RenderMesh();
-		
+
 		/*
 		Ejercicio 2: Importar el modelo de su coche con sus 4 llantas acomodadas
 		y tener texturizadas las 4 llantas (diferenciar caucho y rin)  y
 		texturizar el logo de la Facultad de ingenier?a en el cofre de su propio modelo de coche
 		*/
-
 		//------------ INICIA DIBUJO DEL VEHICULO -------------------
-		// Vehiculo
 		Texture::DisableTextures();
-		model = glm::mat4(1.0);
-		model = handler.setMatrix(model)
-		            .addTranslation(mainWindow.getPosVehiculo(), 0.2f, 0.0f)
+		model = handler.setMatrix(glm::mat4(1.0))
+		            .translate(mainWindow.getPosVehiculo(), -1.8f, 0.0f)
 		            .saveActualState(modelaux) // modelaux = model;
 		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		car.RenderModel();
 
 		// Cofre
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		model = handler.setMatrix(modelaux) // model = modelaux;
-		            .addTranslation(1.37413, 1.57, 0)
-		            .addRotationZ(mainWindow.getAnguloCofre())
+		            .translate(1.37413, 1.57, 0)
+		            .rotateZ(mainWindow.getAnguloCofre())
 		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		logofiTexture.UseTexture();
@@ -473,39 +469,35 @@ int main()
 
 		wheelTexture.UseTexture();
 		// Rueda derecha trasera
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		model = handler.setMatrix(modelaux)
-		            .addTranslation(-2.92984, 0.52, 1.28414)
-		            .addRotationZ(-mainWindow.getRotaRuedas())
+		            .translate(-2.92984, 0.52, 1.28414)
+		            .rotateZ(-mainWindow.getRotaRuedas())
 		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		wheel.RenderModel();
 
 		// Rueda izquierda trasera
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		model = handler.setMatrix(modelaux)
-		            .addTranslation(-2.92984, 0.52, -1.28414)
-		            .addRotationZ(-mainWindow.getRotaRuedas())
-		            .addRotationX(-180)
+		            .translate(-2.92984, 0.52, -1.28414)
+		            .rotateZ(-mainWindow.getRotaRuedas())
+		            .rotateX(-180)
 		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		wheel.RenderModel();
 
 		// Rueda derecha delantera
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		model = handler.setMatrix(modelaux)
-		            .addTranslation(2.6089, 0.52, 1.28414)
-		            .addRotationZ(-mainWindow.getRotaRuedas())
+		            .translate(2.6089, 0.52, 1.28414)
+		            .rotateZ(-mainWindow.getRotaRuedas())
 		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		wheel.RenderModel();
 
 		// Rueda izquierda delantera
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		model = handler.setMatrix(modelaux)
-		            .addTranslation(2.6089, 0.52, -1.28414)
-		            .addRotationZ(-mainWindow.getRotaRuedas())
-		            .addRotationX(-180)
+		            .translate(2.6089, 0.52, -1.28414)
+		            .rotateZ(-mainWindow.getRotaRuedas())
+		            .rotateX(-180)
 		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		wheel.RenderModel();
