@@ -1,1 +1,0 @@
-# Proyecto base para las prácticas de Computacion Grafica e Interaccion Humano-Computadora
