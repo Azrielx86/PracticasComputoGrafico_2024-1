@@ -24,18 +24,24 @@ endif ()
 
 find_package(GLEW REQUIRED)
 if (GLEW_FOUND)
-    message(STATUS "GLEW Found")
+    message(STATUS "GLEW Found.")
 endif ()
 
 find_package(glfw3 REQUIRED)
 if (glfw3_FOUND)
-    message(STATUS "GLFW Found")
+    message(STATUS "GLFW Found.")
 endif ()
 
 find_package(assimp CONFIG REQUIRED)
 if (assimp_FOUND)
-    message(STATUS "Assimp Found")
+    message(STATUS "Assimp Found.")
 endif ()
+
+# vcpkg install imgui[glfw-binding,opengl3-binding]cd ..
+#find_package(imgui CONFIG REQUIRED)
+#if (imgui_FOUND)
+#    message(STATUS "InGui Found.")
+#endif ()
 
 
 if (NOT UNIX)
@@ -49,7 +55,7 @@ else ()
     include_directories(/usr/include/glm)
 endif ()
 
-add_executable(Practica07 practica7.cpp
+add_executable(Practica07 P07-318192950.cpp
         Window.cpp
         Camera.cpp
         DirectionalLight.cpp
@@ -63,6 +69,7 @@ add_executable(Practica07 practica7.cpp
         Sphere.cpp
         SpotLight.cpp
         Texture.cpp
+        ModelMatrix.cpp
 )
 
 message(STATUS "Copiando archivos de shader")
@@ -77,4 +84,5 @@ else ()
     target_link_libraries(Practica07 PRIVATE GLEW::GLEW)
     target_link_libraries(Practica07 PRIVATE glfw)
     target_link_libraries(Practica07 PRIVATE assimp::assimp)
+#    target_link_libraries(Practica07 PRIVATE imgui::imgui)
 endif ()
