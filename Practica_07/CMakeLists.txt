@@ -37,7 +37,7 @@ if (assimp_FOUND)
     message(STATUS "Assimp Found.")
 endif ()
 
-# vcpkg install imgui[glfw-binding,opengl3-binding]cd ..
+# vcpkg install imgui[glfw-binding,opengl3-binding]
 #find_package(imgui CONFIG REQUIRED)
 #if (imgui_FOUND)
 #    message(STATUS "InGui Found.")
