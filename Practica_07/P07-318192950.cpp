@@ -1,3 +1,9 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic ignored "OCUnusedMacroInspection"
+#pragma ide diagnostic ignored "UnusedValue"
+#pragma ide diagnostic ignored "modernize-use-emplace"
+#pragma ide diagnostic ignored "cppcoreguidelines-narrowing-conversions"
 /*
 Semestre 2024-1
 Pr?ctica 7: Iluminaci?n 1
@@ -12,8 +18,9 @@ Pr?ctica 7: Iluminaci?n 1
 #include <glfw3.h>
 
 #include <glm.hpp>
-#include <gtc\matrix_transform.hpp>
-#include <gtc\type_ptr.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
+#include <gtx/matrix_decompose.hpp>
 // para probar el importer
 // #include<assimp/Importer.hpp>
 
@@ -48,6 +55,7 @@ Texture AgaveTexture;
 Model Kitt_M;
 Model Llanta_M;
 Model Blackhawk_M;
+Model Faro_M;
 
 Skybox skybox;
 
@@ -73,7 +81,7 @@ static const char *vShader = "shaders/shader_light.vert";
 static const char *fShader = "shaders/shader_light.frag";
 
 // funci?n de calculo de normales por promedio de v?rtices
-void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat *vertices, unsigned int verticeCount, unsigned int vLength, unsigned int normalOffset)
+void calcAverageNormals(const unsigned int *indices, unsigned int indiceCount, GLfloat *vertices, unsigned int verticeCount, unsigned int vLength, unsigned int normalOffset)
 {
 	for (size_t i = 0; i < indiceCount; i += 3)
 	{
@@ -183,7 +191,7 @@ void CreateObjects()
 
 void CreateShaders()
 {
-	Shader *shader1 = new Shader();
+	auto shader1 = new Shader();
 	shader1->CreateFromFiles(vShader, fShader);
 	shaderList.push_back(*shader1);
 }
@@ -215,6 +223,8 @@ int main()
 	Llanta_M.LoadModel("Models/llanta_optimizada.obj");
 	Blackhawk_M = Model();
 	Blackhawk_M.LoadModel("Models/uh60.obj");
+	Faro_M = Model();
+	Faro_M.LoadModel("Models/faro.obj");
 
 	std::vector<std::string> skyboxFaces;
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -238,7 +248,7 @@ int main()
 	// Declaraci?n de primer luz puntual
 	pointLights[0] = PointLight(1.0f, 0.0f, 0.0f,
 	                            0.0f, 1.0f,
-	                            -6.0f, 1.5f, 1.5f,
+	                            -6.0f, 1.5f, -5.5f,
 	                            0.3f, 0.2f, 0.1f);
 	pointLightCount++;
 
@@ -266,6 +276,24 @@ int main()
 	spotLights[2] = SpotLight(1.0f, 1.0f, 0.0f,
 	                          1.0f, 2.0f,
 	                          5.0f, 10.0f, 0.0f,
+	                          0.0f, -5.0f, 0.0f,
+	                          1.0f, 0.1f, 0.0f,
+	                          15.0f);
+	spotLightCount++;
+
+	// Luz vehiculo
+	spotLights[3] = SpotLight(0.0f, 0.5f, 1.0f,
+	                          1.0f, 2.0f,
+	                          5.0f, 15.0f, 0.0f,
+	                          -5.0f, 0.0f, 0.0f,
+	                          1.0f, 0.0f, 0.00f,
+	                          25.0f);
+	spotLightCount++;
+
+	// Luz faro
+	spotLights[4] = SpotLight(1.0f, 1.0f, 1.0f,
+	                          1.0f, 2.0f,
+	                          0.0f, 0.0f, 0.0f,
 	                          0.0f, -5.0f, 0.0f,
 	                          1.0f, 0.1f, 0.0f,
 	                          15.0f);
@@ -320,6 +348,7 @@ int main()
 
 		glm::mat4 model(1.0);
 		glm::mat4 modelaux(1.0);
+		glm::vec3 translation(1.0f);
 		glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 
 		model = glm::mat4(1.0);
@@ -341,6 +370,14 @@ int main()
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Kitt_M.RenderModel();
+
+		// Luz vehículo
+		model = modelaux;
+		//		model = glm::translate(model, {2.0f, 2.0f, 5.0f});
+		glm::vec3 carLightPos = model[3];
+		carLightPos.x += 2.5f;
+		carLightPos.z += 3.0f;
+		spotLights[3].SetPos(carLightPos);
 
 		// Llanta delantera izquierda
 		model = modelaux;
@@ -378,15 +415,25 @@ int main()
 
 		// Helicoptero
 		model = glm::mat4(1.0);
-		auto translation = glm::vec3(0.0f + mainWindow.getMueveHelicopteroX(), 0.0f + mainWindow.getMueveHelicopteroY(), 6.0);
-		model = glm::translate(model, translation);
+		model = glm::translate(model, glm::vec3(0.0f + mainWindow.getMueveHelicopteroX(), 0.0f + mainWindow.getMueveHelicopteroY(), 6.0));
+		spotLights[2].SetPos(model[3]);
 		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
 		// luz
-		spotLights[2].SetPos(translation);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Blackhawk_M.RenderModel();
+
+		// Faro
+		model = glm::mat4(1.0);
+		model = glm::translate(model, {-15.0f, -1.0f, -4.0f});
+		model = glm::rotate(model, glm::radians(90.0f), {0.0f, 1.0f, 0.0f});
+		modelaux = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Faro_M.RenderModel();
+		model = modelaux;
+		model = glm::translate(model, {-6.2, 16.1, 0.0f});
+		spotLights[4].SetPos(model[3]);
 
 		// Agave ?qu? sucede si lo renderizan antes del coche y el helic?ptero?
 		model = glm::mat4(1.0);
@@ -409,3 +456,5 @@ int main()
 
 	return 0;
 }
+
+#pragma clang diagnostic pop

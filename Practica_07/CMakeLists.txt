@@ -2,20 +2,21 @@
 cmake_minimum_required(VERSION 3.7.2)
 project(Practica07)
 set(CMAKE_CXX_STANDARD 17)
-
-# Opciones para el profiler
-if (UNIX)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
-endif (UNIX)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 # Requires GLEW, OpenGL and GLFW Packages on Linux
 # On Arch Linux: pacman -S glew glfw
 
 # Or Windows require install packages with vcpkg with the following command:
-# ./vcpkg install glfw3:x64-windows glfw3:x86-windows glew:x64-windows glew:x86-windows glm:x64-windows glm:x86-windows
+# ./vcpkg install glfw3:x64-windows glfw3:x86-windows glew:x64-windows glew:x86-windows glm:x64-windows glm:x86-windows assimp
 
-# FIND PACKAGES FOR OpenGL, GLFW and GLEW
+# PROBLEMAS DE RENDIMIENTO DE ASSIMP
+# https://gamedev.stackexchange.com/questions/63498/assimp-in-my-program-is-much-slower-to-import-than-assimp-view-program
+# Para evitar las largas cargas al inicio del programa, es necesario compilar con la configuración RELEASE
+
+# Para compilar con Clang
+# Compilador: C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\Llvm\bin\clang.exe
+
 set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 if (OpenGL_FOUND)
@@ -42,7 +43,6 @@ endif ()
 #if (imgui_FOUND)
 #    message(STATUS "InGui Found.")
 #endif ()
-
 
 if (NOT UNIX)
     include_directories(C:/dev/vcpkg/packages/glfw3_x86-windows/include/GLFW)

@@ -1,5 +1,6 @@
 # Project exclude paths
 cmake-build-debug/
+cmake-build-release/
 build/
 glm/
 include/
@@ -8,3 +9,4 @@ lib/
 *.exe
 *.zip
 .cache/
+out/
