@@ -39,10 +39,10 @@ if (assimp_FOUND)
 endif ()
 
 # vcpkg install imgui[glfw-binding,opengl3-binding]
-#find_package(imgui CONFIG REQUIRED)
-#if (imgui_FOUND)
-#    message(STATUS "InGui Found.")
-#endif ()
+find_package(imgui CONFIG REQUIRED)
+if (imgui_FOUND)
+    message(STATUS "InGui Found.")
+endif ()
 
 if (NOT UNIX)
     include_directories(C:/dev/vcpkg/packages/glfw3_x86-windows/include/GLFW)
@@ -70,6 +70,7 @@ add_executable(Previo_05 P07-318192950.cpp
         SpotLight.cpp
         Texture.cpp
         ModelMatrix.cpp
+        Gui.cpp
 )
 
 message(STATUS "Copiando archivos de shader")
@@ -84,5 +85,5 @@ else ()
     target_link_libraries(Previo_05 PRIVATE GLEW::GLEW)
     target_link_libraries(Previo_05 PRIVATE glfw)
     target_link_libraries(Previo_05 PRIVATE assimp::assimp)
-#    target_link_libraries(Previo_05 PRIVATE imgui::imgui)
+    target_link_libraries(Previo_05 PRIVATE imgui::imgui)
 endif ()

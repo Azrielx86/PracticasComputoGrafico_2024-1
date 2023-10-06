@@ -5,16 +5,14 @@
 
 class Light
 {
-public:
+  public:
 	Light();
-	Light(glm::vec3 rgb,
-			GLfloat aIntensity, GLfloat dIntensity);
+	Light(glm::vec3 rgb, GLfloat aIntensity, GLfloat dIntensity);
 
 	~Light();
 
-protected:
+  protected:
 	glm::vec3 color;
-	GLfloat ambientIntensity;
-	GLfloat diffuseIntensity;
+	GLfloat   ambientIntensity;
+	GLfloat   diffuseIntensity;
 };
-

@@ -1,9 +1,9 @@
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma ide diagnostic ignored "OCUnusedMacroInspection"
-#pragma ide diagnostic ignored "UnusedValue"
-#pragma ide diagnostic ignored "modernize-use-emplace"
-#pragma ide diagnostic ignored "cppcoreguidelines-narrowing-conversions"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedMacroInspection"
+#pragma ide diagnostic   ignored "UnusedValue"
+#pragma ide diagnostic   ignored "modernize-use-emplace"
+#pragma ide diagnostic   ignored "cppcoreguidelines-narrowing-conversions"
 /*
 Semestre 2024-1
 Pr?ctica 7: Iluminaci?n 1
@@ -20,7 +20,6 @@ Pr?ctica 7: Iluminaci?n 1
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
-#include <gtx/matrix_decompose.hpp>
 // para probar el importer
 // #include<assimp/Importer.hpp>
 
@@ -35,14 +34,17 @@ Pr?ctica 7: Iluminaci?n 1
 // para iluminaci?n
 #include "CommonValues.h"
 #include "DirectionalLight.h"
+#include "Gui.h"
 #include "Material.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+
 const float toRadians = 3.14159265f / 180.0f;
 
-Window mainWindow;
+Window              mainWindow;
 std::vector<Mesh *> meshList;
 std::vector<Shader> shaderList;
+Gui                 gui;
 
 Camera camera;
 
@@ -64,15 +66,15 @@ Material Material_brillante;
 Material Material_opaco;
 
 // Sphere cabeza = Sphere(0.5, 20, 20);
-GLfloat deltaTime = 0.0f;
-GLfloat lastTime = 0.0f;
-static double limitFPS = 1.0 / 60.0;
+GLfloat       deltaTime = 0.0f;
+GLfloat       lastTime  = 0.0f;
+static double limitFPS  = 1.0 / 60.0;
 
 // luz direccional
 DirectionalLight mainLight;
 // para declarar varias luces de tipo pointlight
 PointLight pointLights[MAX_POINT_LIGHTS];
-SpotLight spotLights[MAX_SPOT_LIGHTS];
+SpotLight  spotLights[MAX_SPOT_LIGHTS];
 
 // Vertex Shader
 static const char *vShader = "shaders/shader_light.vert";
@@ -81,17 +83,24 @@ static const char *vShader = "shaders/shader_light.vert";
 static const char *fShader = "shaders/shader_light.frag";
 
 // funci?n de calculo de normales por promedio de v?rtices
-void calcAverageNormals(const unsigned int *indices, unsigned int indiceCount, GLfloat *vertices, unsigned int verticeCount, unsigned int vLength, unsigned int normalOffset)
+void calcAverageNormals(const unsigned int *indices,
+                        unsigned int        indiceCount,
+                        GLfloat            *vertices,
+                        unsigned int        verticeCount,
+                        unsigned int        vLength,
+                        unsigned int        normalOffset)
 {
 	for (size_t i = 0; i < indiceCount; i += 3)
 	{
 		unsigned int in0 = indices[i] * vLength;
 		unsigned int in1 = indices[i + 1] * vLength;
 		unsigned int in2 = indices[i + 2] * vLength;
-		glm::vec3 v1(vertices[in1] - vertices[in0], vertices[in1 + 1] - vertices[in0 + 1], vertices[in1 + 2] - vertices[in0 + 2]);
-		glm::vec3 v2(vertices[in2] - vertices[in0], vertices[in2 + 1] - vertices[in0 + 1], vertices[in2 + 2] - vertices[in0 + 2]);
-		glm::vec3 normal = glm::cross(v1, v2);
-		normal = glm::normalize(normal);
+		glm::vec3    v1(vertices[in1] - vertices[in0], vertices[in1 + 1] - vertices[in0 + 1],
+		                vertices[in1 + 2] - vertices[in0 + 2]);
+		glm::vec3    v2(vertices[in2] - vertices[in0], vertices[in2 + 1] - vertices[in0 + 1],
+		                vertices[in2 + 2] - vertices[in0 + 2]);
+		glm::vec3    normal = glm::cross(v1, v2);
+		normal              = glm::normalize(normal);
 
 		in0 += normalOffset;
 		in1 += normalOffset;
@@ -110,9 +119,9 @@ void calcAverageNormals(const unsigned int *indices, unsigned int indiceCount, G
 	for (size_t i = 0; i < verticeCount / vLength; i++)
 	{
 		unsigned int nOffset = i * vLength + normalOffset;
-		glm::vec3 vec(vertices[nOffset], vertices[nOffset + 1], vertices[nOffset + 2]);
-		vec = glm::normalize(vec);
-		vertices[nOffset] = vec.x;
+		glm::vec3    vec(vertices[nOffset], vertices[nOffset + 1], vertices[nOffset + 2]);
+		vec                   = glm::normalize(vec);
+		vertices[nOffset]     = vec.x;
 		vertices[nOffset + 1] = vec.y;
 		vertices[nOffset + 2] = vec.z;
 	}
@@ -201,6 +210,9 @@ int main()
 	mainWindow = Window(1280, 720); // 1280, 1024 or 1024, 768
 	mainWindow.Initialise();
 
+	//	Inicialización de la GUI
+	gui.Init(mainWindow);
+
 	CreateObjects();
 	CreateShaders();
 
@@ -236,8 +248,9 @@ int main()
 
 	skybox = Skybox(skyboxFaces);
 
+	// clang-format off
 	Material_brillante = Material(4.0f, 256);
-	Material_opaco = Material(0.3f, 4);
+	Material_opaco     = Material(0.3f, 4);
 
 	// luz direccional, solo 1 y siempre debe de existir
 	mainLight = DirectionalLight({1.0f, 1.0f, 1.0f},
@@ -298,18 +311,24 @@ int main()
 	                          1.0f, 0.1f, 0.0f,
 	                          15.0f);
 	spotLightCount++;
+	// clang-format on
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
 	       uniformSpecularIntensity = 0, uniformShininess = 0;
-	GLuint uniformColor = 0;
-	glm::mat4 projection = glm::perspective(45.0f, (GLfloat) mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 1000.0f);
+	GLuint    uniformColor = 0;
+	glm::mat4 projection =
+	    glm::perspective(45.0f, (GLfloat) mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 1000.0f);
 	////Loop mientras no se cierra la ventana
 	while (!mainWindow.getShouldClose())
 	{
 		GLfloat now = glfwGetTime();
-		deltaTime = now - lastTime;
+		deltaTime   = now - lastTime;
 		deltaTime += (now - lastTime) / limitFPS;
 		lastTime = now;
+		
+		// Inicio de la gui
+		gui.StartLoop();
+		gui.UpdatePointLightVariables(spotLights[1]);
 
 		// Recibir eventos del usuario
 		glfwPollEvents();
@@ -321,19 +340,20 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		skybox.DrawSkybox(camera.calculateViewMatrix(), projection);
 		shaderList[0].UseShader();
-		uniformModel = shaderList[0].GetModelLocation();
-		uniformProjection = shaderList[0].GetProjectionLocation();
-		uniformView = shaderList[0].GetViewLocation();
+		uniformModel       = shaderList[0].GetModelLocation();
+		uniformProjection  = shaderList[0].GetProjectionLocation();
+		uniformView        = shaderList[0].GetViewLocation();
 		uniformEyePosition = shaderList[0].GetEyePositionLocation();
-		uniformColor = shaderList[0].getColorLocation();
+		uniformColor       = shaderList[0].getColorLocation();
 
 		// informaci?n en el shader de intensidad especular y brillo
 		uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
-		uniformShininess = shaderList[0].GetShininessLocation();
+		uniformShininess         = shaderList[0].GetShininessLocation();
 
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
-		glUniform3f(uniformEyePosition, camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
+		glUniform3f(uniformEyePosition, camera.getCameraPosition().x, camera.getCameraPosition().y,
+		            camera.getCameraPosition().z);
 
 		// luz ligada a la c?mara de tipo flash
 		// sirve para que en tiempo de ejecuci?n (dentro del while) se cambien propiedades de la luz
@@ -363,11 +383,11 @@ int main()
 		meshList[2]->RenderMesh();
 
 		// Instancia del coche
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f + mainWindow.getmuevex(), 0.5f, -3.0f));
+		model    = glm::mat4(1.0);
+		model    = glm::translate(model, glm::vec3(0.0f + mainWindow.getmuevex(), 0.5f, -3.0f));
 		modelaux = model;
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model    = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		model    = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Kitt_M.RenderModel();
 
@@ -415,7 +435,8 @@ int main()
 
 		// Helicoptero
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f + mainWindow.getMueveHelicopteroX(), 0.0f + mainWindow.getMueveHelicopteroY(), 6.0));
+		model = glm::translate(
+		    model, glm::vec3(0.0f + mainWindow.getMueveHelicopteroX(), 0.0f + mainWindow.getMueveHelicopteroY(), 6.0));
 		spotLights[2].SetPos(model[3]);
 		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -425,9 +446,9 @@ int main()
 		Blackhawk_M.RenderModel();
 
 		// Faro
-		model = glm::mat4(1.0);
-		model = glm::translate(model, {-15.0f, -1.0f, -4.0f});
-		model = glm::rotate(model, glm::radians(90.0f), {0.0f, 1.0f, 0.0f});
+		model    = glm::mat4(1.0);
+		model    = glm::translate(model, {-15.0f, -1.0f, -4.0f});
+		model    = glm::rotate(model, glm::radians(90.0f), {0.0f, 1.0f, 0.0f});
 		modelaux = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Faro_M.RenderModel();
@@ -451,6 +472,7 @@ int main()
 
 		glUseProgram(0);
 
+		gui.EndLoop();
 		mainWindow.swapBuffers();
 	}
 
