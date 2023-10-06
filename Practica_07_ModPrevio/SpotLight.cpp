@@ -56,7 +56,7 @@ void SpotLight::SetPos(glm::vec3 pos) { position = pos; }
 
 void SpotLight::SetExp(GLfloat exp) { this->exponent = exp; }
 
-void SpotLight::SetDirection(glm::vec3 dir) { this->direction = dir; }
+void SpotLight::SetDirection(glm::vec3 dir) { this->direction = glm::normalize(dir); }
 
 void SpotLight::SetConstant(GLfloat con) { this->constant = con; }
 

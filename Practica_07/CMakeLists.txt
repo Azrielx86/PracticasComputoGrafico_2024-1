@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 # PROBLEMAS DE RENDIMIENTO DE ASSIMP
 # https://gamedev.stackexchange.com/questions/63498/assimp-in-my-program-is-much-slower-to-import-than-assimp-view-program
-# Para evitar las largas cargas al inicio del programa, es necesario compilar con la configuración RELEASE
+# Para evitar las largas cargas al inicio del programa, es necesario compilar con la configuraciï¿½n RELEASE
 
 # Para compilar con Clang
 # Compilador: C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\Llvm\bin\clang.exe

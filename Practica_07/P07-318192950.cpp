@@ -246,7 +246,7 @@ int main()
 	// contador de luces puntuales
 	unsigned int pointLightCount = 0;
 	// Declaraci?n de primer luz puntual
-	pointLights[0] = PointLight(1.0f, 0.0f, 0.0f,
+	pointLights[0] = PointLight(0.0f, 0.0f, 0.0f,
 	                            0.0f, 1.0f,
 	                            -6.0f, 1.5f, -5.5f,
 	                            0.3f, 0.2f, 0.1f);
@@ -263,21 +263,21 @@ int main()
 	spotLightCount++;
 
 	// luz fija
-	spotLights[1] = SpotLight(0.0f, 1.0f, 0.0f,
+	spotLights[1] = SpotLight(0.0f, 0.0f, 0.0f,
 	                          1.0f, 2.0f,
-	                          5.0f, 10.0f, 0.0f,
+	                          0.0f, 0.0f, 0.0f,
 	                          0.0f, -5.0f, 0.0f,
 	                          1.0f, 0.0f, 0.0f,
 	                          15.0f);
 	spotLightCount++;
 
 	// se crean mas luces puntuales y spotlight
-	// Luz helic?ptero
+	// Luz helicoptero
 	spotLights[2] = SpotLight(1.0f, 1.0f, 0.0f,
 	                          1.0f, 2.0f,
 	                          5.0f, 10.0f, 0.0f,
 	                          0.0f, -5.0f, 0.0f,
-	                          1.0f, 0.1f, 0.0f,
+	                          1.0f, 0.01f, 0.001f,
 	                          15.0f);
 	spotLightCount++;
 
@@ -286,7 +286,7 @@ int main()
 	                          1.0f, 2.0f,
 	                          5.0f, 15.0f, 0.0f,
 	                          -5.0f, 0.0f, 0.0f,
-	                          1.0f, 0.0f, 0.00f,
+	                          1.0f, 0.01f, 0.001f,
 	                          25.0f);
 	spotLightCount++;
 
@@ -296,7 +296,7 @@ int main()
 	                          0.0f, 0.0f, 0.0f,
 	                          0.0f, -5.0f, 0.0f,
 	                          1.0f, 0.1f, 0.0f,
-	                          15.0f);
+	                          30.0f);
 	spotLightCount++;
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
@@ -348,7 +348,6 @@ int main()
 
 		glm::mat4 model(1.0);
 		glm::mat4 modelaux(1.0);
-		glm::vec3 translation(1.0f);
 		glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 
 		model = glm::mat4(1.0);
@@ -371,9 +370,8 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Kitt_M.RenderModel();
 
-		// Luz vehículo
+		// Luz vehiculo
 		model = modelaux;
-		//		model = glm::translate(model, {2.0f, 2.0f, 5.0f});
 		glm::vec3 carLightPos = model[3];
 		carLightPos.x += 2.5f;
 		carLightPos.z += 3.0f;
@@ -416,11 +414,11 @@ int main()
 		// Helicoptero
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f + mainWindow.getMueveHelicopteroX(), 0.0f + mainWindow.getMueveHelicopteroY(), 6.0));
+		// luz
 		spotLights[2].SetPos(model[3]);
 		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-		// luz
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Blackhawk_M.RenderModel();
 
@@ -432,7 +430,7 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Faro_M.RenderModel();
 		model = modelaux;
-		model = glm::translate(model, {-6.2, 16.1, 0.0f});
+		model = glm::translate(model, {-6.2, 16.9, 0.0f});
 		spotLights[4].SetPos(model[3]);
 
 		// Agave ?qu? sucede si lo renderizan antes del coche y el helic?ptero?
