@@ -2,7 +2,10 @@
 cmake_minimum_required(VERSION 3.7.2)
 project(Previo_05)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+
+#if (NOT MSVC)
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-system-headers")
+#endif ()
 
 # Requires GLEW, OpenGL and GLFW Packages on Linux
 # On Arch Linux: pacman -S glew glfw
@@ -23,12 +26,12 @@ if (OpenGL_FOUND)
     message(STATUS "OpenGL Found")
 endif ()
 
-find_package(GLEW REQUIRED)
+find_package(GLEW CONFIG REQUIRED)
 if (GLEW_FOUND)
     message(STATUS "GLEW Found.")
 endif ()
 
-find_package(glfw3 REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
 if (glfw3_FOUND)
     message(STATUS "GLFW Found.")
 endif ()
@@ -55,7 +58,7 @@ else ()
     include_directories(/usr/include/glm)
 endif ()
 
-add_executable(Previo_05 P07-318192950.cpp
+add_executable(Previo_05 main.cpp
         Window.cpp
         Camera.cpp
         DirectionalLight.cpp

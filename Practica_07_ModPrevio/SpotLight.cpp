@@ -54,17 +54,11 @@ void SpotLight::SetFlash(glm::vec3 pos, glm::vec3 dir)
 
 void SpotLight::SetPos(glm::vec3 pos) { position = pos; }
 
-void SpotLight::SetExp(GLfloat exp) { this->exponent = exp; }
-
 void SpotLight::SetDirection(glm::vec3 dir) { this->direction = glm::normalize(dir); }
 
-void SpotLight::SetConstant(GLfloat con) { this->constant = con; }
+void SpotLight::SetEdge(GLfloat edg) { this->edge = cosf(glm::radians(edg));; }
 
-void SpotLight::SetLinear(GLfloat lin) { this->linear = lin; }
-
-void SpotLight::SetEdg(GLfloat edg) { this->edge = cosf(glm::radians(edg));; }
-
-void SpotLight::SetColor(glm::vec3 color) { this->color = color; }
+//void SpotLight::SetColor(glm::vec3 color) { this->color = color; }
 
 void SpotLight::SetIntensity(GLfloat ambient, GLfloat diffuse)
 {

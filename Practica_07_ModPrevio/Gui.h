@@ -15,17 +15,21 @@
 
 class Gui
 {
-	struct SpotLightVariables
+	struct PointLightVariables
 	{
 		glm::vec3 rgb;
 		GLfloat   aIntensity;
 		GLfloat   dIntensity;
 		glm::vec3 pos;
+		GLfloat constant, linear, exponent;
+	};
+	
+	struct SpotLightVariables : PointLightVariables
+	{
+		GLfloat   aIntensity;
+		GLfloat   dIntensity;
 		glm::vec3 dir;
-		GLfloat   con;
-		GLfloat   lin;
-		GLfloat   exp;
-		GLfloat   edg;
+		GLfloat   edge;
 	};
 
   public:
@@ -35,7 +39,7 @@ class Gui
 	void EndLoop();
 	void UpdatePointLightVariables(SpotLight &l);
 	virtual ~Gui();
-	
+
   private:
 	Gui::SpotLightVariables varLight1{};
 };

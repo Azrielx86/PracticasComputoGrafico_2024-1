@@ -29,11 +29,8 @@ class SpotLight : public PointLight
 	void SetPos(glm::vec3 pos);
 	void SetDirection(glm::vec3 dir);
 	void SetIntensity(GLfloat ambient, GLfloat diffuse);
-	void SetConstant(GLfloat con);
-	void SetLinear(GLfloat lin);
-	void SetExp(GLfloat exp);
-	void SetEdg(GLfloat edg);
-	void SetColor(glm::vec3 color);
+	void SetEdge(GLfloat edg);
+//	void SetColor(glm::vec3 color);
 	~SpotLight();
 
   private:

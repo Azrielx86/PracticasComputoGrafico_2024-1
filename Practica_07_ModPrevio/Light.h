@@ -8,7 +8,7 @@ class Light
   public:
 	Light();
 	Light(glm::vec3 rgb, GLfloat aIntensity, GLfloat dIntensity);
-
+	void SetColor(glm::vec3 color);
 	~Light();
 
   protected:

@@ -34,6 +34,12 @@ void PointLight::UseLight(GLfloat ambientIntensityLocation, GLfloat ambientcolor
 	glUniform1f(exponentLocation, exponent);
 }
 
+void PointLight::SetConstant(GLfloat con) { this->constant = con; }
+
+void PointLight::SetLinear(GLfloat lin) { this->linear = lin; }
+
+void PointLight::SetExp(GLfloat exp) { this->exponent = exp; }
+
 PointLight::~PointLight()
 {
 }
