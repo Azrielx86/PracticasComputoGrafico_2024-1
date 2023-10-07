@@ -40,6 +40,24 @@ void PointLight::SetLinear(GLfloat lin) { this->linear = lin; }
 
 void PointLight::SetExp(GLfloat exp) { this->exponent = exp; }
 
+void PointLight::SetPos(glm::vec3 pos) { position = pos; }
+
 PointLight::~PointLight()
 {
+}
+const glm::vec3 &PointLight::getPosition() const
+{
+	return position;
+}
+GLfloat PointLight::getConstant() const
+{
+	return constant;
+}
+GLfloat PointLight::getLinear() const
+{
+	return linear;
+}
+GLfloat PointLight::getExponent() const
+{
+	return exponent;
 }

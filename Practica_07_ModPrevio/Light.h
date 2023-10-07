@@ -12,6 +12,12 @@ class Light
 	~Light();
 
   protected:
+  public:
+	const glm::vec3 &getColor() const;
+	GLfloat          getAmbientIntensity() const;
+	GLfloat          getDiffuseIntensity() const;
+
+  protected:
 	glm::vec3 color;
 	GLfloat   ambientIntensity;
 	GLfloat   diffuseIntensity;

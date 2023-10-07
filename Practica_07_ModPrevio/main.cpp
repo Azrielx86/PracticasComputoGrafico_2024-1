@@ -75,9 +75,8 @@ static double limitFPS  = 1.0 / 60.0;
 DirectionalLight mainLight;
 // para declarar varias luces de tipo pointlight
 PointLight pointLights[MAX_POINT_LIGHTS];
-SpotLight  spotLights[MAX_SPOT_LIGHTS];
 PointLight pointLights2[MAX_POINT_LIGHTS];
-SpotLight  spotLights2[MAX_SPOT_LIGHTS];
+SpotLight  spotLights[MAX_SPOT_LIGHTS];
 
 std::vector<std::pair<int, PointLight *>> PointLightsVector;
 std::vector<std::pair<int, SpotLight *>>  SpotLightsVector;
@@ -223,20 +222,69 @@ void CreateShaders()
 
 void CreateLights()
 {
-	unsigned int pointLightCount = 0;
+	unsigned int pointLightCount  = 0;
+	unsigned int pointLightCount2 = 0;
+	unsigned int spotLightCount   = 0;
+	//	2.- ¿Cómo haces para que en tiempo de ejecución puedas elegir entre 2 arreglos de 4
+	//	luces puntuales en orden diferente, es decir: en el arreglo 1 tienes las luces verde,
+	//	azul, roja, blanca y en el arreglo dos tienes a las luces blanca, verde, azul, roja?
 	// clang-format off
-	// Declaraci?n de primer luz puntual
-	pointLights[0] = PointLight({1.0f, 0.0f, 0.0f},
+// Arreglo 1
+	pointLights[0] = PointLight({0.0f, 1.0f, 0.0f},
 	                            0.0f, 1.0f,
 	                            {-6.0f, 1.5f, -5.5f},
-	                            0.3f, 0.2f, 0.1f);
+	                            0.3f, 0.2f, 0.001f);
 	pointLightCount++;
 	
-	unsigned int spotLightCount = 0;
+	pointLights[1] = PointLight({0.0f, 0.0f, 1.0f},
+								0.0f, 1.0f,
+								{4.0f, 1.5f, -5.5f},
+								0.3f, 0.2f, 0.001f);
+	pointLightCount++;
+	
+	pointLights[2] = PointLight({1.0f, 0.0f, 0.0f},
+								0.0f, 1.0f,
+								{14.0f, 1.5f, -5.5f},
+								0.3f, 0.2f, 0.001f);
+	pointLightCount++;
+	
+	pointLights[3] = PointLight({1.0f, 1.0f, 1.0f},
+								0.0f, 1.0f,
+								{24.0f, 1.5f, -5.5f},
+								0.3f, 0.2f, 0.001f);
+	pointLightCount++;
+
+// Arreglo 2 PointLights
+	pointLights2[0] = PointLight({1.0f, 1.0f, 1.0f},
+								0.0f, 1.0f,
+								{-6.0f, 1.5f, 5.5f},
+								0.3f, 0.2f, 0.001f);
+	pointLightCount2++;
+
+	pointLights2[1] = PointLight({0.0f, 1.0f, 0.0f},
+								0.0f, 1.0f,
+								{4.0f, 1.5f, 5.5f},
+								0.3f, 0.2f, 0.001f);
+	pointLightCount2++;
+	
+	pointLights2[2] = PointLight({0.0f, 0.0f, 1.0f},
+								0.0f, 1.0f,
+								{14.0f, 1.5f, 5.5f},
+								0.3f, 0.2f, 0.001f);
+	pointLightCount2++;
+	
+	pointLights2[3] = PointLight({1.0f, 0.0f, 0.0f},
+								0.0f, 1.0f,
+								{24.0f, 1.5f, 5.5f},
+								0.3f, 0.2f, 0.001f);
+	pointLightCount2++;
+
+	
+// SpotLights
 	// linterna
 	spotLights[0] = SpotLight({1.0f, 1.0f, 1.0f},
 	                          0.0f, 2.0f,
-	                          {0.0f, 0.0f, 0.0f},
+	                          {0.0f, -5.0f, 0.0f},
 	                          {0.0f, -1.0f, 0.0f},
 	                          1.0f, 0.0f, 0.0f,
 	                          5.0f);
@@ -266,22 +314,14 @@ void CreateLights()
 	                          1.0f, 2.0f,
 	                          {5.0f, 15.0f, 0.0f},
 	                          {-5.0f, 0.0f, 0.0f},
-	                          1.0f, 0.0f, 0.00f,
+	                          1.0f, 0.0f, 0.001f,
 	                          25.0f);
-	spotLightCount++;
-
-	// Luz faro
-	spotLights[4] = SpotLight({1.0f, 1.0f, 1.0f},
-	                          1.0f, 2.0f,
-	                          {0.0f, 0.0f, 0.0f},
-	                          {0.0f, -5.0f, 0.0f},
-	                          1.0f, 0.1f, 0.0f,
-	                          15.0f);
 	spotLightCount++;
 	// clang-format on
 
 	addToSLVector(spotLightCount, spotLights);
 	addToPLVector(pointLightCount, pointLights);
+	addToPLVector(pointLightCount2, pointLights2);
 }
 
 int main()
@@ -351,8 +391,6 @@ int main()
 
 		// Inicio de la gui
 		gui.StartLoop();
-		auto editableSp = SpotLightsVector.at(0).second;
-		gui.UpdatePointLightVariables(editableSp[1]);
 
 		// Recibir eventos del usuario
 		glfwPollEvents();
@@ -387,10 +425,21 @@ int main()
 
 		// informaci?n al shader de fuentes de iluminaci?n
 		shaderList[0].SetDirectionalLight(&mainLight);
-		//		shaderList[0].SetPointLights(pointLights, pointLightCount);
-		//		shaderList[0].SetSpotLights(spotLights, spotLightCount);
+
+		int selectedPLight = mainWindow.getSLightSelected();
+		if (selectedPLight >= PointLightsVector.size())
+		{
+			selectedPLight = 0;
+			mainWindow.setPLightSelected(selectedPLight);
+		}
+
 		shaderList[0].SetSpotLights(SpotLightsVector.at(0).second, SpotLightsVector.at(0).first);
-		shaderList[0].SetPointLights(PointLightsVector.at(0).second, PointLightsVector.at(0).first);
+		shaderList[0].SetPointLights(PointLightsVector.at(selectedPLight).second, PointLightsVector.at(selectedPLight).first);
+		
+		auto editableSp = SpotLightsVector.at(0).second;
+		gui.UpdateSpotLightVariables(editableSp[1]);
+		auto editablePl = PointLightsVector.at(selectedPLight).second;
+		gui.UpdatePointLightVariables(editablePl[1]);
 
 		glm::mat4 model(1.0);
 		glm::mat4 modelaux(1.0);
@@ -418,12 +467,11 @@ int main()
 		Kitt_M.RenderModel();
 
 		// Luz vehículo
-		model = modelaux;
-		//		model = glm::translate(model, {2.0f, 2.0f, 5.0f});
-		glm::vec3 carLightPos = model[3];
-		carLightPos.x += 2.5f;
-		carLightPos.z += 3.0f;
-		spotLights[3].SetPos(carLightPos);
+		//		model = modelaux;
+		//		glm::vec3 carLightPos = model[3];
+		//		carLightPos.x += 2.5f;
+		//		carLightPos.z += 3.0f;
+		//		spotLights[3].SetPos(carLightPos);
 
 		// Llanta delantera izquierda
 		model = modelaux;
@@ -480,7 +528,6 @@ int main()
 		Faro_M.RenderModel();
 		model = modelaux;
 		model = glm::translate(model, {-6.2, 16.1, 0.0f});
-		spotLights[4].SetPos(model[3]);
 
 		// Agave ?qu? sucede si lo renderizan antes del coche y el helic?ptero?
 		model = glm::mat4(1.0);

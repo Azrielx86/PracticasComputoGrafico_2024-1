@@ -21,9 +21,9 @@ class Gui
 		GLfloat   aIntensity;
 		GLfloat   dIntensity;
 		glm::vec3 pos;
-		GLfloat constant, linear, exponent;
+		GLfloat   constant, linear, exponent;
 	};
-	
+
 	struct SpotLightVariables : PointLightVariables
 	{
 		GLfloat   aIntensity;
@@ -37,11 +37,15 @@ class Gui
 	void Init(Window &window);
 	void StartLoop();
 	void EndLoop();
-	void UpdatePointLightVariables(SpotLight &l);
+	void UpdateSpotLightVariables(SpotLight &light);
+	void UpdatePointLightVariables(PointLight &light);
+	void SetSpotLightVars(SpotLight &light);
+	void SetPointLightVars(PointLight &light);
 	virtual ~Gui();
 
   private:
-	Gui::SpotLightVariables varLight1{};
+	Gui::SpotLightVariables  varSpotL{};
+	Gui::PointLightVariables varPointL{};
 };
 
 #endif // PREVIO_05_GUI_H

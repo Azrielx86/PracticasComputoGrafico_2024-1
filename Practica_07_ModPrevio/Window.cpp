@@ -121,6 +121,9 @@ void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, in
 	if (key == GLFW_KEY_DOWN)
 		theWindow->mueveHelicopteroY -= 1.0f;
 
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+		theWindow->lightSelected += 1;
+	
 	// Liberar mouse
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
 	{

@@ -17,10 +17,17 @@ class PointLight : public Light
 	void SetConstant(GLfloat con);
 	void SetLinear(GLfloat lin);
 	void SetExp(GLfloat exp);
+	void SetPos(glm::vec3 pos);
 	~PointLight();
 
   protected:
-	glm::vec3 position;
+  public:
+	const glm::vec3 &getPosition() const;
+	GLfloat          getConstant() const;
+	GLfloat          getLinear() const;
+	GLfloat          getExponent() const;
 
+  protected:
+	glm::vec3 position;
 	GLfloat constant, linear, exponent;
 };

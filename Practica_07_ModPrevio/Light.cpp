@@ -20,3 +20,15 @@ void Light::SetColor(glm::vec3 color) { this->color = color; }
 Light::~Light()
 {
 }
+const glm::vec3 &Light::getColor() const
+{
+	return color;
+}
+GLfloat Light::getAmbientIntensity() const
+{
+	return ambientIntensity;
+}
+GLfloat Light::getDiffuseIntensity() const
+{
+	return diffuseIntensity;
+}

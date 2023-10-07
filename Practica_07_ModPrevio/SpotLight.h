@@ -26,7 +26,6 @@ class SpotLight : public PointLight
 	              GLuint edgeLocation);
 
 	void SetFlash(glm::vec3 pos, glm::vec3 dir);
-	void SetPos(glm::vec3 pos);
 	void SetDirection(glm::vec3 dir);
 	void SetIntensity(GLfloat ambient, GLfloat diffuse);
 	void SetEdge(GLfloat edg);
@@ -34,7 +33,11 @@ class SpotLight : public PointLight
 	~SpotLight();
 
   private:
-	glm::vec3 direction;
+  public:
+	const glm::vec3 &getDirection() const;
+	GLfloat          getEdge() const;
 
-	GLfloat edge, procEdge;
+  private:
+	glm::vec3 direction;
+	GLfloat edge;
 };
