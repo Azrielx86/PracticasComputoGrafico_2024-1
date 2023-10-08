@@ -44,8 +44,8 @@ void Gui::UpdateSpotLightVariables(SpotLight &light)
 	if (ImGui::CollapsingHeader("Spot Light"))
 	{
 		ImGui::ColorEdit3("Light Color", reinterpret_cast<float *>(&varSpotL.rgb), ImGuiColorEditFlags_Float);
-		ImGui::InputFloat("Exponent", &varSpotL.exponent, 0.001f, 0.01f);
-		ImGui::InputFloat("Linear", &varSpotL.linear, 0.001f, 0.01f);
+		ImGui::InputFloat("Exponent", &varSpotL.exponent, 0.0001f, 0.001f);
+		ImGui::InputFloat("Linear", &varSpotL.linear, 0.0001f, 0.001f);
 		ImGui::InputFloat("Constant", &varSpotL.constant, 0.01f, 0.1f);
 		ImGui::InputFloat("Edge", &varSpotL.edge, 0.1f, 5.0f);
 		ImGui::InputFloat("Direction x", &varSpotL.dir.x, 0.1f, 1.0f);
@@ -70,8 +70,8 @@ void Gui::UpdatePointLightVariables(PointLight &light)
 {
 	if (ImGui::CollapsingHeader("Point Light")) {
 		ImGui::ColorEdit3("Light Color", reinterpret_cast<float *>(&varPointL.rgb), ImGuiColorEditFlags_Float);
-		ImGui::InputFloat("Exponent", &varPointL.exponent, 0.001f, 0.01f);
-		ImGui::InputFloat("Linear", &varPointL.linear, 0.001f, 0.01f);
+		ImGui::InputFloat("Exponent", &varPointL.exponent, 0.0001f, 0.001f);
+		ImGui::InputFloat("Linear", &varPointL.linear, 0.0001f, 0.001f);
 		ImGui::InputFloat("Constant", &varPointL.constant, 0.01f, 0.1f);
 		ImGui::InputFloat("Position x", &varPointL.pos.x, 0.1f, 1.0f);
 		ImGui::InputFloat("Position y", &varPointL.pos.y, 0.1f, 1.0f);
