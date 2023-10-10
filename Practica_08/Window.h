@@ -23,7 +23,8 @@ class Window
 	bool *getsKeys() { return keys; }
 	void swapBuffers() { return glfwSwapBuffers(mainWindow); }
 	GLFWwindow *getWindowPointer() { return this->mainWindow; }
-	bool getLinterna() const { return this->linterna; }
+	bool getLinterna() const { return this->linternaCamara; }
+	bool getLampara() const { return this->lampara; }
 
 	~Window();
 
@@ -40,7 +41,7 @@ class Window
 	GLfloat muevex;
 	GLfloat mueveHelicopteroX = 0.0f;
 	GLfloat mueveHelicopteroY = 10.0f;
-	bool linterna;
+	bool linternaCamara = true, lampara = true;
 	bool toggleMouse = true;
 	void mouseMode()
 	{

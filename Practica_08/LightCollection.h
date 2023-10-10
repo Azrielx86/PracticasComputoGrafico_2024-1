@@ -14,7 +14,12 @@
 #include <vector>
 
 /**
- * Contiene una colección de luces, con métodos para encender/apagar el arreglo
+ * Contiene una colección de luces, con métodos para encender/apagar el arreglo.
+ * Esto es para no tener que crear distintos arreglos, ni condiciones en el main,
+ * el arreglo se haría automaticamente al encender o apagar una luz.
+ * En cuanto a rendimiento, como solo se actualiza cada que cambia el estado de una luz,
+ * y el maximo de iteraciones sera 8 (o 16), supongo que no afectaria mucho,
+ * o eso espero...
  * @tparam T Clase tipo Light, PointLight o SpotLight
  * @author Azrielx86 (Edgar Chalico)
  */
@@ -28,14 +33,13 @@ class LightColletction
 	/**
 	 * Constructor del arreglo, construye los pares T - bool
 	 * y los agrega a un nuevo vector
-	 * @param lVecIn Vector de luces (Light, PointLight o SpotLight)
+	 * @param inLightVector Vector de luces (Light, PointLight o SpotLight)
 	 */
-	[[maybe_unused]] explicit LightColletction(const std::vector<T> &lVecIn)
+	explicit LightColletction(const std::vector<T> &inLightVector)
 	{
-		for (const auto &light : lVecIn)
-//			lightsVector.push_back(LightPair(light, true));
+		for (const auto &light : inLightVector)
 			lightsVector.push_back(std::make_pair(std::ref(light), true));
-		currentCount = lVecIn.size();
+		currentCount = inLightVector.size();
 	}
 
 	/**
@@ -72,6 +76,7 @@ class LightColletction
 	void updateArray()
 	{
 		currentCount = 0;
+		tmp.clear();
 		for (const LightPair &p : lightsVector)
 		{
 			if (p.second)
@@ -91,9 +96,7 @@ class LightColletction
 	T &operator[](int index) 
 	{
 		auto &light = lightsVector.at(index);
-		//		if (!light.second)
 		return light.first;
-		//		return &lightArray[index];
 	}
 
   private:
@@ -103,18 +106,36 @@ class LightColletction
 	std::vector<T> tmp;
 };
 
+/**
+ * Constructor de un arreglo de luces, puede ser util para no declarar
+ * un arreglo externo de luces, e ingresarlas directamente mediante la
+ * funcion addLight.
+ * @tparam T Clase tipo Light, PointLight o SpotLight
+ */
 template <typename T>
 class LightCollectionBuilder
 {
 	static_assert(std::is_same<Light, T>::value || std::is_same<PointLight, T>::value || std::is_same<SpotLight, T>::value, "Must be Light-like type");
 
   public:
+	/**
+	 * Constructor para un constructor (valga la redundancia) de
+	 * una colección de luces.
+	 * @param lightCount Conteo de las luces que se van a agregar,
+	 * por defecto es 8 (El maximo numero de luces en OpenGL).
+	 * (Creo que no es necesario, lo quirare despues...)
+	 */
 	explicit LightCollectionBuilder<T>(int lightCount)
 	{
-		this->maxLightCount = lightCount;
+		maxLightCount = lightCount;
 		this->lightCount = 0;
 	}
 
+	/**
+	 * Agrega una luz a la coleccion
+	 * @param light Luz tipo Light, SpotLight o PointLight
+	 * @return Referencia al objeto constructor.
+	 */
 	LightCollectionBuilder<T> &addLight(const T &light)
 	{
 		if (this->lightCount < maxLightCount)
@@ -126,16 +147,20 @@ class LightCollectionBuilder
 		return *this;
 	}
 
+	/**
+	 * Construye la colección de luces.
+	 * @return Nueva colección de luces.
+	 */
 	LightColletction<T> build()
 	{
-		LightColletction<T> collection(this->lightVector);
+		auto collection = LightColletction<T>(this->lightVector);
 		collection.updateArray();
 		return collection;
 	}
 
   private:
+	int maxLightCount = 8;
 	int lightCount{};
-	int maxLightCount{};
 	std::vector<T> lightVector;
 };
 

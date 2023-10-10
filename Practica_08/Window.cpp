@@ -14,7 +14,7 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	width = windowWidth;
 	height = windowHeight;
 	muevex = 2.0f;
-	linterna = true;
+	linternaCamara = true;
 	for (size_t i = 0; i < 1024; i++)
 	{
 		keys[i] = 0;
@@ -114,9 +114,10 @@ void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, in
 	}
 
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
-	{
-		theWindow->linterna = !theWindow->linterna;
-	}
+		theWindow->linternaCamara = !theWindow->linternaCamara;
+
+	if (key == GLFW_KEY_L && action == GLFW_PRESS)
+		theWindow->lampara = !theWindow->lampara;
 
 	if (key == GLFW_KEY_LEFT)
 		theWindow->mueveHelicopteroX -= 1.0f;

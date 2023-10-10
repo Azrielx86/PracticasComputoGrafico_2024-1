@@ -336,7 +336,7 @@ int main()
 	pointLightCount++;
 
 	unsigned int spotLightCount = 0;
-	// linterna
+	// linternaCamara
 	spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f,
 	                          0.0f, 2.0f,
 	                          0.0f, 0.0f, 0.0f,
@@ -346,7 +346,7 @@ int main()
 	spotLightCount++;
 
 	// luz fija
-	spotLights[1] = SpotLight(0.0f, 0.0f, 0.0f,
+	spotLights[1] = SpotLight(0.6f, 0.0f, 0.8f,
 	                          1.0f, 2.0f,
 	                          0.0f, 0.0f, 0.0f,
 	                          0.0f, -5.0f, 0.0f,
@@ -374,7 +374,7 @@ int main()
 	spotLightCount++;
 
 	// Luz faro
-	spotLights[4] = SpotLight(0.5f, 1.0f, 1.0f,
+	spotLights[4] = SpotLight(1.0f, 1.0f, 1.0f,
 	                          1.0f, 2.0f,
 	                          0.0f, 0.0f, 0.0f,
 	                          0.0f, -5.0f, 0.0f,
@@ -431,9 +431,10 @@ int main()
 		// sirve para que en tiempo de ejecuci?n (dentro del while) se cambien propiedades de la luz
 		glm::vec3 lowerLight = camera.getCameraPosition();
 		lowerLight.y -= 0.3f;
-		//				spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
 		spotLights1[0].SetFlash(lowerLight, camera.getCameraDirection());
+		
 		spotLights1.toggleLight(0, mainWindow.getLinterna());
+		spotLights1.toggleLight(4, mainWindow.getLampara());
 
 		// informaci?n al shader de fuentes de iluminaci?n
 		shaderList[0].SetDirectionalLight(&mainLight);
