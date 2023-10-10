@@ -119,14 +119,38 @@ void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, in
 	if (key == GLFW_KEY_L && action == GLFW_PRESS)
 		theWindow->lampara = !theWindow->lampara;
 
-	if (key == GLFW_KEY_LEFT)
+	if (key == GLFW_KEY_H)
 		theWindow->mueveHelicopteroX -= 1.0f;
-	if (key == GLFW_KEY_RIGHT)
+	if (key == GLFW_KEY_K)
 		theWindow->mueveHelicopteroX += 1.0f;
-	if (key == GLFW_KEY_UP)
+	if (key == GLFW_KEY_U)
 		theWindow->mueveHelicopteroY += 1.0f;
-	if (key == GLFW_KEY_DOWN)
+	if (key == GLFW_KEY_J)
 		theWindow->mueveHelicopteroY -= 1.0f;
+
+	if (key == GLFW_KEY_UP)
+	{
+		theWindow->posVehiculo += 0.2f;
+		theWindow->rotaRuedas += 25.0f;
+	}
+
+	if (key == GLFW_KEY_DOWN)
+	{
+		theWindow->posVehiculo -= 0.2f;
+		theWindow->rotaRuedas -= 25.0f;
+	}
+
+	if (key == GLFW_KEY_N)
+	{
+		if (theWindow->anguloCofre <= 45)
+			theWindow->anguloCofre += 3.0f;
+	}
+
+	if (key == GLFW_KEY_M)
+	{
+		if (theWindow->anguloCofre > 0)
+			theWindow->anguloCofre -= 3.0f;
+	}
 
 	// Liberar mouse
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
@@ -168,6 +192,21 @@ void Window::ManejaMouse(GLFWwindow *window, double xPos, double yPos)
 
 	theWindow->lastX = xPos;
 	theWindow->lastY = yPos;
+}
+
+GLfloat Window::getPosVehiculo() const
+{
+	return posVehiculo;
+}
+
+GLfloat Window::getRotaRuedas() const
+{
+	return rotaRuedas;
+}
+
+GLfloat Window::getAnguloCofre() const
+{
+	return anguloCofre;
 }
 
 Window::~Window()

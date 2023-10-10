@@ -25,6 +25,9 @@ class Window
 	GLFWwindow *getWindowPointer() { return this->mainWindow; }
 	bool getLinterna() const { return this->linternaCamara; }
 	bool getLampara() const { return this->lampara; }
+	GLfloat getPosVehiculo() const;
+	GLfloat getRotaRuedas() const;
+	GLfloat getAnguloCofre() const;
 
 	~Window();
 
@@ -41,6 +44,9 @@ class Window
 	GLfloat muevex;
 	GLfloat mueveHelicopteroX = 0.0f;
 	GLfloat mueveHelicopteroY = 10.0f;
+	GLfloat posVehiculo = 0.0f;
+	GLfloat anguloCofre = 0.0f;
+	GLfloat rotaRuedas = 0.0f;
 	bool linternaCamara = true, lampara = true;
 	bool toggleMouse = true;
 	void mouseMode()

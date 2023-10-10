@@ -24,7 +24,7 @@
  * @author Azrielx86 (Edgar Chalico)
  */
 template <typename T>
-class LightColletction
+class LightCollection
 {
 	static_assert(std::is_same<Light, T>::value || std::is_same<PointLight, T>::value || std::is_same<SpotLight, T>::value, "Must be Light-like type");
 	using LightPair = std::pair<T, bool>;
@@ -35,7 +35,7 @@ class LightColletction
 	 * y los agrega a un nuevo vector
 	 * @param inLightVector Vector de luces (Light, PointLight o SpotLight)
 	 */
-	explicit LightColletction(const std::vector<T> &inLightVector)
+	explicit LightCollection(const std::vector<T> &inLightVector)
 	{
 		for (const auto &light : inLightVector)
 			lightsVector.push_back(std::make_pair(std::ref(light), true));
@@ -93,7 +93,7 @@ class LightColletction
 	 * @param index
 	 * @return
 	 */
-	T &operator[](int index) 
+	T &operator[](int index)
 	{
 		auto &light = lightsVector.at(index);
 		return light.first;
@@ -151,9 +151,9 @@ class LightCollectionBuilder
 	 * Construye la colección de luces.
 	 * @return Nueva colección de luces.
 	 */
-	LightColletction<T> build()
+	LightCollection<T> build()
 	{
-		auto collection = LightColletction<T>(this->lightVector);
+		auto collection = LightCollection<T>(this->lightVector);
 		collection.updateArray();
 		return collection;
 	}
