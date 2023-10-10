@@ -1,0 +1,37 @@
+---
+AllowShortBlocksOnASingleLine: Always
+AlwaysBreakTemplateDeclarations: Yes
+BinPackParameters: "false"
+BreakBeforeBraces: Allman
+BreakBeforeTernaryOperators: "true"
+IndentWidth: "4"
+NamespaceIndentation: Inner
+SortIncludes: CaseSensitive
+SpaceAfterCStyleCast: "true"
+Standard: Cpp11
+TabWidth: "4"
+UseTab: ForIndentation
+SpaceAfterTemplateKeyword: "true"
+ColumnLimit: 0
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+AlignConsecutiveDeclarations:
+  Enabled: true
+AlignConsecutiveMacros:
+  Enabled: true
+AlignEscapedNewlines: Right
+AlignOperands: AlignAfterOperator
+AlignArrayOfStructures: Right
+AlignAfterOpenBracket: Align
+AlignTrailingComments:
+  Kind: Always
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortLambdasOnASingleLine: All
+AllowShortLoopsOnASingleLine: true
+BreakArrays: false
+IndentPPDirectives: BeforeHash
+InsertNewlineAtEOF: true
