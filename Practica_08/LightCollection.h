@@ -8,7 +8,6 @@
 #include "Light.h"
 #include "PointLight.h"
 #include "SpotLight.h"
-#include <algorithm>
 #include <iostream>
 #include <type_traits>
 #include <vector>
@@ -132,7 +131,7 @@ class LightCollectionBuilder
 	}
 
 	/**
-	 * Agrega una luz a la coleccion
+	 * Agrega una luz a la coleccion.
 	 * @param light Luz tipo Light, SpotLight o PointLight
 	 * @return Referencia al objeto constructor.
 	 */
@@ -144,6 +143,26 @@ class LightCollectionBuilder
 			std::cout << "[WARNING] Se intentaron agregar más de "
 			          << maxLightCount
 			          << " al arreglo, se ignora la inserción.\n";
+		return *this;
+	}
+
+	/**
+	 * Agrega un conjunto de luces a la coleccion.
+	 * @param lights Luces del tipo Light, SpotLight o PointLight.
+	 * @param count Longitud del arreglo.
+	 * @return Referencia al objecto constructor.
+	 */
+	LightCollectionBuilder<T> &addFromArray(T *lights, int count)
+	{
+		for (int i = 0; i < count; ++i)
+		{
+			if (this->lightCount < maxLightCount)
+				this->lightVector.push_back(lights[i]);
+			else
+				std::cout << "[WARNING] Se intentaron agregar más de "
+				          << maxLightCount
+				          << " al arreglo, se ignora la inserción.\n";
+		}
 		return *this;
 	}
 

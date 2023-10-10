@@ -1,11 +1,12 @@
-
 cmake_minimum_required(VERSION 3.7.2)
 project(Practica08)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
-if (DEBUG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
+if (NOT MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+    if (DEBUG)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
+    endif ()
 endif ()
 
 # Requires GLEW, OpenGL and GLFW Packages on Linux
@@ -18,8 +19,9 @@ endif ()
 # https://gamedev.stackexchange.com/questions/63498/assimp-in-my-program-is-much-slower-to-import-than-assimp-view-program
 # Para evitar las largas cargas al inicio del programa, es necesario compilar con la configuraci�n RELEASE
 
-# Para compilar con Clang
+# Para compilar con Clang (12 la versión de VS)
 # Compilador: C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\Llvm\bin\clang.exe
+# O usar la versión de LLVM (Clang 17) (Recomendado).
 
 set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
@@ -90,5 +92,5 @@ else ()
     target_link_libraries(Practica08 PRIVATE GLEW::GLEW)
     target_link_libraries(Practica08 PRIVATE glfw)
     target_link_libraries(Practica08 PRIVATE assimp::assimp)
-#    target_link_libraries(Practica08 PRIVATE imgui::imgui)
+    #    target_link_libraries(Practica08 PRIVATE imgui::imgui)
 endif ()

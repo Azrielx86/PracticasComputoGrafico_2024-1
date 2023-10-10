@@ -345,10 +345,16 @@ int main()
 	// contador de luces puntuales
 	unsigned int pointLightCount = 0;
 	// Declaraci?n de primer luz puntual
-	pointLights[0] = PointLight(0.0f, 0.0f, 0.0f,
+	pointLights[0] = PointLight(0.0f, 1.0f, 0.0f,
 	                            0.0f, 1.0f,
 	                            -6.0f, 1.5f, -5.5f,
 	                            0.3f, 0.2f, 0.1f);
+	pointLightCount++;
+	
+	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f,
+	                            0.0f, 1.0f,
+	                            -6.0f, 1.5f, -5.5f,
+	                            0.3f, 0.01f, 0.001f);
 	pointLightCount++;
 
 	unsigned int spotLightCount = 0;
@@ -376,7 +382,7 @@ int main()
 	                          1.0f, 2.0f,
 	                          5.0f, 10.0f, 0.0f,
 	                          0.0f, -5.0f, 0.0f,
-	                          1.0f, 0.01f, 0.001f,
+	                          1.0f, 0.01f, 0.01f,
 	                          15.0f);
 	spotLightCount++;
 
@@ -389,23 +395,30 @@ int main()
 	                          25.0f);
 	spotLightCount++;
 
-	// Luz faro
-	spotLights[4] = SpotLight(1.0f, 1.0f, 1.0f,
-	                          1.0f, 2.0f,
-	                          0.0f, 0.0f, 0.0f,
-	                          0.0f, -5.0f, 0.0f,
-	                          1.0f, 0.1f, 0.0f,
-	                          30.0f);
-	spotLightCount++;
 
 	// ========================================= CREACION DE LOS ARREGLOS DE LUCES =============================================
 	LightCollectionBuilder<SpotLight> spLightBuilder1(spotLightCount);
-	LightCollection<SpotLight> spotLightCollection1 = spLightBuilder1.addLight(spotLights[0])
-	                                                      .addLight(spotLights[1])
-	                                                      .addLight(spotLights[2])
-	                                                      .addLight(spotLights[3])
-	                                                      .addLight(spotLights[4])
-	                                                      .build();
+	LightCollection<SpotLight> spotLightCollection1 = spLightBuilder1.addFromArray(spotLights, spotLightCount).build();
+	LightCollectionBuilder<PointLight> ptLightBuilder1(pointLightCount);
+	LightCollection<PointLight> pointLightCollection1 = ptLightBuilder1.addFromArray(pointLights, pointLightCount).build();
+	/*
+	 *Otra forma de agregar las luces
+	 *	LightCollection<SpotLight> spotLightCollection1 = spLightBuilder1.addLight(spotLights[0])
+	 *	                                                      .addLight(spotLights[1])
+	 *	                                                      .addLight(spotLights[2])
+	 *	                                                      .addLight(spotLights[3])
+	 *	                                                      .addLight(spotLights[4])
+	 *	                                                      .build();
+	 *
+	 * Idealmente sería para hacer algo como:
+	 * ptLightBuilder1.addLight(pointLights[0])
+	 *					.addLight(PointLight(0.0f, 1.0f, 1.0f,
+	 *										 0.0f, 1.0f,
+	 *										 -6.0f, 1.5f, -15.5f,
+	 *										 0.3f, 0.2f, 0.1f))
+	 *					.build();
+	 * Para no tener que crear un arreglo adicional.
+	 */
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
 	       uniformSpecularIntensity = 0, uniformShininess = 0;
@@ -451,10 +464,11 @@ int main()
 
 		// Llamadas para encender o apagar las luces.
 		spotLightCollection1.toggleLight(0, mainWindow.getLinterna());
-		spotLightCollection1.toggleLight(4, mainWindow.getLampara());
+		pointLightCollection1.toggleLight(1, mainWindow.getLampara());
 
 		// informaci?n al shader de fuentes de iluminaci?n
 		shaderList[0].SetDirectionalLight(&mainLight);
+		shaderList[0].SetPointLights(pointLightCollection1.getLightArray(), pointLightCollection1.getCurrentCount());
 		shaderList[0].SetSpotLights(spotLightCollection1.getLightArray(), spotLightCollection1.getCurrentCount());
 
 		glm::mat4 model(1.0);
@@ -553,8 +567,8 @@ int main()
 		Faro_M.RenderModel();
 		model = modelaux;
 		model = glm::translate(model, {-6.2, 16.9, 0.0f});
-		spotLightCollection1[4].SetPos(model[3]);
-
+		pointLightCollection1[1].SetPos(model[3]);
+		
 		model = handler.setMatrix(glm::mat4(1.0f))
 		            .translate(5.0f, 5.0, 5.0)
 		            .scale(2.0f, 2.0f, 2.0f)
