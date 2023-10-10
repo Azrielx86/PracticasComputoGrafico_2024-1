@@ -13,11 +13,6 @@ TabWidth: "4"
 UseTab: ForIndentation
 SpaceAfterTemplateKeyword: "true"
 ColumnLimit: 0
-AlignConsecutiveAssignments:
-  Enabled: true
-  AcrossEmptyLines: false
-AlignConsecutiveDeclarations:
-  Enabled: true
 AlignConsecutiveMacros:
   Enabled: true
 AlignEscapedNewlines: Right

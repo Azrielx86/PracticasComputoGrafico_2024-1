@@ -1,5 +1,6 @@
 ﻿#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Weverything"
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
 #pragma ide diagnostic ignored "UnusedValue"
@@ -13,8 +14,8 @@ Pr?ctica 7: Iluminaci?n 1
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <cmath>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 #include <glew.h>
 #include <glfw3.h>
@@ -36,11 +37,11 @@ Pr?ctica 7: Iluminaci?n 1
 // para iluminaci?n
 #include "CommonValues.h"
 #include "DirectionalLight.h"
+#include "LightCollection.h"
 #include "Material.h"
+#include "ModelMatrix.h"
 #include "PointLight.h"
 #include "SpotLight.h"
-#include "ModelMatrix.h"
-#include "LightCollection.h"
 
 const float toRadians = 3.14159265f / 180.0f;
 
@@ -52,7 +53,7 @@ enum
 {
 	DADO_8F
 };
-std::unordered_map<int, Mesh*> meshUoMap;
+std::unordered_map<int, Mesh *> meshUoMap;
 
 Camera camera;
 
@@ -267,7 +268,7 @@ void CrearDadoOchoCaras()
 	};
 
 	// clang-format on
-	Mesh* dado = new Mesh();
+	Mesh *dado = new Mesh();
 	dado->CreateMesh(dado_vtx, dado_idx, 192, 36);
 	calcAverageNormals(dado_idx, 24, dado_vtx, 192, 8, 5);
 	meshUoMap[DADO_8F] = dado;
@@ -373,21 +374,22 @@ int main()
 	spotLightCount++;
 
 	// Luz faro
-	spotLights[4] = SpotLight(1.0f, 1.0f, 1.0f,
+	spotLights[4] = SpotLight(0.5f, 1.0f, 1.0f,
 	                          1.0f, 2.0f,
 	                          0.0f, 0.0f, 0.0f,
 	                          0.0f, -5.0f, 0.0f,
 	                          1.0f, 0.1f, 0.0f,
 	                          30.0f);
 	spotLightCount++;
-	
+
 	// ========================================= CREACION DE LOS ARREGLOS DE LUCES =============================================
 	LightCollectionBuilder<SpotLight> lb1(spotLightCount);
-	auto lights1 = lb1.addLight(spotLights[0])
-	    .addLight(spotLights[2])
-	    .addLight(spotLights[3])
-	    .addLight(spotLights[4])
-	    .build();
+	LightColletction<SpotLight> spotLights1 = lb1.addLight(spotLights[0])
+	                                               .addLight(spotLights[1])
+	                                               .addLight(spotLights[2])
+	                                               .addLight(spotLights[3])
+	                                               .addLight(spotLights[4])
+	                                               .build();
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
 	       uniformSpecularIntensity = 0, uniformShininess = 0;
@@ -429,23 +431,13 @@ int main()
 		// sirve para que en tiempo de ejecuci?n (dentro del while) se cambien propiedades de la luz
 		glm::vec3 lowerLight = camera.getCameraPosition();
 		lowerLight.y -= 0.3f;
-		spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
+		//				spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
+		spotLights1[0].SetFlash(lowerLight, camera.getCameraDirection());
+		spotLights1.toggleLight(0, mainWindow.getLinterna());
 
 		// informaci?n al shader de fuentes de iluminaci?n
 		shaderList[0].SetDirectionalLight(&mainLight);
-//		shaderList[0].SetPointLights(pointLights, pointLightCount);
-//
-//		if (mainWindow.getLinterna())
-//			shaderList[0].SetSpotLights(spotLights, spotLightCount);
-//		else
-//			shaderList[0].SetSpotLights(spotLights, spotLightCount - 1);
-
-		shaderList[0].SetSpotLights(lights1->getLightArray(), lights1->getCurrentCount());
-		if(mainWindow.getLinterna()){
-			lights1->toggleLight(0);
-		}
-		
-		
+		shaderList[0].SetSpotLights(spotLights1.getLightArray(), spotLights1.getCurrentCount());
 
 		glm::mat4 model(1.0);
 		glm::mat4 modelaux(1.0);
@@ -476,7 +468,8 @@ int main()
 		glm::vec3 carLightPos = model[3];
 		carLightPos.x += 2.5f;
 		carLightPos.z += 3.0f;
-		spotLights[3].SetPos(carLightPos);
+		//		spotLights[3].SetPos(carLightPos);
+		spotLights1[3].SetPos(carLightPos);
 
 		// Llanta delantera izquierda
 		model = modelaux;
@@ -516,7 +509,8 @@ int main()
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f + mainWindow.getMueveHelicopteroX(), 0.0f + mainWindow.getMueveHelicopteroY(), 6.0));
 		// luz
-		spotLights[2].SetPos(model[3]);
+		spotLights1[2].SetPos(model[3]);
+		//		spotLights[2].SetPos(model[3]);
 		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -532,12 +526,13 @@ int main()
 		Faro_M.RenderModel();
 		model = modelaux;
 		model = glm::translate(model, {-6.2, 16.9, 0.0f});
-		spotLights[4].SetPos(model[3]);
+//		spotLights[4].SetPos(model[3]);
+		spotLights1[4].SetPos(model[3]);
 
 		model = handler.setMatrix(glm::mat4(1.0f))
-			.translate(5.0f, 5.0, 5.0)
-			.scale(2.0f, 2.0f, 2.0f)
-			.getMatrix();
+		            .translate(5.0f, 5.0, 5.0)
+		            .scale(2.0f, 2.0f, 2.0f)
+		            .getMatrix();
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)); // TODO : Meter esta l�nea en ModelMatrix.cpp
 		dado8fTexture.UseTexture();
 		meshUoMap.at(DADO_8F)->RenderMesh();
