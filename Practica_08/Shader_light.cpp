@@ -1,5 +1,7 @@
 #include "Shader_light.h"
 
+#include <cstring>
+
 Shader::Shader()
 {
 	shaderID = 0;
@@ -10,27 +12,28 @@ Shader::Shader()
 	spotLightCount = 0;
 }
 
-void Shader::CreateFromString(const char* vertexCode, const char* fragmentCode)
+void Shader::CreateFromString(const char *vertexCode, const char *fragmentCode)
 {
 	CompileShader(vertexCode, fragmentCode);
 }
 
-void Shader::CreateFromFiles(const char* vertexLocation, const char* fragmentLocation)
+void Shader::CreateFromFiles(const char *vertexLocation, const char *fragmentLocation)
 {
 	std::string vertexString = ReadFile(vertexLocation);
 	std::string fragmentString = ReadFile(fragmentLocation);
-	const char* vertexCode = vertexString.c_str();
-	const char* fragmentCode = fragmentString.c_str();
+	const char *vertexCode = vertexString.c_str();
+	const char *fragmentCode = fragmentString.c_str();
 
 	CompileShader(vertexCode, fragmentCode);
 }
 
-std::string Shader::ReadFile(const char* fileLocation)
+std::string Shader::ReadFile(const char *fileLocation)
 {
 	std::string content;
 	std::ifstream fileStream(fileLocation, std::ios::in);
 
-	if (!fileStream.is_open()) {
+	if (!fileStream.is_open())
+	{
 		printf("Failed to read %s! File doesn't exist.", fileLocation);
 		return "";
 	}
@@ -46,7 +49,7 @@ std::string Shader::ReadFile(const char* fileLocation)
 	return content;
 }
 
-void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
+void Shader::CompileShader(const char *vertexCode, const char *fragmentCode)
 {
 	shaderID = glCreateProgram();
 
@@ -60,7 +63,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 	AddShader(shaderID, fragmentCode, GL_FRAGMENT_SHADER);
 
 	GLint result = 0;
-	GLchar eLog[1024] = { 0 };
+	GLchar eLog[1024] = {0};
 
 	glLinkProgram(shaderID);
 	glGetProgramiv(shaderID, GL_LINK_STATUS, &result);
@@ -96,7 +99,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 
 	for (size_t i = 0; i < MAX_POINT_LIGHTS; i++)
 	{
-		char locBuff[100] = { '\0' };
+		char locBuff[100] = {'\0'};
 
 		snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.color", i);
 		uniformPointLight[i].uniformcolor = glGetUniformLocation(shaderID, locBuff);
@@ -124,7 +127,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 
 	for (size_t i = 0; i < MAX_SPOT_LIGHTS; i++)
 	{
-		char locBuff[100] = { '\0' };
+		char locBuff[100] = {'\0'};
 
 		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.color", i);
 		uniformSpotLight[i].uniformColour = glGetUniformLocation(shaderID, locBuff);
@@ -153,7 +156,6 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].edge", i);
 		uniformSpotLight[i].uniformEdge = glGetUniformLocation(shaderID, locBuff);
 	}
-
 }
 
 GLuint Shader::GetProjectionLocation()
@@ -201,13 +203,13 @@ GLuint Shader::getColorLocation()
 {
 	return uniformColor;
 }
-void Shader::SetDirectionalLight(DirectionalLight * dLight)
+void Shader::SetDirectionalLight(DirectionalLight *dLight)
 {
 	dLight->UseLight(uniformDirectionalLight.uniformAmbientIntensity, uniformDirectionalLight.uniformcolor,
-		uniformDirectionalLight.uniformDiffuseIntensity, uniformDirectionalLight.uniformDirection);
+	                 uniformDirectionalLight.uniformDiffuseIntensity, uniformDirectionalLight.uniformDirection);
 }
 
-void Shader::SetPointLights(PointLight * pLight, unsigned int lightCount)
+void Shader::SetPointLights(PointLight *pLight, unsigned int lightCount)
 {
 	if (lightCount > MAX_POINT_LIGHTS) lightCount = MAX_POINT_LIGHTS;
 
@@ -216,12 +218,12 @@ void Shader::SetPointLights(PointLight * pLight, unsigned int lightCount)
 	for (size_t i = 0; i < lightCount; i++)
 	{
 		pLight[i].UseLight(uniformPointLight[i].uniformAmbientIntensity, uniformPointLight[i].uniformcolor,
-			uniformPointLight[i].uniformDiffuseIntensity, uniformPointLight[i].uniformPosition,
-			uniformPointLight[i].uniformConstant, uniformPointLight[i].uniformLinear, uniformPointLight[i].uniformExponent);
+		                   uniformPointLight[i].uniformDiffuseIntensity, uniformPointLight[i].uniformPosition,
+		                   uniformPointLight[i].uniformConstant, uniformPointLight[i].uniformLinear, uniformPointLight[i].uniformExponent);
 	}
 }
 
-void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount)
+void Shader::SetSpotLights(SpotLight *sLight, unsigned int lightCount)
 {
 	if (lightCount > MAX_SPOT_LIGHTS) lightCount = MAX_SPOT_LIGHTS;
 
@@ -230,9 +232,9 @@ void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount)
 	for (size_t i = 0; i < lightCount; i++)
 	{
 		sLight[i].UseLight(uniformSpotLight[i].uniformAmbientIntensity, uniformSpotLight[i].uniformColour,
-			uniformSpotLight[i].uniformDiffuseIntensity, uniformSpotLight[i].uniformPosition, uniformSpotLight[i].uniformDirection,
-			uniformSpotLight[i].uniformConstant, uniformSpotLight[i].uniformLinear, uniformSpotLight[i].uniformExponent,
-			uniformSpotLight[i].uniformEdge);
+		                   uniformSpotLight[i].uniformDiffuseIntensity, uniformSpotLight[i].uniformPosition, uniformSpotLight[i].uniformDirection,
+		                   uniformSpotLight[i].uniformConstant, uniformSpotLight[i].uniformLinear, uniformSpotLight[i].uniformExponent,
+		                   uniformSpotLight[i].uniformEdge);
 	}
 }
 
@@ -253,15 +255,13 @@ void Shader::ClearShader()
 	uniformProjection = 0;
 	uniformColor = 0;
 	uniformView = 0;
-
 }
 
-
-void Shader::AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType)
+void Shader::AddShader(GLuint theProgram, const char *shaderCode, GLenum shaderType)
 {
 	GLuint theShader = glCreateShader(shaderType);
 
-	const GLchar* theCode[1];
+	const GLchar *theCode[1];
 	theCode[0] = shaderCode;
 
 	GLint codeLength[1];
@@ -271,7 +271,7 @@ void Shader::AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderT
 	glCompileShader(theShader);
 
 	GLint result = 0;
-	GLchar eLog[1024] = { 0 };
+	GLchar eLog[1024] = {0};
 
 	glGetShaderiv(theShader, GL_COMPILE_STATUS, &result);
 	if (!result)

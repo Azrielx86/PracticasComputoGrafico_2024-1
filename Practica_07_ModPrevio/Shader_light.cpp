@@ -1,4 +1,5 @@
 #include "Shader_light.h"
+#include <cstring>
 
 Shader::Shader()
 {

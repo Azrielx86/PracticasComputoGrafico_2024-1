@@ -37,7 +37,7 @@ int Window::Initialise()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 	// CREAR VENTANA
-	mainWindow = glfwCreateWindow(width, height, "Practica 07: Iluminacion 1", NULL, NULL);
+	mainWindow = glfwCreateWindow(width, height, "Practica 08: Iluminacion 2", NULL, NULL);
 
 	if (!mainWindow)
 	{
@@ -130,14 +130,14 @@ void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, in
 
 	if (key == GLFW_KEY_UP)
 	{
-		theWindow->posVehiculo += 0.2f;
-		theWindow->rotaRuedas += 25.0f;
+		theWindow->posVehiculo -= 0.9f;
+		theWindow->rotaRuedas -= 25.0f;
 	}
 
 	if (key == GLFW_KEY_DOWN)
 	{
-		theWindow->posVehiculo -= 0.2f;
-		theWindow->rotaRuedas -= 25.0f;
+		theWindow->posVehiculo += 0.9f;
+		theWindow->rotaRuedas += 25.0f;
 	}
 
 	if (key == GLFW_KEY_N)

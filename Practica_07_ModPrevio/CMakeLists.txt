@@ -15,7 +15,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # PROBLEMAS DE RENDIMIENTO DE ASSIMP
 # https://gamedev.stackexchange.com/questions/63498/assimp-in-my-program-is-much-slower-to-import-than-assimp-view-program
-# Para evitar las largas cargas al inicio del programa, es necesario compilar con la configuración RELEASE
+# Para evitar las largas cargas al inicio del programa, es necesario compilar con la configuraciï¿½n RELEASE
 
 # Para compilar con Clang
 # Compilador: C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\Llvm\bin\clang.exe
@@ -26,12 +26,12 @@ if (OpenGL_FOUND)
     message(STATUS "OpenGL Found")
 endif ()
 
-find_package(GLEW CONFIG REQUIRED)
+find_package(GLEW REQUIRED)
 if (GLEW_FOUND)
     message(STATUS "GLEW Found.")
 endif ()
 
-find_package(glfw3 CONFIG REQUIRED)
+find_package(glfw3 REQUIRED)
 if (glfw3_FOUND)
     message(STATUS "GLFW Found.")
 endif ()
@@ -42,9 +42,9 @@ if (assimp_FOUND)
 endif ()
 
 # vcpkg install imgui[glfw-binding,opengl3-binding]
-find_package(imgui CONFIG REQUIRED)
+find_package(imgui REQUIRED)
 if (imgui_FOUND)
-    message(STATUS "InGui Found.")
+    message(STATUS "ImGui Found.")
 endif ()
 
 if (NOT UNIX)
@@ -56,6 +56,7 @@ else ()
     include_directories(/usr/include/GLFW)
     include_directories(/usr/include/GL)
     include_directories(/usr/include/glm)
+    include_directories(/usr/include/stb)
 endif ()
 
 add_executable(Previo_05 main.cpp

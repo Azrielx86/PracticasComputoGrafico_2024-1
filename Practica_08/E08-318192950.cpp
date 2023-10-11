@@ -317,13 +317,13 @@ int main()
 	Faro_M.LoadModel("Models/faro.obj");
 
 	car = Model();
-	car.LoadModel("Models/BMW_no_hood.obj");
+	car.LoadModel("Models/BMW_base.obj");
 
 	hood = Model();
-	hood.LoadModel("Models/BMW_Hood_logo.obj");
+	hood.LoadModel("Models/BMW_hood.obj");
 
 	wheel = Model();
-	wheel.LoadModel("Models/BMW_Wheel.obj");
+	wheel.LoadModel("Models/BMW_wheel.obj");
 
 	std::vector<std::string> skyboxFaces;
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -350,11 +350,11 @@ int main()
 	                            -6.0f, 1.5f, -5.5f,
 	                            0.3f, 0.2f, 0.1f);
 	pointLightCount++;
-	
+
 	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f,
 	                            0.0f, 1.0f,
 	                            -6.0f, 1.5f, -5.5f,
-	                            0.3f, 0.01f, 0.001f);
+	                            0.3f, 0.05f, 0.001f);
 	pointLightCount++;
 
 	unsigned int spotLightCount = 0;
@@ -394,7 +394,6 @@ int main()
 	                          1.0f, 0.01f, 0.001f,
 	                          25.0f);
 	spotLightCount++;
-
 
 	// ========================================= CREACION DE LOS ARREGLOS DE LUCES =============================================
 	LightCollectionBuilder<SpotLight> spLightBuilder1(spotLightCount);
@@ -486,66 +485,6 @@ int main()
 
 		meshList[2]->RenderMesh();
 
-		//------------ INICIA DIBUJO DEL VEHICULO -------------------
-		model = handler.setMatrix(glm::mat4(1.0))
-		            .translate(mainWindow.getPosVehiculo(), -1.0f, 0.0f)
-		            .rotateY(180.0f)
-		            .saveActualState(modelaux) // modelaux = model;
-		            .getMatrix();
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		car.RenderModel();
-
-		// Luz vehiculo
-		model = modelaux;
-		glm::vec3 carLightPos = model[3];
-		carLightPos.x += 1.5f;
-		carLightPos.z += 1.0f;
-		spotLightCollection1[3].SetPos(carLightPos);
-
-		// Cofre
-		model = handler.setMatrix(modelaux) // model = modelaux;
-		            .translate(1.37413, 1.57, 0)
-		            .rotateZ(mainWindow.getAnguloCofre())
-		            .getMatrix();
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		logofiTexture.UseTexture();
-		hood.RenderModel();
-
-		wheelTexture.UseTexture();
-		// Rueda derecha trasera
-		model = handler.setMatrix(modelaux)
-		            .translate(-2.92984, 0.52, 1.28414)
-		            .rotateZ(mainWindow.getRotaRuedas())
-		            .getMatrix();
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		wheel.RenderModel();
-
-		// Rueda izquierda trasera
-		model = handler.setMatrix(modelaux)
-		            .translate(-2.92984, 0.52, -1.28414)
-		            .rotateZ(mainWindow.getRotaRuedas())
-		            .rotateX(-180)
-		            .getMatrix();
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		wheel.RenderModel();
-
-		// Rueda derecha delantera
-		model = handler.setMatrix(modelaux)
-		            .translate(2.6089, 0.52, 1.28414)
-		            .rotateZ(mainWindow.getRotaRuedas())
-		            .getMatrix();
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		wheel.RenderModel();
-
-		// Rueda izquierda delantera
-		model = handler.setMatrix(modelaux)
-		            .translate(2.6089, 0.52, -1.28414)
-		            .rotateZ(mainWindow.getRotaRuedas())
-		            .rotateX(-180)
-		            .getMatrix();
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		wheel.RenderModel();
-
 		// Helicoptero
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f + mainWindow.getMueveHelicopteroX(), 0.0f + mainWindow.getMueveHelicopteroY(), 6.0));
@@ -568,7 +507,7 @@ int main()
 		model = modelaux;
 		model = glm::translate(model, {-6.2, 16.9, 0.0f});
 		pointLightCollection1[1].SetPos(model[3]);
-		
+
 		model = handler.setMatrix(glm::mat4(1.0f))
 		            .translate(5.0f, 5.0, 5.0)
 		            .scale(2.0f, 2.0f, 2.0f)
@@ -576,6 +515,75 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)); // TODO : Meter esta l�nea en ModelMatrix.cpp
 		dado8fTexture.UseTexture();
 		meshUnorderedMap.at(DADO_8F)->RenderMesh();
+
+		//------------ INICIA DIBUJO DEL VEHICULO -------------------
+		model = handler.setMatrix(glm::mat4(1.0))
+		            .translate(mainWindow.getPosVehiculo(), -1.0, 0.0f)
+		            .rotateY(180.0f)
+		            .saveActualState(modelaux) // modelaux = model;
+		            .scale(0.4, 0.4, 0.4)
+		            .getMatrix();
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		car.RenderModel();
+		glDisable(GL_BLEND);
+
+		// Luz vehiculo
+		model = modelaux;
+		glm::vec3 carLightPos = model[3];
+		carLightPos.x += -7.7644;
+		carLightPos.y += 1.8;
+		carLightPos.z += -1.84289;
+		spotLightCollection1[3].SetPos(carLightPos);
+
+		// Cofre
+		model = handler.setMatrix(modelaux) // model = modelaux;
+		            .translate(3.23728, 2.75007, 0)
+		            .rotateZ(mainWindow.getAnguloCofre())
+		            .scale(0.4, 0.4, 0.4)
+		            .getMatrix();
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		//		logofiTexture.UseTexture();
+		hood.RenderModel();
+		
+		// Rueda derecha trasera
+		model = handler.setMatrix(modelaux)
+		            .translate(-3.65932, 1.0601, 2.52948)
+		            .rotateZ(mainWindow.getRotaRuedas())
+		            .scale(0.4, 0.4, 0.4)
+		            .getMatrix();
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		wheel.RenderModel();
+
+		// Rueda izquierda trasera
+		model = handler.setMatrix(modelaux)
+		            .translate(-3.65932, 1.0601, -2.52948)
+		            .rotateZ(mainWindow.getRotaRuedas())
+		            .rotateX(-180)
+		            .scale(0.4, 0.4, 0.4)
+		            .getMatrix();
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		wheel.RenderModel();
+
+		// Rueda derecha delantera
+		model = handler.setMatrix(modelaux)
+		            .translate(5.19296, 1.05874, 2.52948)
+		            .rotateZ(mainWindow.getRotaRuedas())
+		            .scale(0.4, 0.4, 0.4)
+		            .getMatrix();
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		wheel.RenderModel();
+
+		// Rueda izquierda delantera
+		model = handler.setMatrix(modelaux)
+		            .translate(5.19296, 1.05874, -2.52948)
+		            .rotateZ(mainWindow.getRotaRuedas())
+		            .rotateX(-180)
+		            .scale(0.4, 0.4, 0.4)
+		            .getMatrix();
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		wheel.RenderModel();
 
 		// Agave ?qu? sucede si lo renderizan antes del coche y el helic?ptero?
 		model = glm::mat4(1.0);
