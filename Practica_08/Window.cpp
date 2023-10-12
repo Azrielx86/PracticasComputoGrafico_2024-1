@@ -132,12 +132,14 @@ void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, in
 	{
 		theWindow->posVehiculo -= 0.9f;
 		theWindow->rotaRuedas -= 25.0f;
+		theWindow->currentLight = Window::CAR_LIGHT::FRONT_LIGHT;
 	}
 
 	if (key == GLFW_KEY_DOWN)
 	{
 		theWindow->posVehiculo += 0.9f;
 		theWindow->rotaRuedas += 25.0f;
+		theWindow->currentLight = Window::CAR_LIGHT::BACK_LIGHT;
 	}
 
 	if (key == GLFW_KEY_N)
@@ -151,6 +153,12 @@ void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, in
 		if (theWindow->anguloCofre > 0)
 			theWindow->anguloCofre -= 3.0f;
 	}
+
+	if (key == GLFW_KEY_O && action == GLFW_PRESS)
+		theWindow->keyHelicoptero = true;
+	
+	if (key == GLFW_KEY_O && action == GLFW_RELEASE)
+		theWindow->keyHelicoptero = false;
 
 	// Liberar mouse
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
@@ -213,4 +221,19 @@ Window::~Window()
 {
 	glfwDestroyWindow(mainWindow);
 	glfwTerminate();
+}
+
+Window::CAR_LIGHT Window::getCurrentCarLight() const
+{
+	return currentLight;
+}
+
+int Window::getTiempoHelicoptero() const
+{
+	return tiempoHelicoptero;
+}
+
+void Window::setTiempoHelicoptero(int th)
+{
+	Window::tiempoHelicoptero = th;
 }

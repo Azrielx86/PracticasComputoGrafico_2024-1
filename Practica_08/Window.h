@@ -6,6 +6,12 @@
 class Window
 {
   public:
+	enum CAR_LIGHT
+	{
+		FRONT_LIGHT,
+		BACK_LIGHT
+	};
+
 	Window();
 	Window(GLint windowWidth, GLint windowHeight);
 	int Initialise();
@@ -13,9 +19,9 @@ class Window
 	GLfloat getBufferHeight() { return bufferHeight; }
 	GLfloat getXChange();
 	GLfloat getYChange();
-	GLfloat getmuevex() { return muevex; }
-	GLfloat getMueveHelicopteroX() const { return mueveHelicopteroX; }
-	GLfloat getMueveHelicopteroY() const { return mueveHelicopteroY; }
+	[[nodiscard]] GLfloat getmuevex() const { return muevex; }
+	[[nodiscard]] GLfloat getMueveHelicopteroX() const { return mueveHelicopteroX; }
+	[[nodiscard]] GLfloat getMueveHelicopteroY() const { return mueveHelicopteroY; }
 	bool getShouldClose()
 	{
 		return glfwWindowShouldClose(mainWindow);
@@ -23,12 +29,16 @@ class Window
 	bool *getsKeys() { return keys; }
 	void swapBuffers() { return glfwSwapBuffers(mainWindow); }
 	GLFWwindow *getWindowPointer() { return this->mainWindow; }
-	bool getLinterna() const { return this->linternaCamara; }
-	bool getLampara() const { return this->lampara; }
-	GLfloat getPosVehiculo() const;
-	GLfloat getRotaRuedas() const;
-	GLfloat getAnguloCofre() const;
-
+	[[nodiscard]] bool getLinterna() const { return this->linternaCamara; }
+	[[nodiscard]] bool getLampara() const { return this->lampara; }
+	[[nodiscard]] GLfloat getPosVehiculo() const;
+	[[nodiscard]] GLfloat getRotaRuedas() const;
+	[[nodiscard]] GLfloat getAnguloCofre() const;
+	[[nodiscard]] CAR_LIGHT getCurrentCarLight() const;
+	[[nodiscard]] int getTiempoHelicoptero() const;
+	void setTiempoHelicoptero(int th);
+	[[nodiscard]] bool getToggleLuzHelicoptero() const { return toggleLuzHelicoptero; };
+	[[nodiscard]] bool getKeyHelicoptero() const { return keyHelicoptero; }
 	~Window();
 
   private:
@@ -47,6 +57,10 @@ class Window
 	GLfloat posVehiculo = 0.0f;
 	GLfloat anguloCofre = 0.0f;
 	GLfloat rotaRuedas = 0.0f;
+	CAR_LIGHT currentLight;
+	int tiempoHelicoptero;
+	bool toggleLuzHelicoptero = true;
+	bool keyHelicoptero = false;
 	bool linternaCamara = true, lampara = true;
 	bool toggleMouse = true;
 	void mouseMode()
