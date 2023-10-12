@@ -1,7 +1,19 @@
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma ide diagnostic ignored "readability-redundant-string-init"
+#pragma ide diagnostic ignored "cppcoreguidelines-pro-type-member-init"
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic ignored "modernize-use-nullptr"
+#pragma ide diagnostic ignored "readability-convert-member-functions-to-static"
+#pragma ide diagnostic ignored "cppcoreguidelines-narrowing-conversions"
+#pragma clang diagnostic ignored "-Wformat"
+#pragma ide diagnostic ignored "readability-make-member-function-const"
 #include "Shader_light.h"
 
 #include <cstring>
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedValue"
 Shader::Shader()
 {
 	shaderID = 0;
@@ -11,6 +23,7 @@ Shader::Shader()
 	pointLightCount = 0;
 	spotLightCount = 0;
 }
+#pragma clang diagnostic pop
 
 void Shader::CreateFromString(const char *vertexCode, const char *fragmentCode)
 {
@@ -132,28 +145,28 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode)
 		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.color", i);
 		uniformSpotLight[i].uniformColour = glGetUniformLocation(shaderID, locBuff);
 
-		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.ambientIntensity", i);
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%zu].base.base.ambientIntensity", i);
 		uniformSpotLight[i].uniformAmbientIntensity = glGetUniformLocation(shaderID, locBuff);
 
-		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.diffuseIntensity", i);
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%zu].base.base.diffuseIntensity", i);
 		uniformSpotLight[i].uniformDiffuseIntensity = glGetUniformLocation(shaderID, locBuff);
 
-		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.position", i);
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%zu].base.position", i);
 		uniformSpotLight[i].uniformPosition = glGetUniformLocation(shaderID, locBuff);
 
-		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.constant", i);
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%zu].base.constant", i);
 		uniformSpotLight[i].uniformConstant = glGetUniformLocation(shaderID, locBuff);
 
 		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.linear", i);
 		uniformSpotLight[i].uniformLinear = glGetUniformLocation(shaderID, locBuff);
 
-		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.exponent", i);
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%zu].base.exponent", i);
 		uniformSpotLight[i].uniformExponent = glGetUniformLocation(shaderID, locBuff);
 
-		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].direction", i);
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%zu].direction", i);
 		uniformSpotLight[i].uniformDirection = glGetUniformLocation(shaderID, locBuff);
 
-		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].edge", i);
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%zu].edge", i);
 		uniformSpotLight[i].uniformEdge = glGetUniformLocation(shaderID, locBuff);
 	}
 }
@@ -288,3 +301,5 @@ Shader::~Shader()
 {
 	ClearShader();
 }
+
+#pragma clang diagnostic pop

@@ -25,7 +25,7 @@ int Window::Initialise()
 	// Inicialización de GLFW
 	if (!glfwInit())
 	{
-		printf("Falló inicializar GLFW");
+		printf("Fallo inicializar GLFW");
 		glfwTerminate();
 		return 1;
 	}
@@ -59,7 +59,7 @@ int Window::Initialise()
 
 	if (glewInit() != GLEW_OK)
 	{
-		printf("Falló inicialización de GLEW");
+		printf("Fallo inicialización de GLEW");
 		glfwDestroyWindow(mainWindow);
 		glfwTerminate();
 		return 1;
@@ -118,6 +118,8 @@ void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, in
 
 	if (key == GLFW_KEY_L && action == GLFW_PRESS)
 		theWindow->lampara = !theWindow->lampara;
+	if (key == GLFW_KEY_F && action == GLFW_PRESS)
+		theWindow->farola = !theWindow->farola;
 
 	if (key == GLFW_KEY_H)
 		theWindow->mueveHelicopteroX -= 1.0f;
@@ -132,14 +134,14 @@ void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, in
 	{
 		theWindow->posVehiculo -= 0.9f;
 		theWindow->rotaRuedas -= 25.0f;
-		theWindow->currentLight = Window::CAR_LIGHT::FRONT_LIGHT;
+		theWindow->currentCarLight = Window::CAR_LIGHT::FRONT_LIGHT;
 	}
 
 	if (key == GLFW_KEY_DOWN)
 	{
 		theWindow->posVehiculo += 0.9f;
 		theWindow->rotaRuedas += 25.0f;
-		theWindow->currentLight = Window::CAR_LIGHT::BACK_LIGHT;
+		theWindow->currentCarLight = Window::CAR_LIGHT::BACK_LIGHT;
 	}
 
 	if (key == GLFW_KEY_N)
@@ -225,7 +227,7 @@ Window::~Window()
 
 Window::CAR_LIGHT Window::getCurrentCarLight() const
 {
-	return currentLight;
+	return currentCarLight;
 }
 
 int Window::getTiempoHelicoptero() const
@@ -236,4 +238,9 @@ int Window::getTiempoHelicoptero() const
 void Window::setTiempoHelicoptero(int th)
 {
 	Window::tiempoHelicoptero = th;
+}
+
+bool Window::getFarola() const
+{
+	return farola;
 }

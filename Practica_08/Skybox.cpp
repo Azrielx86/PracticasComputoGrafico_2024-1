@@ -22,7 +22,7 @@ Skybox::Skybox(std::vector<std::string> faceLocations)
 		unsigned char *texData = stbi_load(faceLocations[i].c_str(), &width, &height, &bitDepth, 0); //el tipo unsigned char es para un array de bytes de la imagen, obtener datos de la imagen 
 		if (!texData)
 		{
-			printf("No se encontró : %s", faceLocations[i].c_str());
+			printf("No se encontro : %s", faceLocations[i].c_str());
 			return;
 		}
 		//para cambiar el origen a la esquina inferior izquierda como necesitamos

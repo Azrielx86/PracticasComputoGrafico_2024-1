@@ -13,7 +13,9 @@ Pr?ctica 7: Iluminaci?n 1
 // para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
 
-#include <cmath>
+#ifndef __linux__
+	#include <cmath>
+#endif
 #include <unordered_map>
 #include <vector>
 
@@ -71,6 +73,7 @@ Model Llanta_M;
 Model Blackhawk_M;
 Model Faro_M;
 Model car, hood, wheel;
+Model Farola_M;
 
 Skybox skybox;
 
@@ -315,6 +318,8 @@ int main()
 	Blackhawk_M.LoadModel("Models/uh60.obj");
 	Faro_M = Model();
 	Faro_M.LoadModel("Models/faro.obj");
+	Farola_M = Model();
+	Farola_M.LoadModel("Models/Farola.obj");
 
 	car = Model();
 	car.LoadModel("Models/BMW_base.obj");
@@ -342,66 +347,71 @@ int main()
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
 	                             0.3f, 0.3f,
 	                             0.0f, 0.0f, -1.0f);
+	enum PLEnum1
+	{
+		FAROLA,
+		FARO
+	};
+
+	enum SPEnum1
+	{
+		CAMARA,
+		HELICOPTERO,
+		VEHICULO_AVANZA,
+		VEHICULO_RETROCEDE
+	};
+
 	// contador de luces puntuales
 	unsigned int pointLightCount = 0;
 	// Declaraci?n de primer luz puntual
-	pointLights[0] = PointLight(0.0f, 1.0f, 0.0f,
-	                            0.0f, 1.0f,
-	                            -6.0f, 1.5f, -5.5f,
-	                            0.3f, 0.2f, 0.1f);
+	pointLights[PLEnum1::FAROLA] = PointLight(255.0f / 255.0f, 174.0f / 255.0f, 0.0f,
+	                                          0.0f, 1.0f,
+	                                          -6.0f, 1.5f, -5.5f,
+	                                          0.3f, 0.12f, 0.00001f);
 	pointLightCount++;
 
-	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f,
-	                            0.0f, 1.0f,
-	                            -6.0f, 1.5f, -5.5f,
-	                            0.3f, 0.05f, 0.001f);
+	pointLights[PLEnum1::FARO] = PointLight(1.0f, 1.0f, 1.0f,
+	                                        0.0f, 1.0f,
+	                                        -6.0f, 1.5f, -5.5f,
+	                                        0.3f, 0.05f, 0.001f);
 	pointLightCount++;
 
 	unsigned int spotLightCount = 0;
 	// linternaCamara
-	spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f,
-	                          0.0f, 2.0f,
-	                          0.0f, 0.0f, 0.0f,
-	                          0.0f, -1.0f, 0.0f,
-	                          1.0f, 0.0f, 0.0f,
-	                          15.0f);
-	spotLightCount++;
-
-	// luz fija
-	spotLights[1] = SpotLight(0.6f, 0.0f, 0.8f,
-	                          1.0f, 2.0f,
-	                          0.0f, 4.0f, -14.0f,
-	                          0.0f, -5.0f, 0.0f,
-	                          1.0f, 0.0f, 0.0f,
-	                          15.0f);
+	spotLights[SPEnum1::CAMARA] = SpotLight(1.0f, 1.0f, 1.0f,
+	                                        0.0f, 2.0f,
+	                                        0.0f, 0.0f, 0.0f,
+	                                        0.0f, -1.0f, 0.0f,
+	                                        1.0f, 0.0f, 0.0f,
+	                                        15.0f);
 	spotLightCount++;
 
 	// se crean mas luces puntuales y spotlight
 	// Luz helicoptero
-	spotLights[2] = SpotLight(1.0f, 1.0f, 0.0f,
-	                          1.0f, 2.0f,
-	                          5.0f, 10.0f, 0.0f,
-	                          0.0f, -5.0f, 0.0f,
-	                          1.0f, 0.01f, 0.01f,
-	                          15.0f);
+	spotLights[SPEnum1::HELICOPTERO] = SpotLight(1.0f, 1.0f, 0.0f,
+	                                             1.0f, 2.0f,
+	                                             5.0f, 10.0f, 0.0f,
+	                                             0.0f, -5.0f, 0.0f,
+	                                             1.0f, 0.01f, 0.01f,
+	                                             15.0f);
 	spotLightCount++;
 
 	// Luz vehiculo
-	spotLights[3] = SpotLight(0.0f, 0.5f, 1.0f,
-	                          1.0f, 2.0f,
-	                          5.0f, 15.0f, 0.0f,
-	                          -5.0f, 0.0f, 0.0f,
-	                          1.0f, 0.01f, 0.001f,
-	                          25.0f);
+	spotLights[SPEnum1::VEHICULO_AVANZA] = SpotLight(0.0f, 0.5f, 1.0f,
+	                                                 1.0f, 2.0f,
+	                                                 5.0f, 15.0f, 0.0f,
+	                                                 -5.0f, 0.0f, 0.0f,
+	                                                 1.0f, 0.01f, 0.002f,
+	                                                 35.0f);
 	spotLightCount++;
 
 	// Luz vehiculo
-	spotLights[4] = SpotLight(1.0f, 1.0f, 1.0f,
-	                          1.0f, 2.0f,
-	                          5.0f, 15.0f, 0.0f,
-	                          5.0f, 0.0f, 0.0f,
-	                          1.0f, 0.01f, 0.001f,
-	                          25.0f);
+	spotLights[SPEnum1::VEHICULO_RETROCEDE] = SpotLight(1.0f, 1.0f, 1.0f,
+	                                                    1.0f, 2.0f,
+	                                                    5.0f, 15.0f, 0.0f,
+	                                                    5.0f, 0.0f, 0.0f,
+	                                                    1.0f, 0.01f, 0.005f,
+	                                                    35.0f);
 	spotLightCount++;
 
 	// ========================================= CREACION DE LOS ARREGLOS DE LUCES =============================================
@@ -468,20 +478,22 @@ int main()
 		// sirve para que en tiempo de ejecuci?n (dentro del while) se cambien propiedades de la luz
 		glm::vec3 lowerLight = camera.getCameraPosition();
 		lowerLight.y -= 0.3f;
-		spotLightCollection1[0].SetFlash(lowerLight, camera.getCameraDirection());
+		spotLightCollection1[SPEnum1::CAMARA].SetFlash(lowerLight, camera.getCameraDirection());
 
 		// Llamadas para encender o apagar las luces.
-		spotLightCollection1.toggleLight(0, mainWindow.getLinterna());
-		pointLightCollection1.toggleLight(1, mainWindow.getLampara());
+		spotLightCollection1.toggleLight(SPEnum1::CAMARA, mainWindow.getLinterna());
+		pointLightCollection1.toggleLight(PLEnum1::FARO, mainWindow.getLampara());
+		pointLightCollection1.toggleLight(PLEnum1::FAROLA, mainWindow.getFarola());
+		
 		if (mainWindow.getCurrentCarLight() == Window::CAR_LIGHT::FRONT_LIGHT)
 		{
-			spotLightCollection1.toggleLight(3, true);
-			spotLightCollection1.toggleLight(4, false);
+			spotLightCollection1.toggleLight(SPEnum1::VEHICULO_AVANZA, true);
+			spotLightCollection1.toggleLight(SPEnum1::VEHICULO_RETROCEDE, false);
 		}
 		else
 		{
-			spotLightCollection1.toggleLight(3, false);
-			spotLightCollection1.toggleLight(4, true);
+			spotLightCollection1.toggleLight(SPEnum1::VEHICULO_AVANZA, false);
+			spotLightCollection1.toggleLight(SPEnum1::VEHICULO_RETROCEDE, true);
 		}
 
 		/* Enviar tiempo actual
@@ -490,13 +502,13 @@ int main()
 		 */
 		if (mainWindow.getKeyHelicoptero())
 		{
-			mainWindow.setTiempoHelicoptero((int) glfwGetTime() + 5);
-			spotLightCollection1.toggleLight(2, false);
+			mainWindow.setTiempoHelicoptero((int) glfwGetTime() + 2);
+			spotLightCollection1.toggleLight(SPEnum1::HELICOPTERO, false);
 		}
-		
+
 		if (mainWindow.getTiempoHelicoptero() == (int) glfwGetTime())
 		{
-			spotLightCollection1.toggleLight(2, true);
+			spotLightCollection1.toggleLight(SPEnum1::HELICOPTERO, true);
 		}
 
 		// informaci?n al shader de fuentes de iluminaci?n
@@ -523,7 +535,7 @@ int main()
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f + mainWindow.getMueveHelicopteroX(), 0.0f + mainWindow.getMueveHelicopteroY(), 6.0));
 		// luz
-		spotLightCollection1[2].SetPos(model[3]);
+		spotLightCollection1[SPEnum1::HELICOPTERO].SetPos(model[3]);
 		//		spotLights[2].SetPos(model[3]);
 		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -540,7 +552,20 @@ int main()
 		Faro_M.RenderModel();
 		model = modelaux;
 		model = glm::translate(model, {-6.2, 16.9, 0.0f});
-		pointLightCollection1[1].SetPos(model[3]);
+		pointLightCollection1[PLEnum1::FARO].SetPos(model[3]);
+
+		// Farola
+		model = handler.setMatrix(glm::mat4(1.0f))
+		            .translate(5.0, -1.0, -25.0)
+		            .saveActualState(modelaux)
+		            .scale(0.5, 0.5, 0.5)
+		            .getMatrix();
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Farola_M.RenderModel();
+		model = handler.setMatrix(modelaux)
+		            .translate(0, 1.5, 0)
+		            .getMatrix();
+		pointLightCollection1[PLEnum1::FAROLA].SetPos(model[3]);
 
 		model = handler.setMatrix(glm::mat4(1.0f))
 		            .translate(5.0f, 5.0, 5.0)
@@ -569,14 +594,14 @@ int main()
 		carLightPos.x += -7.7644;
 		carLightPos.y += 1.8;
 		carLightPos.z += -1.84289;
-		spotLightCollection1[3].SetPos(carLightPos);
+		spotLightCollection1[SPEnum1::VEHICULO_AVANZA].SetPos(carLightPos);
 
 		model = modelaux;
 		carLightPos = model[3];
 		carLightPos.x += 7.7644;
 		carLightPos.y += 1.8;
 		carLightPos.z += -1.84289;
-		spotLightCollection1[4].SetPos(carLightPos);
+		spotLightCollection1[SPEnum1::VEHICULO_RETROCEDE].SetPos(carLightPos);
 
 		// Cofre
 		model = handler.setMatrix(modelaux) // model = modelaux;

@@ -57,11 +57,18 @@ class Window
 	GLfloat posVehiculo = 0.0f;
 	GLfloat anguloCofre = 0.0f;
 	GLfloat rotaRuedas = 0.0f;
-	CAR_LIGHT currentLight;
+	CAR_LIGHT currentCarLight = CAR_LIGHT::FRONT_LIGHT;
 	int tiempoHelicoptero;
 	bool toggleLuzHelicoptero = true;
 	bool keyHelicoptero = false;
-	bool linternaCamara = true, lampara = true;
+	bool linternaCamara = true;
+	bool lampara = true;
+	bool farola = true;
+
+  public:
+	bool getFarola() const;
+
+  private:
 	bool toggleMouse = true;
 	void mouseMode()
 	{
@@ -70,7 +77,7 @@ class Window
 		else
 			glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
-	bool mouseFirstMoved;
+	bool mouseFirstMoved = true;
 	static void ManejaTeclado(GLFWwindow *window, int key, int code, int action, int mode);
 	static void ManejaMouse(GLFWwindow *window, double xPos, double yPos);
 };

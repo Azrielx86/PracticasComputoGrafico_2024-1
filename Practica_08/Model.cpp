@@ -1,3 +1,7 @@
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma ide diagnostic ignored "modernize-use-equals-default"
 #include "Model.h"
 
 Model::Model()
@@ -11,7 +15,7 @@ void Model::LoadModel(const std::string &fileName)
 	const aiScene *scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
 	if (!scene)
 	{
-		printf("Falló en cargar el modelo: %s [%s]\n", fileName.c_str(), importer.GetErrorString());
+		printf("Fallo en cargar el modelo: %s [%s]\n", fileName.c_str(), importer.GetErrorString());
 		return;
 	}
 	LoadNode(scene->mRootNode, scene);
@@ -127,7 +131,7 @@ void Model::LoadMaterials(const aiScene *scene)
 				{
 					if (!TextureList[i]->LoadTextureA())
 					{
-						printf("Falló en cargar la Textura :%s\n", texPath.c_str());
+						printf("Fallo en cargar la Textura :%s\n", texPath.c_str());
 						delete TextureList[i];
 						TextureList[i] = nullptr;
 					}
@@ -136,7 +140,7 @@ void Model::LoadMaterials(const aiScene *scene)
 				{
 					if (!TextureList[i]->LoadTexture())
 					{
-						printf("Falló en cargar la Textura :%s\n", texPath.c_str());
+						printf("Fallo en cargar la Textura :%s\n", texPath.c_str());
 						delete TextureList[i];
 						TextureList[i] = nullptr;
 					}
@@ -150,3 +154,5 @@ void Model::LoadMaterials(const aiScene *scene)
 		}
 	}
 }
+
+#pragma clang diagnostic pop
