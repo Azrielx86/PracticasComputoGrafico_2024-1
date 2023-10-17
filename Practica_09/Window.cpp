@@ -114,53 +114,14 @@ void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, in
 	}
 
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
-		theWindow->linternaCamara = !theWindow->linternaCamara;
-
-	if (key == GLFW_KEY_L && action == GLFW_PRESS)
-		theWindow->lampara = !theWindow->lampara;
-	if (key == GLFW_KEY_F && action == GLFW_PRESS)
-		theWindow->farola = !theWindow->farola;
-
-	if (key == GLFW_KEY_H)
-		theWindow->mueveHelicopteroX -= 1.0f;
-	if (key == GLFW_KEY_K)
-		theWindow->mueveHelicopteroX += 1.0f;
-	if (key == GLFW_KEY_U)
-		theWindow->mueveHelicopteroY += 1.0f;
-	if (key == GLFW_KEY_J)
-		theWindow->mueveHelicopteroY -= 1.0f;
-
-	if (key == GLFW_KEY_UP)
-	{
-		theWindow->posVehiculo -= 0.9f;
-		theWindow->rotaRuedas -= 25.0f;
-		theWindow->currentCarLight = Window::CAR_LIGHT::FRONT_LIGHT;
-	}
-
-	if (key == GLFW_KEY_DOWN)
-	{
-		theWindow->posVehiculo += 0.9f;
-		theWindow->rotaRuedas += 25.0f;
-		theWindow->currentCarLight = Window::CAR_LIGHT::BACK_LIGHT;
-	}
-
-	if (key == GLFW_KEY_N)
-	{
-		if (theWindow->anguloCofre <= 45)
-			theWindow->anguloCofre += 3.0f;
-	}
-
-	if (key == GLFW_KEY_M)
-	{
-		if (theWindow->anguloCofre > 0)
-			theWindow->anguloCofre -= 3.0f;
-	}
-
-	if (key == GLFW_KEY_O && action == GLFW_PRESS)
-		theWindow->keyHelicoptero = true;
+		theWindow->startCoinAnimation = true;
+	if (key == GLFW_KEY_P && action == GLFW_RELEASE)
+		theWindow->startCoinAnimation = false;
 	
+	if (key == GLFW_KEY_O && action == GLFW_PRESS)
+		theWindow->resetAnimation = true;
 	if (key == GLFW_KEY_O && action == GLFW_RELEASE)
-		theWindow->keyHelicoptero = false;
+		theWindow->resetAnimation = false;
 
 	// Liberar mouse
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
@@ -204,16 +165,6 @@ void Window::ManejaMouse(GLFWwindow *window, double xPos, double yPos)
 	theWindow->lastY = yPos;
 }
 
-GLfloat Window::getPosVehiculo() const
-{
-	return posVehiculo;
-}
-
-GLfloat Window::getRotaRuedas() const
-{
-	return rotaRuedas;
-}
-
 GLfloat Window::getAnguloCofre() const
 {
 	return anguloCofre;
@@ -224,23 +175,11 @@ Window::~Window()
 	glfwDestroyWindow(mainWindow);
 	glfwTerminate();
 }
-
-Window::CAR_LIGHT Window::getCurrentCarLight() const
+bool Window::getStartCoinAnimation() const
 {
-	return currentCarLight;
+	return startCoinAnimation;
 }
-
-int Window::getTiempoHelicoptero() const
+bool Window::getResetAnimation() const
 {
-	return tiempoHelicoptero;
-}
-
-void Window::setTiempoHelicoptero(int th)
-{
-	Window::tiempoHelicoptero = th;
-}
-
-bool Window::getFarola() const
-{
-	return farola;
+	return resetAnimation;
 }

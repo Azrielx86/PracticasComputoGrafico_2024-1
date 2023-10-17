@@ -19,9 +19,6 @@ class Window
 	GLfloat getBufferHeight() { return bufferHeight; }
 	GLfloat getXChange();
 	GLfloat getYChange();
-	[[nodiscard]] GLfloat getmuevex() const { return muevex; }
-	[[nodiscard]] GLfloat getMueveHelicopteroX() const { return mueveHelicopteroX; }
-	[[nodiscard]] GLfloat getMueveHelicopteroY() const { return mueveHelicopteroY; }
 	bool getShouldClose()
 	{
 		return glfwWindowShouldClose(mainWindow);
@@ -29,16 +26,7 @@ class Window
 	bool *getsKeys() { return keys; }
 	void swapBuffers() { return glfwSwapBuffers(mainWindow); }
 	GLFWwindow *getWindowPointer() { return this->mainWindow; }
-	[[nodiscard]] bool getLinterna() const { return this->linternaCamara; }
-	[[nodiscard]] bool getLampara() const { return this->lampara; }
-	[[nodiscard]] GLfloat getPosVehiculo() const;
-	[[nodiscard]] GLfloat getRotaRuedas() const;
 	[[nodiscard]] GLfloat getAnguloCofre() const;
-	[[nodiscard]] CAR_LIGHT getCurrentCarLight() const;
-	[[nodiscard]] int getTiempoHelicoptero() const;
-	void setTiempoHelicoptero(int th);
-	[[nodiscard]] bool getToggleLuzHelicoptero() const { return toggleLuzHelicoptero; };
-	[[nodiscard]] bool getKeyHelicoptero() const { return keyHelicoptero; }
 	~Window();
 
   private:
@@ -52,21 +40,20 @@ class Window
 	GLfloat xChange;
 	GLfloat yChange;
 	GLfloat muevex;
-	GLfloat mueveHelicopteroX = 0.0f;
-	GLfloat mueveHelicopteroY = 10.0f;
 	GLfloat posVehiculo = 0.0f;
 	GLfloat anguloCofre = 0.0f;
 	GLfloat rotaRuedas = 0.0f;
 	CAR_LIGHT currentCarLight = CAR_LIGHT::FRONT_LIGHT;
 	int tiempoHelicoptero;
-	bool toggleLuzHelicoptero = true;
-	bool keyHelicoptero = false;
 	bool linternaCamara = true;
-	bool lampara = true;
-	bool farola = true;
+	bool startCoinAnimation = false;
+	bool resetAnimation = true;
 
   public:
-	bool getFarola() const;
+	bool getResetAnimation() const;
+
+  public:
+	bool getStartCoinAnimation() const;
 
   private:
 	bool toggleMouse = true;
