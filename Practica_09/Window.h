@@ -47,7 +47,7 @@ class Window
 	int tiempoHelicoptero;
 	bool linternaCamara = true;
 	bool startCoinAnimation = false;
-	bool resetAnimation = true;
+	bool resetAnimation = false;
 
   public:
 	bool getResetAnimation() const;

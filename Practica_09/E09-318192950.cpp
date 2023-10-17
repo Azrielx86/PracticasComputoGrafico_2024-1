@@ -54,7 +54,7 @@ float movCoche;
 float movOffset;
 float rotllanta;
 float rotllantaOffset;
-//bool avanza;
+// bool avanza;
 Window mainWindow;
 std::vector<Mesh *> meshList;
 std::vector<Shader> shaderList;
@@ -73,7 +73,8 @@ Model Blackhawk_M;
 Model Pinball;
 Model CristalPinball;
 Model Coin;
-Model Canica;
+Model Canica_1;
+Model Canica_2;
 
 Model car, hood, wheel;
 
@@ -268,8 +269,10 @@ int main()
     Pinball.LoadModel("Models/MaquinaPinball.obj");
     CristalPinball = Model();
     CristalPinball.LoadModel("Models/MaquinaCristal.obj");
-    Canica = Model();
-    Canica.LoadModel("Models/canica.obj");
+    Canica_1 = Model();
+    Canica_1.LoadModel("Models/canica.obj");
+    Canica_2 = Model();
+    Canica_2.LoadModel("Models/canica.obj");
 
     std::vector<std::string> skyboxFaces;
     skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -297,7 +300,7 @@ int main()
     unsigned int spotLightCount = 0;
     // linterna
     spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f,
-                              0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 10.0f);
+                              0.0f, -1.0f, 0.0f, 1.0f, 0.01f, 0.0001f, 20.0f);
     spotLightCount++;
 
     // luz fija
@@ -319,12 +322,16 @@ int main()
     movOffset = 0.8f;
     rotllanta = 0.0f;
     rotllantaOffset = 5.0f;
-//    avanza = true;
+    //    avanza = true;
 
-    float posMoneda = -4.33306;
-    float movMonedaOffset = 0.05f;
-    float posCanica = 1.20125;
+    float posMonedaX = -4.5;
+    float posMonedaY = -1.2;
+    float movMonedaOffset = 0.3f;
+    float posCanica_1 = 0;
+    float posCanica_2 = -0.15;
     float movCanicaOffset = 0.05f;
+    float rotaCanica = 0;
+    float rotaCanicaOffset = 5.0f;
 
     // Animacion de la moneda
     Animation coinAnimation;
@@ -333,32 +340,48 @@ int main()
             [](float) -> bool
             { return mainWindow.getStartCoinAnimation(); })
         .addCondition(
-            [&posMoneda, &movMonedaOffset](float dt) -> bool
+            [&posMonedaY, &movMonedaOffset](float dt) -> bool
             {
-                if (posMoneda < 0)
+                if (posMonedaY < 3.51984)
                 {
-                    posMoneda += movMonedaOffset * dt;
+                    posMonedaY += movMonedaOffset * dt;
+                    return false;
+                }
+                movMonedaOffset = 0.05f;
+                return true;
+            })
+        .addCondition(
+            [&posMonedaX, &movMonedaOffset](float dt) -> bool
+            {
+                if (posMonedaX < 0)
+                {
+                    posMonedaX += movMonedaOffset * dt;
                     return false;
                 }
                 return true;
             })
         .addCondition(
-            [&posCanica, &movCanicaOffset](float dt) -> bool
+            [&posCanica_1, &movCanicaOffset, &rotaCanica, &rotaCanicaOffset, &posCanica_2](float dt) -> bool
             {
-                if (posCanica < 1.45229)
+                if (posCanica_1 < 1.45229)
                 {
-                    posCanica += movCanicaOffset * deltaTime;
+                    posCanica_1 += movCanicaOffset * dt;
+                    posCanica_2 += movCanicaOffset * dt;
+                    rotaCanica += rotaCanicaOffset * dt;
                     return false;
                 }
                 return true;
             })
         .addCondition(
-            [&posMoneda, &posCanica](float) -> bool
+            [&posMonedaX, &posCanica_1, &posMonedaY, &movMonedaOffset, &posCanica_2](float) -> bool
             {
                 if (mainWindow.getResetAnimation())
                 {
-                    posMoneda = -4.33306;
-                    posCanica = 1.20125;
+                    posMonedaX = -4.5;
+                    posMonedaY = -1.2;
+                    posCanica_1 = 0;
+                    posCanica_2 = -0.15;
+                    movMonedaOffset = 0.3f;
                     return true;
                 }
                 return false;
@@ -464,16 +487,24 @@ int main()
         model = handler
                     .setMatrix(glm::mat4(1.0f))
                     // Posici?n inicial
-                    .translate(posMoneda, 3.51984, 0.238931)
+                    .translate(posMonedaX, posMonedaY, 0.238931)
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Coin.RenderModel();
 
         model = handler.setMatrix(glm::mat4(1.0f))
-                    .translate(-2.31758, 3.87085, posCanica)
+                    .translate(-2.31758, 3.87085, posCanica_1)
+                    .rotateX(rotaCanica) // Rotación al moverse
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        Canica.RenderModel();
+        Canica_1.RenderModel();
+
+        model = handler.setMatrix(glm::mat4(1.0f))
+                    .translate(-2.31758, 3.87085, posCanica_2)
+                    .rotateX(rotaCanica) // Rotación al moverse
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        Canica_2.RenderModel();
 
         model = handler.setMatrix(glm::mat4(1.0f))
                     .translate(0.0, -1.0, 0.0)
@@ -481,8 +512,9 @@ int main()
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Pinball.RenderModel();
 
+        // ======================================================== Vehiculo =======================================================================
         model = handler.setMatrix(glm::mat4(1.0))
-                    .translate(movCoche, -1.0, 0.0f)
+                    .translate(movCoche, -1.0, -15.0f)
                     .rotateY(180.0f)
                     .saveActualState(modelaux) // modelaux = model;
                     .scale(0.4, 0.4, 0.4)
