@@ -53,6 +53,9 @@ class Window
 	bool getResetAnimation() const;
 
   public:
+	/**
+	 * Tecla P 
+	 */
 	bool getStartCoinAnimation() const;
 
   private:

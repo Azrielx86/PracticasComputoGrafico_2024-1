@@ -78,6 +78,8 @@ add_executable(Practica08 E09-318192950.cpp
         ModelMatrix.cpp
         LightCollection.cpp
         LightCollection.h
+        Animation.cpp
+        Animation.h
 )
 
 message(STATUS "Copiando archivos de shader")
