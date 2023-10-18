@@ -66,9 +66,10 @@ Texture plainTexture;
 Texture pisoTexture;
 Texture AgaveTexture;
 
-Model Kitt_M;
 Model Llanta_M;
 Model Blackhawk_M;
+Model Blackhawk_HS_M;
+Model Blackhawk_HB_M;
 Model Pinball;
 Model CristalPinball;
 Model Coin;
@@ -245,13 +246,15 @@ int main()
     pisoTexture.LoadTextureA();
     AgaveTexture = Texture("Textures/Agave.tga");
     AgaveTexture.LoadTextureA();
-
-    Kitt_M = Model();
-    Kitt_M.LoadModel("Models/kitt_optimizado.obj");
+    
     Llanta_M = Model();
     Llanta_M.LoadModel("Models/llanta_optimizada.obj");
     Blackhawk_M = Model();
-    Blackhawk_M.LoadModel("Models/uh60.obj");
+    Blackhawk_M.LoadModel("Models/uh60_base.obj");
+    Blackhawk_HS_M = Model();
+    Blackhawk_HS_M.LoadModel("Models/uh60_helice.obj");
+    Blackhawk_HB_M = Model();
+    Blackhawk_HB_M.LoadModel("Models/uh60_helice_back.obj");
 
     car = Model();
     car.LoadModel("Models/BMW_base.obj");
@@ -335,7 +338,7 @@ int main()
     // Variables para la animacion del helicoptero
     float helicPosZ = 0.0;
     float helicPosY = -1.0f;
-    float helicRotZ = 90.0f;
+    float helicRotZ = 0.0f;
     float helicOffset = 0.2f;
 
     // 2. El helicóptero despega de un helipuerto, sube 7 unidades.
@@ -370,7 +373,7 @@ int main()
         .addCondition(
             [&helicRotZ, &helicOffset](float dt) -> bool
             {
-                if (helicRotZ < 270)
+                if (helicRotZ < 180)
                 {
                     helicRotZ += helicOffset * 4.0 * dt;
                     return false;
@@ -390,7 +393,7 @@ int main()
         .addCondition(
             [&helicRotZ, &helicOffset](float dt) -> bool
             {
-                if (helicRotZ > 90)
+                if (helicRotZ > 0)
                 {
                     helicRotZ -= helicOffset * 4.0 * dt;
                     return false;
@@ -564,15 +567,23 @@ int main()
 
         meshList[2]->RenderMesh();
 
-        model = glm::mat4(1.0);
-        // model = glm::translate(model, glm::vec3(0.0f, 5.0f, 6.0));
-        model = glm::translate(model, glm::vec3(20.0f, helicPosY, helicPosZ));
-        model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
-        model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(-helicRotZ), {0.0f, 0.0f, 1.0f});
-        model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        model = handler.setMatrix(glm::mat4(1.0f))
+                    .translate(20.0, helicPosY, helicPosZ)
+                    .rotateX(-90)
+                    .rotateZ(-helicRotZ)
+                    .saveActualState(modelaux)
+                    .scale(0.3)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, +glm::value_ptr(model));
         Blackhawk_M.RenderModel();
+        
+        model = handler.setMatrix(modelaux)
+                .translate(0.016786, -0.00059, 0.51)
+                .rotateZ(glfwGetTime() * 8)
+                .scale(0.3)
+                .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        Blackhawk_HS_M.RenderModel();
 
         model = handler
                     .setMatrix(glm::mat4(1.0f))
