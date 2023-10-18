@@ -18,7 +18,6 @@ algoritmos. Adicional.- ,Textura Animada
 // para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
 
-#include <cmath>
 #include <vector>
 
 #include <glew.h>
@@ -328,7 +327,7 @@ int main()
     float posMonedaY = -1.2;
     float movMonedaOffset = 0.3f;
     float posCanica_1 = 0;
-    float posCanica_2 = -0.15;
+    float posCanica_2 = -0.2;
     float movCanicaOffset = 0.05f;
     float rotaCanica = 0;
     float rotaCanicaOffset = 5.0f;
@@ -361,7 +360,8 @@ int main()
                 return true;
             })
         .addCondition(
-            [&posCanica_1, &movCanicaOffset, &rotaCanica, &rotaCanicaOffset, &posCanica_2](float dt) -> bool
+            [&posCanica_1, &movCanicaOffset,
+             &rotaCanica, &rotaCanicaOffset, &posCanica_2](float dt) -> bool
             {
                 if (posCanica_1 < 1.45229)
                 {
@@ -379,12 +379,23 @@ int main()
                 {
                     posMonedaX = -4.5;
                     posMonedaY = -1.2;
-                    posCanica_1 = 0;
-                    posCanica_2 = -0.15;
                     movMonedaOffset = 0.3f;
                     return true;
                 }
                 return false;
+            })
+        .addCondition(
+            [&posCanica_1, &posCanica_2,
+             &movCanicaOffset, &rotaCanicaOffset, &rotaCanica](float dt) -> bool
+            {
+                if (posCanica_1 > 0)
+                {
+                    posCanica_1 -= movCanicaOffset * dt;
+                    posCanica_2 -= movCanicaOffset * dt;
+                    rotaCanica += rotaCanicaOffset * dt;
+                    return false;
+                }
+                return true;
             });
     coinAnimation.prepare();
 
@@ -486,7 +497,6 @@ int main()
 
         model = handler
                     .setMatrix(glm::mat4(1.0f))
-                    // Posici?n inicial
                     .translate(posMonedaX, posMonedaY, 0.238931)
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -494,14 +504,14 @@ int main()
 
         model = handler.setMatrix(glm::mat4(1.0f))
                     .translate(-2.31758, 3.87085, posCanica_1)
-                    .rotateX(rotaCanica) // Rotación al moverse
+                    .rotateX(rotaCanica) // Rotaciï¿½n al moverse
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Canica_1.RenderModel();
 
         model = handler.setMatrix(glm::mat4(1.0f))
                     .translate(-2.31758, 3.87085, posCanica_2)
-                    .rotateX(rotaCanica) // Rotación al moverse
+                    .rotateX(rotaCanica) // Rotaciï¿½n al moverse
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Canica_2.RenderModel();
@@ -573,6 +583,15 @@ int main()
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         wheel.RenderModel();
+        
+        model = handler.setMatrix(glm::mat4(1.0f))
+                    .translate(0.0, -1.0, 0.0)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        CristalPinball.RenderModel();
+        glDisable(GL_BLEND);
 
         // Agave ?qu? sucede si lo renderizan antes del coche y el helic?ptero?
         model = glm::mat4(1.0);
@@ -587,16 +606,7 @@ int main()
         Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[3]->RenderMesh();
         glDisable(GL_BLEND);
-
-        model = handler.setMatrix(glm::mat4(1.0f))
-                    .translate(0.0, -1.0, 0.0)
-                    .getMatrix();
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        CristalPinball.RenderModel();
-        glDisable(GL_BLEND);
-
+        
         glUseProgram(0);
 
         mainWindow.swapBuffers();

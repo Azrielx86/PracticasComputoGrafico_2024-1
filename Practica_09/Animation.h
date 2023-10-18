@@ -11,7 +11,7 @@
 class Animation
 {
   public:
-	explicit Animation(bool loop = true);
+	Animation();
 	Animation &addCondition(const std::function<bool(float)>& function);
 	void prepare();
 	void update(float deltaTime);

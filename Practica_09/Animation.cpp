@@ -3,7 +3,7 @@
 //
 
 #include "Animation.h"
-Animation::Animation(bool loop)
+Animation::Animation()
 {
 	current = nullptr;
 	currentIndex = 0;
