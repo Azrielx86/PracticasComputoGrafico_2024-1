@@ -63,7 +63,7 @@ else ()
     include_directories(/usr/include/glm)
 endif ()
 
-add_executable(Practica08 E09-318192950.cpp
+add_executable(Practica08 P09-318192950.cpp
         Window.cpp
         Camera.cpp
         DirectionalLight.cpp

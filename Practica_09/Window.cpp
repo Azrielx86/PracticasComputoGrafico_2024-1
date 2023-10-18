@@ -117,6 +117,11 @@ void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, in
 		theWindow->startCoinAnimation = true;
 	if (key == GLFW_KEY_P && action == GLFW_RELEASE)
 		theWindow->startCoinAnimation = false;
+    
+    if (key == GLFW_KEY_H && action == GLFW_PRESS)
+        theWindow->startHelicAnimation = true;
+    if (key == GLFW_KEY_H && action == GLFW_RELEASE)
+        theWindow->startHelicAnimation = false;
 	
 	if (key == GLFW_KEY_O && action == GLFW_PRESS)
 		theWindow->resetAnimation = true;
