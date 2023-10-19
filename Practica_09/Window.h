@@ -40,29 +40,32 @@ class Window
     GLfloat xChange;
     GLfloat yChange;
     GLfloat muevex;
-    GLfloat posVehiculo = 0.0f;
     GLfloat anguloCofre = 0.0f;
-    GLfloat rotaRuedas = 0.0f;
-    CAR_LIGHT currentCarLight = CAR_LIGHT::FRONT_LIGHT;
-    int tiempoHelicoptero;
-    bool linternaCamara = true;
     bool startCoinAnimation = false;
     bool resetAnimation = false;
     bool startHelicAnimation = false;
+    bool startDiceAnimation = false;
 
   public:
-    bool getResetAnimation() const;
     /**
-     * Tecla H
-     * @return 
+     * Tecla O 
      */
-    bool getStartHelicAnimation() const { return startHelicAnimation; }
-
-  public:
+    [[nodiscard]] bool getResetAnimation() const;
+    
+    /**
+     * Tecla H 
+     */
+    [[nodiscard]] bool getStartHelicAnimation() const { return startHelicAnimation; }
+    
+    /**
+     * Tecla U 
+     */
+    [[nodiscard]] bool getStartDiceAnimation() const { return startDiceAnimation; }
+    
     /**
      * Tecla P
      */
-    bool getStartCoinAnimation() const;
+    [[nodiscard]] bool getStartCoinAnimation() const;
 
   private:
     bool toggleMouse = true;

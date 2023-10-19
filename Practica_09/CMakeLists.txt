@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.7.2)
-project(Practica08)
+project(Practica09)
 set(CMAKE_CXX_STANDARD 17)
 
 if (NOT MSVC)
@@ -64,7 +64,7 @@ else ()
     include_directories(/usr/include/stb)
 endif ()
 
-add_executable(Practica08 P09-318192950.cpp
+add_executable(Practica09 P09-318192950.cpp
         Window.cpp
         Camera.cpp
         DirectionalLight.cpp
@@ -92,10 +92,10 @@ file(COPY Models DESTINATION ${CMAKE_BINARY_DIR})
 message(STATUS "Copiando archivos de texturas")
 file(COPY Textures DESTINATION ${CMAKE_BINARY_DIR})
 if (UNIX)
-    target_link_libraries(Practica08 glfw OpenGL::GL GLEW assimp::assimp)
+    target_link_libraries(Practica09 glfw OpenGL::GL GLEW assimp::assimp)
 else ()
-    target_link_libraries(Practica08 PRIVATE GLEW::GLEW)
-    target_link_libraries(Practica08 PRIVATE glfw)
-    target_link_libraries(Practica08 PRIVATE assimp::assimp)
-    #    target_link_libraries(Practica08 PRIVATE imgui::imgui)
+    target_link_libraries(Practica09 PRIVATE GLEW::GLEW)
+    target_link_libraries(Practica09 PRIVATE glfw)
+    target_link_libraries(Practica09 PRIVATE assimp::assimp)
+    #    target_link_libraries(Practica09 PRIVATE imgui::imgui)
 endif ()

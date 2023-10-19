@@ -18,6 +18,7 @@ algoritmos. Adicional.- ,Textura Animada
 // para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
 
+#include <cstdio>
 #include <vector>
 
 #include <glew.h>
@@ -46,6 +47,12 @@ algoritmos. Adicional.- ,Textura Animada
 #include "PointLight.h"
 #include "SpotLight.h"
 
+enum
+{
+    DADO_8F
+};
+std::unordered_map<int, Mesh *> meshUnorderedMap;
+
 const float toRadians = 3.14159265f / 180.0f;
 
 // variables para animaci?n
@@ -65,6 +72,7 @@ Texture dirtTexture;
 Texture plainTexture;
 Texture pisoTexture;
 Texture AgaveTexture;
+Texture dado8fTexture;
 
 Model Llanta_M;
 Model Blackhawk_M;
@@ -144,6 +152,72 @@ void calcAverageNormals(unsigned int *indices, unsigned int indiceCount,
         vertices[nOffset + 1] = vec.y;
         vertices[nOffset + 2] = vec.z;
     }
+}
+
+void CrearDadoOchoCaras()
+{
+    // clang-format off
+	unsigned int dado_idx[] = {
+			0, 1, 2,
+			3, 4, 5,
+			6, 7, 8,
+			9, 10, 11,
+			12, 13, 14,
+			15, 16, 17,
+			18, 19, 20,
+			21, 22, 23
+	};
+	//Ejercicio 1: reemplazar con sus dados de 6 caras texturizados, agregar normales
+// average normals
+	GLfloat dado_vtx[] = {
+		// Cara superior 4
+		//x		y		z		S		T			NX		NY		NZ
+		0.0f, 1.0f, 0.0f, 0.5, 0.75, -1.0f, -1.0f, 1.0f, // 0
+		0.0f, 0.0f, -1.0f, 0.75, 1.0, -1.0f, -1.0f, 1.0f, //1
+		1.0f, 0.0f, 0.0f, 1.0f, 0.75, -1.0f, -1.0f, 1.0f, // 2
+
+		// Cara superior 6
+		0.0f, 1.0f, 0.0f, 0.5, 0.75, -1.0f, -1.0f, -1.0f, // 3
+		1.0f, 0.0f, 0.0f, 1.0f, 0.75, -1.0f, -1.0f, -1.0f, // 4
+		0.0f, 0.0f, 1.0f, 0.75, 0.50, -1.0f, -1.0f, -1.0f, // 5
+
+		// Cara superior 8
+		0.0f, 1.0f, 0.0f, 0.5f, 0.75, 1.0f, -1.0f, -1.0f, // 6
+		0.0f, 0.0f, 1.0f, 0.75, 0.50, 1.0f, -1.0f, -1.0f, // 7
+		-1.0f, 0.0f, 0.0f, 0.25, 0.5, 1.0f, -1.0f, -1.0f, // 8
+
+		// Cara superior 2
+		0.0f, 1.0f, 0.0f, 0.5f, 0.75, 1.0f, -1.0f, 1.0f, // 9 
+		-1.0f, 0.0f, 0.0f, 0.25, 0.5, 1.0f, -1.0f, 1.0f, // 10
+		0.0f, -0.0f, -1.0f, 0.0f, 0.75f, 1.0f, -1.0f, 1.0f, // 11,
+
+		// Caras inferiores
+		// Cara inferior 1
+		0.0f, -1.0f, 0.0f, 0.5, 0.25, -1.0f, 1.0f, 1.0f, // 12
+		0.0f, 0.0f, -1.0f, 0.75, 0.0, -1.0f, 1.0f, 1.0f, //13
+		1.0f, 0.0f, 0.0f, 1.0f, 0.25, -1.0f, 1.0f, 1.0f, // 14
+
+		// Cara superior 3
+		0.0f, -1.0f, 0.0f, 0.5, 0.25, -1.0f, 1.0f, -1.0f, // 15
+		1.0f, 0.0f, 0.0f, 1.0f, 0.25, -1.0f, 1.0f, -1.0f, // 16
+		0.0f, 0.0f, 1.0f, 0.75, 0.50, -1.0f, 1.0f, -1.0f, // 17
+
+		// Cara superior 5
+		0.0f, -1.0f, 0.0f, 0.5f, 0.25, 1.0f, 1.0f, -1.0f, // 18
+		0.0f, 0.0f, 1.0f, 0.75, 0.50, 1.0f, 1.0f, -1.0f, // 19
+		-1.0f, 0.0f, 0.0f, 0.25, 0.5, 1.0f, 1.0f, -1.0f, // 20
+
+		// Cara superior 7
+		0.0f, -1.0f, 0.0f, 0.5f, 0.25, 1.0f, 1.0f, 1.0f, // 21
+		-1.0f, 0.0f, 0.0f, 0.25, 0.5, 1.0f, 1.0f, 1.0f, // 22
+		0.0f, -0.0f, -1.0f, 0.0f, 0.25f, 1.0f, 1.0f, 1.0f, // 23
+	};
+
+    // clang-format on
+    Mesh *dado = new Mesh();
+    dado->CreateMesh(dado_vtx, dado_idx, 192, 36);
+    calcAverageNormals(dado_idx, 24, dado_vtx, 192, 8, 5);
+    meshUnorderedMap[DADO_8F] = dado;
 }
 
 void CreateObjects()
@@ -231,6 +305,7 @@ int main()
 
     CreateObjects();
     CreateShaders();
+    CrearDadoOchoCaras();
 
     ModelMatrix handler(glm::mat4(1.0f));
 
@@ -250,6 +325,8 @@ int main()
     pisoTexture.LoadTextureA();
     AgaveTexture = Texture("Textures/Agave.tga");
     AgaveTexture.LoadTextureA();
+    dado8fTexture = Texture("Textures/dado_8f.tga");
+    dado8fTexture.LoadTextureA();
 
     Llanta_M = Model();
     Llanta_M.LoadModel("Models/llanta_optimizada.obj");
@@ -344,6 +421,28 @@ int main()
     float rotHelices = 0.0f;
     float rotHeliOffset = 10.0f;
 
+    // Variables para la animacion del dado
+    float dicePosY = 15.0f;
+    float diceMovOffset = 0.3f;
+
+    // 1. Su dado cae sobre el piso, gira y cae en un número random, se repite la tirada al presionar una tecla.
+    Animation diceAnimation;
+    diceAnimation
+        .addCondition(
+            [](float) -> bool
+            { return mainWindow.getStartDiceAnimation(); })
+        .addCondition(
+            [&dicePosY, &diceMovOffset](float dt) -> bool
+            {
+                if (dicePosY >= 0.0f)
+                {
+                    dicePosY -= diceMovOffset * dt;
+                    return false;
+                }
+                return true;
+            })
+        .prepare();
+
     // 2. El helicóptero despega de un helipuerto, sube 7 unidades.
     // Avanza una distancia de  20 unidades, da vuelta sobre su propio eje,
     // regresa a la altura del helipuerto, da vuelta sobre su propio eje y
@@ -409,7 +508,7 @@ int main()
                 return true;
             })
         .addCondition( // Helicoptero baja
-            [&helicPosY, &helicOffset, &rotHeliOffset, &rotHelices](float dt) -> bool
+            [&helicPosY, &helicOffset, &rotHeliOffset, &rotHelices, &helicPosZ](float dt) -> bool
             {
                 if (helicPosY > -0.5)
                 {
@@ -417,6 +516,10 @@ int main()
                     rotHelices += rotHeliOffset * dt;
                     return false;
                 }
+
+                // Reinicia las posciones iniciales
+                helicPosZ = 0.0;
+                helicPosY = -0.5f;
                 return true;
             })
         .prepare();
@@ -488,6 +591,7 @@ int main()
             })
         .prepare();
 
+    // Animacion del vehiculo
     Animation carAnimation;
     carAnimation
         .addCondition(
@@ -520,6 +624,9 @@ int main()
         coinAnimation.update(deltaTime);
         carAnimation.update(deltaTime);
         helicAnimation.update(deltaTime);
+        diceAnimation.update(deltaTime);
+
+        printf("Pos Z: %.4f | Pos Y: %.4f\r", helicPosZ, helicPosY);
 
         // Recibir eventos del usuario
         glfwPollEvents();
@@ -572,8 +679,16 @@ int main()
 
         pisoTexture.UseTexture();
         Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
-
         meshList[2]->RenderMesh();
+
+        // ============================== dado =================================
+        model = handler.setMatrix(glm::mat4(1.0f))
+                    .translate(-15.0f, dicePosY, 15.0)
+                    .scale(2.0f, 2.0f, 2.0f)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        dado8fTexture.UseTexture();
+        meshUnorderedMap.at(DADO_8F)->RenderMesh();
 
         model = handler.setMatrix(glm::mat4(1.0f))
                     .translate(20.0, helicPosY, helicPosZ)
