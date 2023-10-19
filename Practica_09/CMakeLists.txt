@@ -61,6 +61,7 @@ else ()
     include_directories(/usr/include/GLFW)
     include_directories(/usr/include/GL)
     include_directories(/usr/include/glm)
+    include_directories(/usr/include/stb)
 endif ()
 
 add_executable(Practica08 P09-318192950.cpp

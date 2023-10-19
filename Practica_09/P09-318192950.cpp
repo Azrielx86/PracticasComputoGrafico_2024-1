@@ -1,4 +1,3 @@
-#include <cstdio>
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Weverything"
@@ -25,8 +24,8 @@ algoritmos. Adicional.- ,Textura Animada
 #include <glfw3.h>
 
 #include <glm.hpp>
-#include <gtc\matrix_transform.hpp>
-#include <gtc\type_ptr.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
 // para probar el importer
 // #include<assimp/Importer.hpp>
 
@@ -235,7 +234,11 @@ int main()
 
     ModelMatrix handler(glm::mat4(1.0f));
 
+#if __linux__
+    camera = Camera(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.3f, 1.2f);
+#else
     camera = Camera(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.3f, 0.5f);
+#endif
 
     brickTexture = Texture("Textures/brick.png");
     brickTexture.LoadTextureA();
@@ -317,10 +320,7 @@ int main()
            uniformEyePosition = 0, uniformSpecularIntensity = 0,
            uniformShininess = 0;
     GLuint uniformColor = 0;
-    glm::mat4 projection = glm::perspective(
-        45.0f,
-        (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(),
-        0.1f, 1000.0f);
+    glm::mat4 projection = glm::perspective(45.0f, (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 1000.0f);
     movCoche = 0.0f;
     movOffset = 0.8f;
     rotllanta = 0.0f;
@@ -342,7 +342,7 @@ int main()
     float helicRotZ = 0.0f;
     float helicOffset = 0.2f;
     float rotHelices = 0.0f;
-    float rotHeliOffset = 8.0f;
+    float rotHeliOffset = 10.0f;
 
     // 2. El helicóptero despega de un helipuerto, sube 7 unidades.
     // Avanza una distancia de  20 unidades, da vuelta sobre su propio eje,
@@ -592,6 +592,16 @@ int main()
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Blackhawk_HS_M.RenderModel();
+
+        model = handler.setMatrix(modelaux)
+                    .translate(0.062476, -3.12069, 0.697806)
+                    .rotateX(rotHelices)
+                    .scale(0.3)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        Blackhawk_HB_M.RenderModel();
+
+        // ====== Moneda =======
 
         model = handler
                     .setMatrix(glm::mat4(1.0f))
