@@ -1,3 +1,4 @@
+#include <cstdio>
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Weverything"
@@ -246,7 +247,7 @@ int main()
     pisoTexture.LoadTextureA();
     AgaveTexture = Texture("Textures/Agave.tga");
     AgaveTexture.LoadTextureA();
-    
+
     Llanta_M = Model();
     Llanta_M.LoadModel("Models/llanta_optimizada.obj");
     Blackhawk_M = Model();
@@ -337,9 +338,11 @@ int main()
 
     // Variables para la animacion del helicoptero
     float helicPosZ = 0.0;
-    float helicPosY = -1.0f;
+    float helicPosY = -0.5f;
     float helicRotZ = 0.0f;
     float helicOffset = 0.2f;
+    float rotHelices = 0.0f;
+    float rotHeliOffset = 8.0f;
 
     // 2. El helicóptero despega de un helipuerto, sube 7 unidades.
     // Avanza una distancia de  20 unidades, da vuelta sobre su propio eje,
@@ -350,62 +353,68 @@ int main()
         .addCondition(
             [](float) -> bool
             { return mainWindow.getStartHelicAnimation(); })
-        .addCondition(
-            [&helicPosY, &helicOffset](float dt) -> bool
+        .addCondition( // Helicoptero sube 7 unidades
+            [&helicPosY, &helicOffset, &rotHeliOffset, &rotHelices](float dt) -> bool
             {
                 if (helicPosY <= 6.5)
                 {
                     helicPosY += helicOffset * dt;
+                    rotHelices += rotHeliOffset * dt;
                     return false;
                 }
                 return true;
             })
-        .addCondition(
-            [&helicPosZ, &helicOffset](float dt) -> bool
+        .addCondition( // Helicoptero avanza 20 unidades
+            [&helicPosZ, &helicOffset, &rotHeliOffset, &rotHelices](float dt) -> bool
             {
                 if (helicPosZ > -20)
                 {
                     helicPosZ -= helicOffset * dt;
+                    rotHelices += rotHeliOffset * dt;
                     return false;
                 }
                 return true;
             })
-        .addCondition(
-            [&helicRotZ, &helicOffset](float dt) -> bool
+        .addCondition( // Helicoptero rota
+            [&helicRotZ, &helicOffset, &rotHeliOffset, &rotHelices](float dt) -> bool
             {
                 if (helicRotZ < 180)
                 {
                     helicRotZ += helicOffset * 4.0 * dt;
+                    rotHelices += rotHeliOffset * dt;
                     return false;
                 }
                 return true;
             })
-        .addCondition(
-            [&helicPosZ, &helicOffset](float dt) -> bool
+        .addCondition( // Helicoptero regresa
+            [&helicPosZ, &helicOffset, &rotHeliOffset, &rotHelices](float dt) -> bool
             {
                 if (helicPosZ < 0)
                 {
                     helicPosZ += helicOffset * dt;
+                    rotHelices += rotHeliOffset * dt;
                     return false;
                 }
                 return true;
             })
-        .addCondition(
-            [&helicRotZ, &helicOffset](float dt) -> bool
+        .addCondition( // Helicoptero gira
+            [&helicRotZ, &helicOffset, &rotHeliOffset, &rotHelices](float dt) -> bool
             {
                 if (helicRotZ > 0)
                 {
                     helicRotZ -= helicOffset * 4.0 * dt;
+                    rotHelices += rotHeliOffset * dt;
                     return false;
                 }
                 return true;
             })
-        .addCondition(
-            [&helicPosY, &helicOffset](float dt) -> bool
+        .addCondition( // Helicoptero baja
+            [&helicPosY, &helicOffset, &rotHeliOffset, &rotHelices](float dt) -> bool
             {
                 if (helicPosY > -0.5)
                 {
                     helicPosY -= helicOffset * dt;
+                    rotHelices += rotHeliOffset * dt;
                     return false;
                 }
                 return true;
@@ -476,8 +485,8 @@ int main()
                     return false;
                 }
                 return true;
-            });
-    coinAnimation.prepare();
+            })
+        .prepare();
 
     Animation carAnimation;
     carAnimation
@@ -501,7 +510,6 @@ int main()
             });
     carAnimation.prepare();
 
-    ////Loop mientras no se cierra la ventana
     while (!mainWindow.getShouldClose())
     {
         GLfloat now = glfwGetTime();
@@ -576,12 +584,12 @@ int main()
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, +glm::value_ptr(model));
         Blackhawk_M.RenderModel();
-        
+
         model = handler.setMatrix(modelaux)
-                .translate(0.016786, -0.00059, 0.51)
-                .rotateZ(glfwGetTime() * 8)
-                .scale(0.3)
-                .getMatrix();
+                    .translate(0.016786, -0.00059, 0.51)
+                    .rotateZ(rotHelices)
+                    .scale(0.3)
+                    .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Blackhawk_HS_M.RenderModel();
 
