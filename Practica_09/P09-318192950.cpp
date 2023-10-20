@@ -18,7 +18,8 @@ algoritmos. Adicional.- ,Textura Animada
 // para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
 
-#include <cstdio>
+#include <chrono>
+#include <random>
 #include <vector>
 
 #include <glew.h>
@@ -27,6 +28,7 @@ algoritmos. Adicional.- ,Textura Animada
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
+#include <gtx/string_cast.hpp>
 // para probar el importer
 // #include<assimp/Importer.hpp>
 
@@ -103,6 +105,13 @@ DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
 
+std::mt19937 generator(std::chrono::system_clock::now().time_since_epoch().count());
+std::uniform_real_distribution<float> distribution(0, 8);
+const auto dice = []() -> float
+{ return distribution(generator); };
+
+std::vector<glm::vec3> diceFaces;
+
 // Vertex Shader
 static const char *vShader = "shaders/shader_light.vert";
 
@@ -154,7 +163,19 @@ void calcAverageNormals(unsigned int *indices, unsigned int indiceCount,
     }
 }
 
-void CrearDadoOchoCaras()
+void GetDiceFaces(GLfloat *vtx, unsigned int vtx_count)
+{
+#ifdef INTENTO_CARAS_ROTACION
+    for (int i = 5; i < vtx_count; i += 24)
+    {
+        glm::vec3 face(vtx[i], vtx[i + 1], vtx[i + 2]);
+        std::cout << "Normal: " << glm::to_string(face) << "\n";
+        diceFaces.push_back(face);
+    }
+#endif
+}
+
+void CreateDice()
 {
     // clang-format off
 	unsigned int dado_idx[] = {
@@ -217,6 +238,7 @@ void CrearDadoOchoCaras()
     Mesh *dado = new Mesh();
     dado->CreateMesh(dado_vtx, dado_idx, 192, 36);
     calcAverageNormals(dado_idx, 24, dado_vtx, 192, 8, 5);
+    GetDiceFaces(dado_vtx, 192);
     meshUnorderedMap[DADO_8F] = dado;
 }
 
@@ -305,7 +327,7 @@ int main()
 
     CreateObjects();
     CreateShaders();
-    CrearDadoOchoCaras();
+    CreateDice();
 
     ModelMatrix handler(glm::mat4(1.0f));
 
@@ -422,24 +444,47 @@ int main()
     float rotHeliOffset = 10.0f;
 
     // Variables para la animacion del dado
-    float dicePosY = 15.0f;
-    float diceMovOffset = 0.3f;
+    float dicePosY = 30.0f;
+    float diceVelocity;
+    glm::vec3 diceRotation(0.0f);
 
     // 1. Su dado cae sobre el piso, gira y cae en un número random, se repite la tirada al presionar una tecla.
     Animation diceAnimation;
     diceAnimation
         .addCondition(
-            [](float) -> bool
-            { return mainWindow.getStartDiceAnimation(); })
-        .addCondition(
-            [&dicePosY, &diceMovOffset](float dt) -> bool
+            [&dicePosY, &diceRotation](float) -> bool
             {
-                if (dicePosY >= 0.0f)
+                if (mainWindow.getStartDiceAnimation())
                 {
-                    dicePosY -= diceMovOffset * dt;
-                    return false;
+                    dicePosY = 30.0f;
+                    diceRotation = glm::vec3(dice(), dice(), dice());
+                    return true;
                 }
-                return true;
+                return false;
+            })
+        .addCondition(
+            [&dicePosY, &diceVelocity, &diceRotation](float dt) -> bool
+            {
+                diceVelocity += (dicePosY > 0.0f) ? -0.04 * dt : 0.03 * dt;
+                dicePosY += diceVelocity * dt;
+
+                if (dicePosY <= 0.0f)
+                {
+                    dicePosY = 0.0f;
+                    diceVelocity = -diceVelocity * 0.4;
+                }
+
+                diceRotation.x += dice() * dt;
+                diceRotation.y += dice() * dt;
+                diceRotation.z += dice() * dt;
+
+                if (std::abs(diceVelocity) <= 0.1 && dicePosY <= 0.0)
+                {
+                    printf("Rotacion final: (%f, %f, %f)\n", diceRotation.x, diceRotation.y, diceRotation.z);
+                    dicePosY = 0.0;
+                    return true;
+                }
+                return false;
             })
         .prepare();
 
@@ -626,8 +671,6 @@ int main()
         helicAnimation.update(deltaTime);
         diceAnimation.update(deltaTime);
 
-        printf("Pos Z: %.4f | Pos Y: %.4f\r", helicPosZ, helicPosY);
-
         // Recibir eventos del usuario
         glfwPollEvents();
         camera.keyControl(mainWindow.getsKeys(), deltaTime);
@@ -684,6 +727,9 @@ int main()
         // ============================== dado =================================
         model = handler.setMatrix(glm::mat4(1.0f))
                     .translate(-15.0f, dicePosY, 15.0)
+                    .rotateX(diceRotation.x)
+                    .rotateY(diceRotation.y)
+                    .rotateZ(diceRotation.z)
                     .scale(2.0f, 2.0f, 2.0f)
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
