@@ -106,7 +106,7 @@ PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
 
 std::mt19937 generator(std::chrono::system_clock::now().time_since_epoch().count());
-std::uniform_real_distribution<float> distribution(0, 8);
+std::uniform_real_distribution<float> distribution(0, 16);
 const auto dice = []() -> float
 { return distribution(generator); };
 
@@ -474,9 +474,9 @@ int main()
                     diceVelocity = -diceVelocity * 0.4;
                 }
 
-                diceRotation.x += dice() * dt;
-                diceRotation.y += dice() * dt;
-                diceRotation.z += dice() * dt;
+                diceRotation.x += dice();
+                diceRotation.y += dice();
+                diceRotation.z += dice();
 
                 if (std::abs(diceVelocity) <= 0.1 && dicePosY <= 0.0)
                 {
