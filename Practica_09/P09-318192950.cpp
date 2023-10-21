@@ -465,20 +465,20 @@ int main()
         .addCondition(
             [&dicePosY, &diceVelocity, &diceRotation](float dt) -> bool
             {
-                diceVelocity += (dicePosY > 0.0f) ? -0.04 * dt : 0.03 * dt;
+                diceVelocity += -0.04 * dt;
                 dicePosY += diceVelocity * dt;
 
                 if (dicePosY <= 0.0f)
                 {
                     dicePosY = 0.0f;
-                    diceVelocity = -diceVelocity * 0.4;
+                    diceVelocity = -diceVelocity * 0.5;
                 }
 
                 diceRotation.x += dice();
                 diceRotation.y += dice();
                 diceRotation.z += dice();
 
-                if (std::abs(diceVelocity) <= 0.1 && dicePosY <= 0.0)
+                if (std::abs(diceVelocity) <= 0.01 && dicePosY <= 0.0)
                 {
                     printf("Rotacion final: (%f, %f, %f)\n", diceRotation.x, diceRotation.y, diceRotation.z);
                     dicePosY = 0.0;
