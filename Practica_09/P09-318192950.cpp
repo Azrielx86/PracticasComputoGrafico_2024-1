@@ -87,6 +87,7 @@ Model Canica_1;
 Model Canica_2;
 
 Model car, hood, wheel;
+Model Helipuerto;
 
 Skybox skybox;
 
@@ -358,6 +359,8 @@ int main()
     Blackhawk_HS_M.LoadModel("Models/uh60_helice.obj");
     Blackhawk_HB_M = Model();
     Blackhawk_HB_M.LoadModel("Models/uh60_helice_back.obj");
+    Helipuerto = Model();
+    Helipuerto.LoadModel("Models/Helipuerto.obj");
 
     car = Model();
     car.LoadModel("Models/BMW_base.obj");
@@ -437,7 +440,7 @@ int main()
 
     // Variables para la animacion del helicoptero
     float helicPosZ = 0.0;
-    float helicPosY = -0.5f;
+    float helicPosY = -0.0f;
     float helicRotZ = 0.0f;
     float helicOffset = 0.2f;
     float rotHelices = 0.0f;
@@ -445,7 +448,7 @@ int main()
 
     // Variables para la animacion del dado
     float dicePosY = 30.0f;
-    float diceVelocity;
+    float diceVelocity = 0.0f;
     glm::vec3 diceRotation(0.0f);
 
     // 1. Su dado cae sobre el piso, gira y cae en un número random, se repite la tirada al presionar una tecla.
@@ -500,7 +503,7 @@ int main()
         .addCondition( // Helicoptero sube 7 unidades
             [&helicPosY, &helicOffset, &rotHeliOffset, &rotHelices](float dt) -> bool
             {
-                if (helicPosY <= 6.5)
+                if (helicPosY <= 7.0)
                 {
                     helicPosY += helicOffset * dt;
                     rotHelices += rotHeliOffset * dt;
@@ -555,7 +558,7 @@ int main()
         .addCondition( // Helicoptero baja
             [&helicPosY, &helicOffset, &rotHeliOffset, &rotHelices, &helicPosZ](float dt) -> bool
             {
-                if (helicPosY > -0.5)
+                if (helicPosY > 0.0)
                 {
                     helicPosY -= helicOffset * dt;
                     rotHelices += rotHeliOffset * dt;
@@ -564,7 +567,7 @@ int main()
 
                 // Reinicia las posciones iniciales
                 helicPosZ = 0.0;
-                helicPosY = -0.5f;
+                helicPosY = 0.0f;
                 return true;
             })
         .prepare();
@@ -735,6 +738,15 @@ int main()
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         dado8fTexture.UseTexture();
         meshUnorderedMap.at(DADO_8F)->RenderMesh();
+
+        // ======================== Helicoptero ================================
+        model = handler
+                    .setMatrix(glm::mat4(1.0f))
+                    .translate(20, -1.3, 0)
+                    .scale(0.8)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        Helipuerto.RenderModel();
 
         model = handler.setMatrix(glm::mat4(1.0f))
                     .translate(20.0, helicPosY, helicPosZ)
