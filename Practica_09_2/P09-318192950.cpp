@@ -1,3 +1,4 @@
+#include "fwd.hpp"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Weverything"
@@ -35,10 +36,12 @@ Adicional.- Textura Animada
 #include "Camera.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "ModelMatrix.h"
 #include "Shader_light.h"
 #include "Skybox.h"
 #include "Texture.h"
 #include "Window.h"
+
 
 // para iluminación
 #include "CommonValues.h"
@@ -81,6 +84,7 @@ Texture Numero2Texture;
 Model Kitt_M;
 Model Llanta_M;
 Model Blackhawk_M;
+Model Sword;
 
 Skybox skybox;
 
@@ -281,6 +285,8 @@ int main()
 
     camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.5f, 0.5f);
 
+    ModelMatrix handler(glm::mat4(1.0f));
+
     brickTexture = Texture("Textures/brick.png");
     brickTexture.LoadTextureA();
     dirtTexture = Texture("Textures/dirt.png");
@@ -306,6 +312,8 @@ int main()
     Llanta_M.LoadModel("Models/llanta_optimizada.obj");
     Blackhawk_M = Model();
     Blackhawk_M.LoadModel("Models/uh60.obj");
+    Sword = Model();
+    Sword.LoadModel("Models/sword.obj");
 
     std::vector<std::string> skyboxFaces;
     skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -340,7 +348,7 @@ int main()
                               0.0f, 0.0f, 0.0f,
                               0.0f, -1.0f, 0.0f,
                               1.0f, 0.0f, 0.0f,
-                              5.0f);
+                              15.0f);
     spotLightCount++;
 
     // luz fija
@@ -443,6 +451,14 @@ int main()
         Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 
         meshList[2]->RenderMesh();
+
+        // Instancia de la espada
+        model = handler.setMatrix(glm::mat4(1.0f))
+                    .translate(10, 0, 0)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        Sword.RenderModel();
+        
 
         // Instancia del coche
         model = glm::mat4(1.0);
@@ -622,13 +638,19 @@ int main()
                 if (contadorNumeros < 0)
                     contadorNumeros = 2;
             }
+
             /*
                 Valores no válidos
+                Para no dibujar las partes de la textura que no corresponden a un numero.
                 (u, v) = (0.500000, 0.330000)
                 (u, v) = (0.750000, 0.330000)
             */
+            if (contadorNumeros == 1 && toffsetnumerocambiau >= 0.5)
+            {
+                toffsetnumerocambiau = 0.0;
+                contadorNumeros = 0;
+            }
             toffsetnumerocambiav = 0.33 * contadorNumeros;
-            printf("(u, v) = (%f, %f)\n", toffsetnumerocambiau, toffsetnumerocambiav);
             siguienteCambio = (int)glfwGetTime() + 1;
         }
         printf("(%f, %f)\r", toffsetnumerocambiau, toffsetnumerocambiav);
