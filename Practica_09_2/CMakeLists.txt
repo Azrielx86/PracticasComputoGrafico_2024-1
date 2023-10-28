@@ -64,7 +64,7 @@ else ()
     include_directories(/usr/include/stb)
 endif ()
 
-add_executable(Practica09 E09_2-318192950.cpp
+add_executable(Practica09 P09_2-318192950.cpp
         Window.cpp
         Camera.cpp
         DirectionalLight.cpp
@@ -83,6 +83,8 @@ add_executable(Practica09 E09_2-318192950.cpp
         LightCollection.h
         Animation.cpp
         Animation.h
+        Counter.cpp
+        Counter.h
 )
 
 message(STATUS "Copiando archivos de shader")
