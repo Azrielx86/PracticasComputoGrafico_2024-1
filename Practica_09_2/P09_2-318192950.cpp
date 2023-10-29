@@ -1,4 +1,3 @@
-#include "fwd.hpp"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Weverything"
@@ -34,6 +33,7 @@ Adicional.- Textura Animada
 // #include<assimp/Importer.hpp>
 
 #include "Camera.h"
+#include "Displacer.h"
 #include "Mesh.h"
 #include "Model.h"
 #include "ModelMatrix.h"
@@ -41,7 +41,6 @@ Adicional.- Textura Animada
 #include "Skybox.h"
 #include "Texture.h"
 #include "Window.h"
-
 
 // para iluminación
 #include "CommonValues.h"
@@ -108,6 +107,26 @@ static const char *vShader = "shaders/shader_light.vert";
 
 // Fragment Shader
 static const char *fShader = "shaders/shader_light.frag";
+
+/**
+ * VTX1 = 0
+ * VTX2 = 1
+ * FLOOR = 2
+ * VEGETACION = 3
+ * FLECHA = 4
+ * SCORE = 5
+ * NUMEROS = 6
+ */
+enum OBJETOS
+{
+    VTX1,
+    VTX2,
+    FLOOR,
+    VEGETACION,
+    FLECHA,
+    SCORE,
+    NUMEROS
+};
 
 // cálculo del promedio de las normales para sombreado de Phong
 void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat *vertices, unsigned int verticeCount,
@@ -383,6 +402,22 @@ int main()
     int numberTimeout = 2.0f;
     int sinceLastAction = 0;
 
+    // Sección para el contador
+    std::vector<Displacer *> digitCounter;
+    float nextDigitsChange = 1;
+
+    // Con este for se puede ajustar el número de dígitos
+    for (int i = 0; i < 2; ++i)
+    {
+        auto displacer = new Displacer(3, 2);
+        displacer->setInitialCoordinates(1, 2);
+        if (i > 0)
+            displacer->connectCounter(digitCounter.at(i - 1));
+        digitCounter.push_back(displacer);
+    }
+
+    auto rootCounter = digitCounter.back();
+
     ////Loop mientras no se cierra la ventana
     while (!mainWindow.getShouldClose())
     {
@@ -390,6 +425,13 @@ int main()
         deltaTime = now - lastTime;
         deltaTime += (now - lastTime) / limitFPS;
         lastTime = now;
+        //        printf("Tiempo de ejecucion: %f\r", glfwGetTime());
+
+        if (glfwGetTime() > nextDigitsChange)
+        {
+            rootCounter->increment();
+            nextDigitsChange = glfwGetTime() + 0.1;
+        }
 
         angulovaria += 0.5f * deltaTime;
 
@@ -439,7 +481,6 @@ int main()
         glm::mat4 modelaux(1.0);
         glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
         glm::vec2 toffset = glm::vec2(0.0f, 0.0f);
-
         glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
         model = glm::mat4(1.0);
         model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
@@ -458,8 +499,8 @@ int main()
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Sword.RenderModel();
-        
 
+#ifdef CODIGO_INNECESARIO
         // Instancia del coche
         model = glm::mat4(1.0);
         model = glm::translate(model, glm::vec3(movCoche - 50.0f, 0.5f, -2.0f));
@@ -554,7 +595,30 @@ int main()
         FlechaTexture.UseTexture();
         Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[4]->RenderMesh();
+#else
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
 
+//        for (const auto& digito : digitCounter)
+        for (int i = 0; i < digitCounter.size(); i++)
+        {
+            auto digito = digitCounter.at(i);
+            toffset = { digito->getU() * 0.25, digito->getV() * (-0.33) };
+            model = handler.setMatrix(glm::mat4(1.0f))
+                        .translate(-10 + (i * 3.0), 2.0, -6.0)
+                        .rotateX(90)
+                        .scale(3.0)
+                        .getMatrix();
+            glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+            glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+            color = glm::vec3(1.0f, 1.0f, 1.0f);
+            NumerosTexture.UseTexture();
+            Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+            meshList[6]->RenderMesh();
+        }
+        
+#if NUMEROS_EJERCICIO
         // plano con todos los números
         toffsetnumerou = 0.0;
         toffsetnumerov = 0.0;
@@ -570,7 +634,7 @@ int main()
         NumerosTexture.UseTexture();
         Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[5]->RenderMesh();
-
+        
         // número 1
         // toffsetnumerou = 0.0;
         // toffsetnumerov = 0.0;
@@ -584,7 +648,7 @@ int main()
         glUniform3fv(uniformColor, 1, glm::value_ptr(color));
         NumerosTexture.UseTexture();
         Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[6]->RenderMesh();
+        meshList[OBJETOS::NUMEROS]->RenderMesh();
 
         for (int i = 1; i < 4; i++)
         {
@@ -653,7 +717,9 @@ int main()
             toffsetnumerocambiav = 0.33 * contadorNumeros;
             siguienteCambio = (int)glfwGetTime() + 1;
         }
-        printf("(%f, %f)\r", toffsetnumerocambiau, toffsetnumerocambiav);
+
+        //        printf("(%f, %f)\n", toffsetnumerocambiau, toffsetnumerocambiav);
+
         toffset = glm::vec2(toffsetnumerocambiau, toffsetnumerocambiav);
         model = glm::mat4(1.0);
         model = glm::translate(model, glm::vec3(-10.0f, 10.0f, -6.0f));
@@ -694,7 +760,7 @@ int main()
 
         Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[5]->RenderMesh();
-
+#endif
         glDisable(GL_BLEND);
 
         glUseProgram(0);

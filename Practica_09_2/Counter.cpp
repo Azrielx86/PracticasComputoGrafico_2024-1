@@ -8,17 +8,21 @@ Counter::Counter()
     currentCount = 0;
     threshold = 9;
     connCounter = nullptr;
-    increase = [this]()
-    {
-        currentCount++;
-        if (currentCount == threshold)
-        {
-            currentCount++;
-        }
-    };
 }
 
+void Counter::connectCounter(Counter *counter) { connCounter = counter; }
 
-void Counter::connectCounter(Counter *counter){ connCounter = counter; }
-
-void Counter::setThreshold(const std::function<void()> &incFunction){ increase = incFunction; }
+void Counter::increment()
+{
+    currentCount++;
+    if (currentCount > threshold)
+    {
+        currentCount = 0;
+        if (connCounter != nullptr)
+            connCounter->increment();
+    }
+}
+short Counter::getCurrentCount() const
+{
+    return currentCount;
+}

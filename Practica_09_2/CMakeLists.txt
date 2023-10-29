@@ -85,6 +85,8 @@ add_executable(Practica09 P09_2-318192950.cpp
         Animation.h
         Counter.cpp
         Counter.h
+        Displacer.cpp
+        Displacer.h
 )
 
 message(STATUS "Copiando archivos de shader")
