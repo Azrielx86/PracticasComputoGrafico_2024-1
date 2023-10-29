@@ -19,6 +19,8 @@ Adicional.- Textura Animada
 // para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
 
+#define NUM_DIGITOS 2
+
 #include <cmath>
 #include <cstdio>
 #include <vector>
@@ -32,6 +34,7 @@ Adicional.- Textura Animada
 // para probar el importer
 // #include<assimp/Importer.hpp>
 
+#include "Animation.h"
 #include "Camera.h"
 #include "Displacer.h"
 #include "Mesh.h"
@@ -324,13 +327,14 @@ int main()
     Numero1Texture.LoadTextureA();
     Numero2Texture = Texture("Textures/numero2.tga");
     Numero2Texture.LoadTextureA();
-
+#if NOUSE
     Kitt_M = Model();
     Kitt_M.LoadModel("Models/kitt_optimizado.obj");
     Llanta_M = Model();
     Llanta_M.LoadModel("Models/llanta_optimizada.obj");
     Blackhawk_M = Model();
     Blackhawk_M.LoadModel("Models/uh60.obj");
+#endif
     Sword = Model();
     Sword.LoadModel("Models/sword.obj");
 
@@ -402,12 +406,59 @@ int main()
     int numberTimeout = 2.0f;
     int sinceLastAction = 0;
 
+    // Seccion para el lanzamiento de la espada
+    //    float swordPosX = 0.0;
+    //    float swordPosY = 0.0;
+    glm::vec3 swordPos(60.0f, 1.0f, 0.0f);
+    float swordDesp = 0.0;
+    float swordT = 0.0f;
+    float rotateSw = 0.0;
+    float accSword = 0.0;
+    const float cAccSword = 0.003;
+#define SWMaxVec 0.08
+    Animation swordAnimation;
+    swordAnimation
+        .addCondition(
+            [](float dt) -> bool
+            { return mainWindow.getStartCoinAnimation(); })
+        .addCondition(
+            [&swordPos, &cAccSword, &accSword,
+             &swordDesp, &swordT, &rotateSw](float dt) -> bool
+            {
+                float dsp = SWMaxVec * dt;
+//                float acc = (SWMaxVec - swordDesp) / dt;
+                float acc = dsp * dsp * dt;
+                
+
+                if (swordDesp < SWMaxVec)
+                    swordDesp += acc * dt;
+
+                swordT += dsp;
+
+                printf("%f\n", swordDesp);
+                swordPos.x = 30 + 30 * glm::cos(swordT);
+                swordPos.z = 24 * glm::sin(swordT);
+                rotateSw += 15 * dt;
+
+                if (swordT >= 2 * 3.141592654)
+                    return true;
+                return false;
+            })
+        .addCondition(
+            [&swordT, &swordPos](float) -> bool
+            {
+                swordT = 0;
+                swordPos = glm::vec3(60.0f, 1.0f, 0.0f);
+                return true;
+            })
+        .prepare();
+
     // Sección para el contador
     std::vector<Displacer *> digitCounter;
     float nextDigitsChange = 1;
 
     // Con este for se puede ajustar el número de dígitos
-    for (int i = 0; i < 2; ++i)
+    for (int i = 0; i < NUM_DIGITOS; ++i)
     {
         auto displacer = new Displacer(3, 2);
         displacer->setInitialCoordinates(1, 2);
@@ -425,7 +476,9 @@ int main()
         deltaTime = now - lastTime;
         deltaTime += (now - lastTime) / limitFPS;
         lastTime = now;
-        //        printf("Tiempo de ejecucion: %f\r", glfwGetTime());
+        printf("Tiempo de ejecucion: %f\r", glfwGetTime());
+
+        swordAnimation.update(deltaTime);
 
         if (glfwGetTime() > nextDigitsChange)
         {
@@ -438,7 +491,6 @@ int main()
         if (movCoche < 30.0f)
         {
             movCoche -= movOffset * deltaTime;
-            // printf("avanza%f \n ",movCoche);
         }
         rotllanta += rotllantaOffset * deltaTime;
 
@@ -495,10 +547,13 @@ int main()
 
         // Instancia de la espada
         model = handler.setMatrix(glm::mat4(1.0f))
-                    .translate(10, 0, 0)
+                    //                    .translate(10, 0, 0)
+                    .translate(swordPos)
+                    .rotateY(rotateSw)
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Sword.RenderModel();
+        printf("\n\nRot:%f\n\n", rotateSw);
 
 #ifdef CODIGO_INNECESARIO
         // Instancia del coche
@@ -600,11 +655,10 @@ int main()
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
 
-//        for (const auto& digito : digitCounter)
         for (int i = 0; i < digitCounter.size(); i++)
         {
             auto digito = digitCounter.at(i);
-            toffset = { digito->getU() * 0.25, digito->getV() * (-0.33) };
+            toffset = {digito->getU() * 0.25, digito->getV() * (-0.33)};
             model = handler.setMatrix(glm::mat4(1.0f))
                         .translate(-10 + (i * 3.0), 2.0, -6.0)
                         .rotateX(90)
@@ -617,7 +671,7 @@ int main()
             Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
             meshList[6]->RenderMesh();
         }
-        
+
 #if NUMEROS_EJERCICIO
         // plano con todos los números
         toffsetnumerou = 0.0;
@@ -634,7 +688,7 @@ int main()
         NumerosTexture.UseTexture();
         Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[5]->RenderMesh();
-        
+
         // número 1
         // toffsetnumerou = 0.0;
         // toffsetnumerov = 0.0;

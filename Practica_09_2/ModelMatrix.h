@@ -34,6 +34,11 @@ class ModelMatrix
     ModelMatrix &translate(float x, float y, float z);
 
     /**
+     * Agrega una traslación a la matriz.
+     */
+    ModelMatrix &translate(const glm::vec3 &pos);
+
+    /**
      * Agrega una escala a la matriz.
      */
     ModelMatrix &scale(float x, float y, float z);

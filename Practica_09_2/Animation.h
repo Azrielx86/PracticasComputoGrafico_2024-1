@@ -17,6 +17,7 @@ class Animation
     Animation();
     /**
      * Agrega una funcion a la animacion completa.
+     * Debe retornar True si la animacion ha terminado, False si aun se ejecuta.
      * @param function El parametro flotante es el deltaTime, la funcion debe retornar un booleano.
      * @return Referencia a la instancia del objeto.
      */

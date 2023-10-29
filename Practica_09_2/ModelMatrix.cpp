@@ -20,6 +20,12 @@ ModelMatrix &ModelMatrix::translate(float x, float y, float z)
     return *this;
 }
 
+ModelMatrix &ModelMatrix::translate(const glm::vec3 &pos)
+{
+    model = glm::translate(model, pos);
+    return *this;
+}
+
 ModelMatrix &ModelMatrix::scale(float x, float y, float z)
 {
     model = glm::scale(model, {x, y, z});
