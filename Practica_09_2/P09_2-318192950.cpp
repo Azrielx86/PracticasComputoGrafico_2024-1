@@ -420,19 +420,10 @@ int main()
     swordAnimation
         .addCondition(
             [&rotSword](float dt) -> bool
-            {
-                return mainWindow.getsKeys()[GLFW_KEY_P];
-                //                if (mainWindow.getsKeys()[GLFW_KEY_P])
-                //                {
-                //                    rotSword = {0, 0, 0};
-                //                    return true;
-                //                }
-                //                return false;
-            })
+            { return mainWindow.getsKeys()[GLFW_KEY_P]; })
         .addCondition(
             [&swordPos, &rotSword](float dt) -> bool
             {
-                // revertir glm::vec3 rotSword = {-115.0f, 0.0f, 90.0f};
                 if (rotSword.x < 0)
                 {
                     rotSword.x += 20.0 * dt;
@@ -466,7 +457,6 @@ int main()
             {
                 swordT = 0;
                 swordPos = glm::vec3(60.0f, 13.0f, 0.0f);
-                //                rotSword = {-115.0f, 0.0f, 90.0f};
                 rotSword = {0.0f, 0.0f, 0.0f};
                 return true;
             })
@@ -481,7 +471,13 @@ int main()
                 }
                 return true;
             })
-        .prepare();
+        .addCondition(
+            [&rotSword](float dt) -> bool
+            {
+                rotSword = {-115.0f, 0.0f, 90.0f};
+                return true;
+            })
+    .prepare();
 
     // Sección para el contador
     std::vector<Displacer *> digitCounter;
@@ -832,7 +828,7 @@ int main()
             auto digito = digitCounter.at(i);
             toffset = {digito->getU() * 0.25, digito->getV() * (-0.33)};
             model = handler.setMatrix(glm::mat4(1.0f))
-                        .translate(-10 + (i * 3.0), 2.0, -6.0)
+                        .translate(10 + (i * 3.0), 2.0, -6.0)
                         .rotateX(90)
                         .scale(3.0)
                         .getMatrix();
