@@ -1,0 +1,8 @@
+---
+BasedOnStyle: LLVM
+AllowShortBlocksOnASingleLine: Always
+BreakBeforeBraces: Allman
+IndentWidth: "4"
+TabWidth: "4"
+LambdaBodyIndentation: Signature
+ColumnLimit: 0
