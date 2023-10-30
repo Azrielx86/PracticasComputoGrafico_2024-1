@@ -1,6 +1,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Weverything"
+#pragma ide diagnostic ignored "bugprone-reserved-identifier"
 #pragma ide diagnostic ignored "readability-non-const-parameter"
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
@@ -18,10 +19,11 @@ Adicional.- Textura Animada
 */
 // para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
-
+#define _USE_MATH_DEFINES
 #define NUM_DIGITOS 2
-
+#define swordMaxVec 0.08
 #include <cmath>
+
 #include <cstdio>
 #include <vector>
 
@@ -327,7 +329,7 @@ int main()
     Numero1Texture.LoadTextureA();
     Numero2Texture = Texture("Textures/numero2.tga");
     Numero2Texture.LoadTextureA();
-#if NOUSE
+#if ELEMENTOS_EJERCICIO
     Kitt_M = Model();
     Kitt_M.LoadModel("Models/kitt_optimizado.obj");
     Llanta_M = Model();
@@ -407,48 +409,49 @@ int main()
     int sinceLastAction = 0;
 
     // Seccion para el lanzamiento de la espada
-    //    float swordPosX = 0.0;
-    //    float swordPosY = 0.0;
-    glm::vec3 swordPos(60.0f, 1.0f, 0.0f);
+    glm::vec3 swordPos(60.0f, 13.0f, 0.0f);
     float swordDesp = 0.0;
     float swordT = 0.0f;
-    float rotateSw = 0.0;
+    glm::vec3 rotSword = {-115.0f, 0.0f, 90.0f};
     float accSword = 0.0;
     const float cAccSword = 0.003;
-#define SWMaxVec 0.08
+
     Animation swordAnimation;
     swordAnimation
         .addCondition(
-            [](float dt) -> bool
-            { return mainWindow.getStartCoinAnimation(); })
+            [&rotSword](float dt) -> bool
+            {
+                if (mainWindow.getsKeys()[GLFW_KEY_P])
+                {
+                    rotSword = {0, 0, 0};
+                    return true;
+                }
+                return false;
+            })
         .addCondition(
             [&swordPos, &cAccSword, &accSword,
-             &swordDesp, &swordT, &rotateSw](float dt) -> bool
+             &swordDesp, &swordT, &rotSword](float dt) -> bool
             {
-                float dsp = SWMaxVec * dt;
-//                float acc = (SWMaxVec - swordDesp) / dt;
+                float dsp = swordMaxVec * dt;
                 float acc = dsp * dsp * dt;
-                
 
-                if (swordDesp < SWMaxVec)
+                if (swordDesp < swordMaxVec)
                     swordDesp += acc * dt;
-
                 swordT += dsp;
-
-                printf("%f\n", swordDesp);
                 swordPos.x = 30 + 30 * glm::cos(swordT);
                 swordPos.z = 24 * glm::sin(swordT);
-                rotateSw += 15 * dt;
+                rotSword.y += 10 * dt;
 
-                if (swordT >= 2 * 3.141592654)
+                if (swordT >= 2 * M_PI)
                     return true;
                 return false;
             })
         .addCondition(
-            [&swordT, &swordPos](float) -> bool
+            [&swordT, &swordPos, &rotSword](float) -> bool
             {
                 swordT = 0;
-                swordPos = glm::vec3(60.0f, 1.0f, 0.0f);
+                swordPos = glm::vec3(60.0f, 13.0f, 0.0f);
+                rotSword = {-115.0f, 0.0f, 90.0f};
                 return true;
             })
         .prepare();
@@ -483,7 +486,7 @@ int main()
         if (glfwGetTime() > nextDigitsChange)
         {
             rootCounter->increment();
-            nextDigitsChange = glfwGetTime() + 0.1;
+            nextDigitsChange = glfwGetTime() + 0.2;
         }
 
         angulovaria += 0.5f * deltaTime;
@@ -547,15 +550,15 @@ int main()
 
         // Instancia de la espada
         model = handler.setMatrix(glm::mat4(1.0f))
-                    //                    .translate(10, 0, 0)
                     .translate(swordPos)
-                    .rotateY(rotateSw)
+                    .rotateX(rotSword.x)
+                    .rotateY(rotSword.y)
+                    .rotateZ(rotSword.z)
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Sword.RenderModel();
-        printf("\n\nRot:%f\n\n", rotateSw);
 
-#ifdef CODIGO_INNECESARIO
+#ifdef ELEMENTOS_EJERCICIO
         // Instancia del coche
         model = glm::mat4(1.0);
         model = glm::translate(model, glm::vec3(movCoche - 50.0f, 0.5f, -2.0f));
@@ -672,7 +675,7 @@ int main()
             meshList[6]->RenderMesh();
         }
 
-#if NUMEROS_EJERCICIO
+#if ELEMENTOS_EJERCICIO
         // plano con todos los números
         toffsetnumerou = 0.0;
         toffsetnumerov = 0.0;
