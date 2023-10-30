@@ -19,10 +19,10 @@ Adicional.- Textura Animada
 */
 // para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
-#define _USE_MATH_DEFINES
 #define NUM_DIGITOS 2
 #define swordMaxVec 0.08
-#include <cmath>
+
+#define PI_CONST 3.141592654
 
 #include <cstdio>
 #include <vector>
@@ -421,15 +421,28 @@ int main()
         .addCondition(
             [&rotSword](float dt) -> bool
             {
-                if (mainWindow.getsKeys()[GLFW_KEY_P])
-                {
-                    rotSword = {0, 0, 0};
-                    return true;
-                }
-                return false;
+                return mainWindow.getsKeys()[GLFW_KEY_P];
+                //                if (mainWindow.getsKeys()[GLFW_KEY_P])
+                //                {
+                //                    rotSword = {0, 0, 0};
+                //                    return true;
+                //                }
+                //                return false;
             })
         .addCondition(
-            [&swordPos, &cAccSword, &accSword,
+            [&swordPos, &rotSword](float dt) -> bool
+            {
+                // revertir glm::vec3 rotSword = {-115.0f, 0.0f, 90.0f};
+                if (rotSword.x < 0)
+                {
+                    rotSword.x += 20.0 * dt;
+                    rotSword.z -= 15.0 * dt;
+                    return false;
+                }
+                return true;
+            })
+        .addCondition(
+            [&swordPos, &accSword,
              &swordDesp, &swordT, &rotSword](float dt) -> bool
             {
                 float dsp = swordMaxVec * dt;
@@ -440,9 +453,11 @@ int main()
                 swordT += dsp;
                 swordPos.x = 30 + 30 * glm::cos(swordT);
                 swordPos.z = 24 * glm::sin(swordT);
+                swordPos.x = swordPos.x + 1.5 * glm::cos(swordT * 10);
+                swordPos.z = swordPos.z + 1.5 * glm::sin(swordT * 10);
                 rotSword.y += 10 * dt;
 
-                if (swordT >= 2 * M_PI)
+                if (swordT >= 2 * PI_CONST)
                     return true;
                 return false;
             })
@@ -451,7 +466,19 @@ int main()
             {
                 swordT = 0;
                 swordPos = glm::vec3(60.0f, 13.0f, 0.0f);
-                rotSword = {-115.0f, 0.0f, 90.0f};
+                //                rotSword = {-115.0f, 0.0f, 90.0f};
+                rotSword = {0.0f, 0.0f, 0.0f};
+                return true;
+            })
+        .addCondition(
+            [&swordPos, &rotSword](float dt) -> bool
+            {
+                if (rotSword.x > -115)
+                {
+                    rotSword.x -= 20.0 * dt;
+                    rotSword.z += 15.0 * dt;
+                    return false;
+                }
                 return true;
             })
         .prepare();
@@ -653,29 +680,7 @@ int main()
         FlechaTexture.UseTexture();
         Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[4]->RenderMesh();
-#else
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#endif
 
-        for (int i = 0; i < digitCounter.size(); i++)
-        {
-            auto digito = digitCounter.at(i);
-            toffset = {digito->getU() * 0.25, digito->getV() * (-0.33)};
-            model = handler.setMatrix(glm::mat4(1.0f))
-                        .translate(-10 + (i * 3.0), 2.0, -6.0)
-                        .rotateX(90)
-                        .scale(3.0)
-                        .getMatrix();
-            glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
-            glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-            color = glm::vec3(1.0f, 1.0f, 1.0f);
-            NumerosTexture.UseTexture();
-            Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-            meshList[6]->RenderMesh();
-        }
-
-#if ELEMENTOS_EJERCICIO
         // plano con todos los números
         toffsetnumerou = 0.0;
         toffsetnumerov = 0.0;
@@ -817,7 +822,28 @@ int main()
 
         Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[5]->RenderMesh();
+#else
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
+
+        for (int i = 0; i < digitCounter.size(); i++)
+        {
+            auto digito = digitCounter.at(i);
+            toffset = {digito->getU() * 0.25, digito->getV() * (-0.33)};
+            model = handler.setMatrix(glm::mat4(1.0f))
+                        .translate(-10 + (i * 3.0), 2.0, -6.0)
+                        .rotateX(90)
+                        .scale(3.0)
+                        .getMatrix();
+            glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+            glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+            color = glm::vec3(1.0f, 1.0f, 1.0f);
+            NumerosTexture.UseTexture();
+            Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+            meshList[6]->RenderMesh();
+        }
+
         glDisable(GL_BLEND);
 
         glUseProgram(0);
