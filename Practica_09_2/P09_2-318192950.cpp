@@ -23,6 +23,7 @@ Adicional.- Textura Animada
 #define swordMaxVec 0.08
 
 #define PI_CONST 3.141592654
+#define GRAVITY 9.8
 
 #include <cstdio>
 #include <vector>
@@ -89,6 +90,7 @@ Model Kitt_M;
 Model Llanta_M;
 Model Blackhawk_M;
 Model Sword;
+Model Canica;
 
 Skybox skybox;
 
@@ -106,6 +108,9 @@ DirectionalLight mainLight;
 // para declarar varias luces de tipo pointlight
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
+
+// Variables canica
+const float masaCanica = 1.0f;
 
 // Vertex Shader
 static const char *vShader = "shaders/shader_light.vert";
@@ -130,7 +135,8 @@ enum OBJETOS
     VEGETACION,
     FLECHA,
     SCORE,
-    NUMEROS
+    NUMEROS,
+    PLANO
 };
 
 // cálculo del promedio de las normales para sombreado de Phong
@@ -261,6 +267,19 @@ void CreateObjects()
 		-0.5f, 0.0f, -0.5f,		0.0f, 1.0f,		0.0f, -1.0f, 0.0f,
 
 	};
+
+// Plano inclinado
+    unsigned int planoIdx[] = {
+        0, 2, 1,
+        1, 2, 3
+    };
+    
+    GLfloat planoVtx[] = {
+        -10.0f, 0.0f, -10.0f,	0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
+        10.0f, 0.0f, -10.0f,	10.0f, 0.0f,	0.0f, -1.0f, 0.0f,
+        -10.0f, 5.13f, 14.096f,	0.0f, 10.0f,	0.0f, -1.0f, 0.0f,
+        10.0f, 5.13f, 14.096f,		10.0f, 10.0f,	0.0f, -1.0f, 0.0f
+    };
     // clang-format on
 
     Mesh *obj1 = new Mesh();
@@ -290,6 +309,10 @@ void CreateObjects()
     Mesh *obj7 = new Mesh();
     obj7->CreateMesh(numeroVertices, numeroIndices, 32, 6);
     meshList.push_back(obj7);
+
+    auto obj8 = new Mesh();
+    obj8->CreateMesh(planoVtx, planoIdx, 32, 6);
+    meshList.push_back(obj8);
 }
 
 void CreateShaders()
@@ -339,6 +362,8 @@ int main()
 #endif
     Sword = Model();
     Sword.LoadModel("Models/sword.obj");
+    Canica = Model();
+    Canica.LoadModel("Models/canica.obj");
 
     std::vector<std::string> skyboxFaces;
     skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -398,7 +423,7 @@ int main()
     movOffset = 0.01f;
     rotllanta = 0.0f;
     rotllantaOffset = 10.0f;
-
+#if ELEMENTOS_EJERCICIO
     bool intercambia = true;
     int sigNumCambio = 2;
     int siguienteCambio = 5;
@@ -407,14 +432,13 @@ int main()
 
     int numberTimeout = 2.0f;
     int sinceLastAction = 0;
-
+#endif
     // Seccion para el lanzamiento de la espada
     glm::vec3 swordPos(60.0f, 13.0f, 0.0f);
     float swordDesp = 0.0;
     float swordT = 0.0f;
     glm::vec3 rotSword = {-115.0f, 0.0f, 90.0f};
     float accSword = 0.0;
-    const float cAccSword = 0.003;
 
     Animation swordAnimation;
     swordAnimation
@@ -442,10 +466,10 @@ int main()
                 if (swordDesp < swordMaxVec)
                     swordDesp += acc * dt;
                 swordT += dsp;
-                swordPos.x = 30 + 30 * glm::cos(swordT);
-                swordPos.z = 24 * glm::sin(swordT);
-                swordPos.x = swordPos.x + 1.5 * glm::cos(swordT * 10);
-                swordPos.z = swordPos.z + 1.5 * glm::sin(swordT * 10);
+                swordPos.x = 30 + 30 * cos(swordT);
+                swordPos.z = 24 * sin(swordT);
+                swordPos.x = swordPos.x + 1.5 * cos(swordT * 10);
+                swordPos.z = swordPos.z + 1.5 * sin(swordT * 10);
                 rotSword.y += 10 * dt;
 
                 if (swordT >= 2 * PI_CONST)
@@ -477,8 +501,35 @@ int main()
                 rotSword = {-115.0f, 0.0f, 90.0f};
                 return true;
             })
-    .prepare();
+        .prepare();
 
+    // Sección para el lanzamiento de la canica
+    glm::vec3 posCanica(-14, 1, 0);
+
+#if EXTRA_CANICA
+    Animation canicaAnimation;
+    canicaAnimation
+        .addCondition(
+            [](float) -> bool
+            {
+                return mainWindow.getsKeys()[GLFW_KEY_U];
+            })
+        .addCondition(
+            [&posCanica](float dt) -> bool
+            {
+                // Hubiera puesto atención en las clases de fisica... :P
+                float inercia = (2.0 / 5.0) * masaCanica * pow(0.5, 2);
+                float a = (GRAVITY * sin(20)) / (1.0 + (inercia / (masaCanica * pow(0.5, 2))));
+                
+                posCanica.z -= a;
+                posCanica.y = posCanica.z * tan(20);
+                
+                if (posCanica.y <= 0) return true;
+                else return false;
+            })
+        .prepare();
+#endif
+    
     // Sección para el contador
     std::vector<Displacer *> digitCounter;
     float nextDigitsChange = 1;
@@ -505,6 +556,9 @@ int main()
         printf("Tiempo de ejecucion: %f\r", glfwGetTime());
 
         swordAnimation.update(deltaTime);
+#if EXTRA_CANICA
+        canicaAnimation.update(deltaTime);
+#endif
 
         if (glfwGetTime() > nextDigitsChange)
         {
@@ -580,7 +634,21 @@ int main()
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Sword.RenderModel();
+#if EXTRA_CANICA
+        // Plano y canica
+        model = handler.setMatrix(glm::mat4(1.0f))
+                    .translate(-30, -1, 7)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        meshList[OBJETOS::PLANO]->RenderMesh();
 
+        model = handler.setMatrix(glm::mat4(1.0f))
+                    .translate(-14 + posCanica.x, posCanica.y, posCanica.z)
+                    .scale(6.67)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        Canica.RenderModel();
+#endif
 #ifdef ELEMENTOS_EJERCICIO
         // Instancia del coche
         model = glm::mat4(1.0);
