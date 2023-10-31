@@ -21,6 +21,8 @@ Fuentes :
 // #define SKYBOX_SP
 
 #include <cmath>
+#include <cstdio>
+#include <cstring>
 #include <vector>
 
 #include <glew.h>
@@ -44,6 +46,7 @@ Fuentes :
 #include "PointLight.h"
 #include "Shader_light.h"
 #include "Skybox.h"
+#include "Sphere.h"
 #include "SpotLight.h"
 #include "Texture.h"
 #include "Window.h"
@@ -107,6 +110,9 @@ static const char *vShader = "shaders/shader_light.vert";
 
 // Fragment Shader
 static const char *fShader = "shaders/shader_light.frag";
+
+// función para teclado de keyframes
+void inputKeyframes(bool *keys);
 
 // cálculo del promedio de las normales para sombreado de Phong
 void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat *vertices, unsigned int verticeCount,
@@ -412,10 +418,105 @@ void CreateObjects()
 
 void CreateShaders()
 {
-    auto shader1 = new Shader();
+    Shader *shader1 = new Shader();
     shader1->CreateFromFiles(vShader, fShader);
     shaderList.push_back(*shader1);
 }
+
+///////////////////////////////KEYFRAMES/////////////////////
+
+bool animacion = false;
+
+float posXavion = 2.0, posYavion = 5.0, posZavion = -3.0;
+float movAvion_x = 0.0f, movAvion_y = 0.0f;
+float giroAvion = 0;
+
+#define MAX_FRAMES 100
+int i_max_steps = 90;
+int i_curr_steps = 4;
+typedef struct _frame
+{
+    // Variables para GUARDAR Key Frames
+    float movAvion_x;    // Variable para PosicionX
+    float movAvion_y;    // Variable para PosicionY
+    float movAvion_xInc; // Variable para IncrementoX
+    float movAvion_yInc; // Variable para IncrementoY
+    float giroAvion;
+    float giroAvionInc;
+} FRAME;
+
+FRAME KeyFrame[MAX_FRAMES];
+int FrameIndex = 4; // introducir datos
+bool play = false;
+int playIndex = 0;
+
+void saveFrame(void) // tecla L
+{
+
+    printf("frameindex %d\n", FrameIndex);
+
+    KeyFrame[FrameIndex].movAvion_x = movAvion_x;
+    KeyFrame[FrameIndex].movAvion_y = movAvion_y;
+    KeyFrame[FrameIndex].giroAvion; // completar
+    // no volatil, agregar una forma de escribir a un archivo para guardar los frames
+    FrameIndex++;
+}
+
+void resetElements(void) // Tecla 0
+{
+
+    movAvion_x = KeyFrame[0].movAvion_x;
+    movAvion_y = KeyFrame[0].movAvion_y;
+    giroAvion = KeyFrame[0].giroAvion;
+}
+
+void interpolation(void)
+{
+    KeyFrame[playIndex].movAvion_xInc = (KeyFrame[playIndex + 1].movAvion_x - KeyFrame[playIndex].movAvion_x) / i_max_steps;
+    KeyFrame[playIndex].movAvion_yInc = (KeyFrame[playIndex + 1].movAvion_y - KeyFrame[playIndex].movAvion_y) / i_max_steps;
+    KeyFrame[playIndex].giroAvionInc = (KeyFrame[playIndex + 1].giroAvion - KeyFrame[playIndex].giroAvion) / i_max_steps;
+}
+
+void animate(void)
+{
+    // Movimiento del objeto con barra espaciadora
+    if (play)
+    {
+        if (i_curr_steps >= i_max_steps) // fin de animación entre frames?
+        {
+            playIndex++;
+            printf("playindex : %d\n", playIndex);
+            if (playIndex > FrameIndex - 2) // Fin de toda la animación con último frame?
+            {
+                printf("Frame index= %d\n", FrameIndex);
+                printf("termino la animacion\n");
+                playIndex = 0;
+                play = false;
+            }
+            else // Interpolación del próximo cuadro
+            {
+                i_curr_steps = 0; // Resetea contador
+                // Interpolar
+                interpolation();
+            }
+        }
+        else
+        {
+            // Dibujar Animación
+            movAvion_x += KeyFrame[playIndex].movAvion_xInc;
+            movAvion_y += KeyFrame[playIndex].movAvion_yInc;
+            giroAvion += KeyFrame[playIndex].giroAvionInc;
+            i_curr_steps++;
+#ifdef DEBUG
+            printf("[ MainFunction ] ===== [ Current Frame Increments ] =====\n");
+            printf("Mov: (%f, %f, %f)\n", movAvion_x, movAvion_y, 0.0);
+            printf("[ MainFunction ] ===== [ Current Frame Increments ] =====\n");
+#endif
+        }
+    }
+}
+
+///////////////* FIN KEYFRAMES*////////////////////////////
 
 int main()
 {
@@ -531,6 +632,36 @@ int main()
     helicAnimation.addKeyframe({0.0f, 0.0f, 0.0f}, {0.0f, 180.0f, 0.0f});
     helicAnimation.addKeyframe({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
 
+    //---------PARA TENER KEYFRAMES GUARDADOS NO VOLATILES QUE SIEMPRE SE UTILIZARAN SE DECLARAN AQUÍ
+
+    KeyFrame[0].movAvion_x = 0.0f;
+    KeyFrame[0].movAvion_y = 0.0f;
+    KeyFrame[0].giroAvion = 0;
+
+    KeyFrame[1].movAvion_x = -1.0f;
+    KeyFrame[1].movAvion_y = 2.0f;
+    KeyFrame[1].giroAvion = 0;
+
+    KeyFrame[2].movAvion_x = -2.0f;
+    KeyFrame[2].movAvion_y = 0.0f;
+    KeyFrame[2].giroAvion = 0;
+
+    KeyFrame[3].movAvion_x = -3.0f;
+    KeyFrame[3].movAvion_y = -2.0f;
+    KeyFrame[3].giroAvion = 0;
+
+    /*KeyFrame[4].movAvion_x = -3.0f;
+    KeyFrame[4].movAvion_y = -2.0f;
+    KeyFrame[4].giroAvion = 180.0f;
+
+    KeyFrame[5].movAvion_x = 0.0f;
+    KeyFrame[5].movAvion_y = 0.0f;
+    KeyFrame[5].giroAvion = 0;*/
+    // Se agregan nuevos frames
+
+    printf("\nTeclas para uso de Keyframes:\n1.-Presionar barra espaciadora para reproducir animacion.\n2.-Presionar 0 para volver a habilitar reproduccion de la animacion\n");
+    printf("3.-Presiona L para guardar frame\n4.-Presiona P para habilitar guardar nuevo frame\n5.-Presiona 1 para mover en X\n6.-Presiona 2 para habilitar mover en X");
+
     ////Loop mientras no se cierra la ventana
     while (!mainWindow.getShouldClose())
     {
@@ -555,6 +686,10 @@ int main()
         glfwPollEvents();
         camera.keyControl(mainWindow.getsKeys(), deltaTime);
         camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+
+        //-------Para Keyframes
+        inputKeyframes(mainWindow.getsKeys());
+        animate();
 
         // Clear the window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -602,6 +737,62 @@ int main()
         Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 
         meshList[2]->RenderMesh();
+#ifdef VEHICULO
+        // Instancia del coche
+        model = glm::mat4(1.0);
+        model = glm::translate(model, glm::vec3(movCoche - 50.0f, 0.5f, -2.0f));
+        modelaux = model;
+        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+        model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        Kitt_M.RenderModel();
+
+        // Llanta delantera izquierda
+        model = modelaux;
+        model = glm::translate(model, glm::vec3(7.0f, -0.5f, 8.0f));
+        model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, rotllanta * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
+        color = glm::vec3(0.5f, 0.5f, 0.5f); // llanta con color gris
+        glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        Llanta_M.RenderModel();
+
+        // Llanta trasera izquierda
+        model = modelaux;
+        model = glm::translate(model, glm::vec3(15.5f, -0.5f, 8.0f));
+        model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, rotllanta * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        Llanta_M.RenderModel();
+
+        // Llanta delantera derecha
+        model = modelaux;
+        model = glm::translate(model, glm::vec3(7.0f, -0.5f, 1.5f));
+        model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, -rotllanta * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        Llanta_M.RenderModel();
+
+        // Llanta trasera derecha
+        model = modelaux;
+        model = glm::translate(model, glm::vec3(15.5f, -0.5f, 1.5f));
+        model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, -rotllanta * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        Llanta_M.RenderModel();
+#endif
+        //        model = glm::mat4(1.0);
+        //        posblackhawk = glm::vec3(posXavion + movAvion_x, posYavion + movAvion_y, posZavion);
+        //        posblackhawk = helicAnimation.getPosition() + helicAnimation.getCurrentFrame()->mov;
+        //        model = glm::translate(model, posblackhawk);
+        //        model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+        // model = glm::rotate(model, giroAvion * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+        //        model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+        //        model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
 
         model = handler
                     .setMatrix(glm::mat4(1.0f))
@@ -657,9 +848,85 @@ int main()
         glUseProgram(0);
 
         mainWindow.swapBuffers();
+        
     }
 
     return 0;
 }
 
+void inputKeyframes(bool *keys)
+{
+    if (keys[GLFW_KEY_SPACE])
+    {
+        if (reproduciranimacion < 1)
+        {
+            if (!play && (FrameIndex > 1))
+            {
+                resetElements();
+                // First Interpolation
+                interpolation();
+                play = true;
+                playIndex = 0;
+                i_curr_steps = 0;
+                reproduciranimacion++;
+                printf("\n presiona 0 para habilitar reproducir de nuevo la animación'\n");
+                habilitaranimacion = 0;
+            }
+            else
+            {
+                play = false;
+            }
+        }
+    }
+    if (keys[GLFW_KEY_0])
+    {
+        if (habilitaranimacion < 1 && reproduciranimacion > 0)
+        {
+            printf("Ya puedes reproducir de nuevo la animación con la tecla de barra espaciadora'\n");
+            reproduciranimacion = 0;
+        }
+    }
+
+    if (keys[GLFW_KEY_L])
+    {
+        if (guardoFrame < 1)
+        {
+            saveFrame();
+            printf("movAvion_x es: %f\n", movAvion_x);
+            printf("movAvion_y es: %f\n", movAvion_y);
+            printf("presiona P para habilitar guardar otro frame'\n");
+            guardoFrame++;
+            reinicioFrame = 0;
+        }
+    }
+    if (keys[GLFW_KEY_P])
+    {
+        if (reinicioFrame < 1)
+        {
+            guardoFrame = 0;
+            printf("Ya puedes guardar otro frame presionando la tecla L'\n");
+        }
+    }
+
+    if (keys[GLFW_KEY_1])
+    {
+        if (ciclo < 1)
+        {
+            // printf("movAvion_x es: %f\n", movAvion_x);
+            movAvion_x += 1.0f;
+            printf("\n movAvion_x es: %f\n", movAvion_x);
+            ciclo++;
+            ciclo2 = 0;
+            printf("\n Presiona la tecla 2 para poder habilitar la variable\n");
+        }
+    }
+    if (keys[GLFW_KEY_2])
+    {
+        if (ciclo2 < 1)
+        {
+            ciclo = 0;
+            printf("\n Ya puedes modificar tu variable presionando la tecla 1\n");
+        }
+    }
+}
 #pragma clang diagnostic pop
