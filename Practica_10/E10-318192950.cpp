@@ -81,9 +81,12 @@ Texture NumerosTexture;
 Texture Numero1Texture;
 Texture Numero2Texture;
 
-Model Kitt_M;
-Model Llanta_M;
 Model Blackhawk_M;
+Model Pinball;
+Model CristalPinball;
+Model Coin;
+Model Canica_1;
+Model Canica_2;
 
 Skybox skybox;
 
@@ -447,13 +450,20 @@ int main()
     Numero1Texture.LoadTextureA();
     Numero2Texture = Texture("Textures/numero2.tga");
     Numero2Texture.LoadTextureA();
-
-    Kitt_M = Model();
-    Kitt_M.LoadModel("Models/kitt_optimizado.obj");
-    Llanta_M = Model();
-    Llanta_M.LoadModel("Models/llanta_optimizada.obj");
+    
     Blackhawk_M = Model();
     Blackhawk_M.LoadModel("Models/uh60.obj");
+    
+    Coin = Model();
+    Coin.LoadModel("Models/Coin.obj");
+    Pinball = Model();
+    Pinball.LoadModel("Models/Pinball/MaquinaPinball.obj");
+    CristalPinball = Model();
+    CristalPinball.LoadModel("Models/Pinball/MaquinaCristal.obj");
+    Canica_1 = Model();
+    Canica_1.LoadModel("Models/canica.obj");
+    Canica_2 = Model();
+    Canica_2.LoadModel("Models/canica.obj");
 
     std::vector<std::string> skyboxFaces;
 
@@ -539,18 +549,6 @@ int main()
         deltaTime += (now - lastTime) / limitFPS;
         lastTime = now;
 
-        angulovaria += 0.5f * deltaTime;
-
-        if (mainWindow.getsKeys()[GLFW_KEY_SPACE] || helicAnimation.isPlaying())
-            helicAnimation.play();
-
-        if (movCoche < 30.0f)
-        {
-            movCoche -= movOffset * deltaTime;
-            // printf("avanza%f \n ",movCoche);
-        }
-        rotllanta += rotllantaOffset * deltaTime;
-
         // Recibir eventos del usuario
         glfwPollEvents();
         camera.keyControl(mainWindow.getsKeys(), deltaTime);
@@ -600,44 +598,18 @@ int main()
         glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
         pisoTexture.UseTexture();
         Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
-
         meshList[2]->RenderMesh();
 
-        model = handler
-                    .setMatrix(glm::mat4(1.0f))
-                    .translate(helicAnimation.getPosition() + helicAnimation.getMovement())
-                    .scale(0.3)
-                    .rotateY(helicAnimation.getRotation().y)
-                    .rotateX(-90)
-                    .rotateZ(90)
+        model = handler.setMatrix(glm::mat4(1.0f))
+                    .translate(0.0, -1.0, 0.0)
                     .getMatrix();
-        Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        Blackhawk_M.RenderModel();
-
-        // Agave ¿qué sucede si lo renderizan antes del coche y de la pista?
-        model = glm::mat4(1.0);
-        model = glm::translate(model, glm::vec3(0.0f, 0.5f, -2.0f));
-        model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        // blending: transparencia o traslucidez
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        AgaveTexture.UseTexture();
-        Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[3]->RenderMesh();
-
-        // textura con movimiento
-        // Importantes porque la variable uniform no podemos modificarla directamente
+        Pinball.RenderModel();
+        
         toffsetflechau += 0.001;
         toffsetflechav += 0.0;
-        // para que no se desborde la variable
         if (toffsetflechau > 1.0)
             toffsetflechau = 0.0;
-        // if (toffsetv > 1.0)
-        //	toffsetv = 0;
-        // printf("\ntfosset %f \n", toffsetu);
-        // pasar a la variable uniform el valor actualizado
         toffset = glm::vec2(toffsetflechau, toffsetflechav);
 
         model = glm::mat4(1.0);
