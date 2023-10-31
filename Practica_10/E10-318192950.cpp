@@ -18,6 +18,7 @@ Fuentes :
     */
 // para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
+// #define SKYBOX_SP
 
 #include <cmath>
 #include <math.h>
@@ -35,20 +36,20 @@ Fuentes :
 // #include<assimp/Importer.hpp>
 
 #include "Camera.h"
+#include "CommonValues.h"
+#include "DirectionalLight.h"
+#include "KeyFrameAnimation.h"
+#include "Material.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "ModelMatrix.h"
+#include "PointLight.h"
 #include "Shader_light.h"
 #include "Skybox.h"
 #include "Sphere.h"
+#include "SpotLight.h"
 #include "Texture.h"
 #include "Window.h"
-
-// para iluminación
-#include "CommonValues.h"
-#include "DirectionalLight.h"
-#include "Material.h"
-#include "PointLight.h"
-#include "SpotLight.h"
 const float toRadians = 3.14159265f / 180.0f;
 
 // variables para animación
@@ -426,7 +427,6 @@ void CreateShaders()
 
 bool animacion = false;
 
-// NEW// Keyframes
 float posXavion = 2.0, posYavion = 5.0, posZavion = -3.0;
 float movAvion_x = 0.0f, movAvion_y = 0.0f;
 float giroAvion = 0;
@@ -495,7 +495,6 @@ void animate(void)
             }
             else // Interpolación del próximo cuadro
             {
-
                 i_curr_steps = 0; // Resetea contador
                 // Interpolar
                 interpolation();
@@ -524,6 +523,8 @@ int main()
 
     camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.5f, 0.5f);
 
+    ModelMatrix handler(glm::mat4(1.0f));
+
     brickTexture = Texture("Textures/brick.png");
     brickTexture.LoadTextureA();
     dirtTexture = Texture("Textures/dirt.png");
@@ -551,7 +552,8 @@ int main()
     Blackhawk_M.LoadModel("Models/uh60.obj");
 
     std::vector<std::string> skyboxFaces;
-#if SKYBOX_SP
+
+#ifdef SKYBOX_SP
     skyboxFaces.push_back("Textures/Skybox/sp2_rt.png");
     skyboxFaces.push_back("Textures/Skybox/sp2_lf.png");
     skyboxFaces.push_back("Textures/Skybox/sp2_dn.png");
@@ -615,6 +617,33 @@ int main()
     rotllantaOffset = 10.0f;
     glm::vec3 posblackhawk = glm::vec3(2.0f, 0.0f, 0.0f);
 
+    KeyFrameAnimation helicAnimation;
+    helicAnimation.setPosition({2.0, 5.0, -3.0});
+    KeyFrameAnimation::Frame frame;
+    frame.mov = {0.0f, 0.0f, 0.0f};
+    frame.rot = {0.0f, 0.0f, 0.0f};
+    helicAnimation.addKeyframe(frame);
+
+    frame.mov = {-1.0f, 2.0f, 0.0f};
+    frame.rot = {0.0f, 0.0f, 0.0f};
+    helicAnimation.addKeyframe(frame);
+
+    frame.mov = {-2.0f, 0.0f, 0.0f};
+    frame.rot = {0.0f, 0.0f, 0.0f};
+    helicAnimation.addKeyframe(frame);
+
+    frame.mov = {-3.0f, -2.0f, 0.0f};
+    frame.rot = {0.0f, 0.0f, 0.0f};
+    helicAnimation.addKeyframe(frame);
+
+    frame.mov = {-3.0f, -2.0f, 0.0f};
+    frame.rot = {0.0f, 180.0f, 0.0f};
+    helicAnimation.addKeyframe(frame);
+
+    frame.mov = {0.0f, 0.0f, 0.0f};
+    frame.rot = {0.0f, 0.0f, 0.0f};
+    helicAnimation.addKeyframe(frame);
+
     //---------PARA TENER KEYFRAMES GUARDADOS NO VOLATILES QUE SIEMPRE SE UTILIZARAN SE DECLARAN AQUÍ
 
     KeyFrame[0].movAvion_x = 0.0f;
@@ -654,6 +683,9 @@ int main()
         lastTime = now;
 
         angulovaria += 0.5f * deltaTime;
+
+        if (mainWindow.getsKeys()[GLFW_KEY_SPACE] || helicAnimation.isPlaying())
+            helicAnimation.play();
 
         if (movCoche < 30.0f)
         {
@@ -765,13 +797,23 @@ int main()
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Llanta_M.RenderModel();
 
-        model = glm::mat4(1.0);
-        posblackhawk = glm::vec3(posXavion + movAvion_x, posYavion + movAvion_y, posZavion);
-        model = glm::translate(model, posblackhawk);
-        model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+//        model = glm::mat4(1.0);
+        //        posblackhawk = glm::vec3(posXavion + movAvion_x, posYavion + movAvion_y, posZavion);
+//        posblackhawk = helicAnimation.getPosition() + helicAnimation.getCurrentFrame()->mov;
+//        model = glm::translate(model, posblackhawk);
+//        model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
         // model = glm::rotate(model, giroAvion * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+        //        model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+        //        model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+
+        model = handler
+                    .setMatrix(glm::mat4 (1.0f))
+                    .translate(helicAnimation.getPosition() + helicAnimation.getCurrentFrame()->movInc)
+                    .scale(0.3)
+                    .rotateX(-90)
+                    .rotateY(helicAnimation.getRotation().y)
+                    .rotateZ(90)
+                    .getMatrix();
         Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
         // color = glm::vec3(0.0f, 1.0f, 0.0f);
         // glUniform3fv(uniformColor, 1, glm::value_ptr(color));
@@ -814,120 +856,6 @@ int main()
         FlechaTexture.UseTexture();
         Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[4]->RenderMesh();
-        /*
-            //plano con todos los números
-            toffsetnumerou = 0.0;
-            toffsetnumerov = 0.0;
-            toffset = glm::vec2(toffsetnumerou, toffsetnumerov);
-            model = glm::mat4(1.0);
-            model = glm::translate(model, glm::vec3(-6.0f, 2.0f, -6.0f));
-            model = glm::rotate(model, 90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-            glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
-            glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-            color = glm::vec3(1.0f, 1.0f, 1.0f);
-            glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-            NumerosTexture.UseTexture();
-            Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-            meshList[5]->RenderMesh();
-
-            //número 1
-            //toffsetnumerou = 0.0;
-            //toffsetnumerov = 0.0;
-            model = glm::mat4(1.0);
-            model = glm::translate(model, glm::vec3(-10.0f, 2.0f, -6.0f));
-            model = glm::rotate(model, 90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-            //glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
-            glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-            color = glm::vec3(1.0f, 1.0f, 1.0f);
-            glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-            NumerosTexture.UseTexture();
-            Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-            meshList[6]->RenderMesh();
-
-            for (int i = 1; i<4; i++)
-            {
-                //números 2-4
-                toffsetnumerou += 0.25;
-                toffsetnumerov = 0.0;
-                toffset = glm::vec2(toffsetnumerou, toffsetnumerov);
-                model = glm::mat4(1.0);
-                model = glm::translate(model, glm::vec3(-10.0f - (i * 3.0), 2.0f, -6.0f));
-                model = glm::rotate(model, 90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-                model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-                glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
-                glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-                color = glm::vec3(1.0f, 1.0f, 1.0f);
-                glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-                NumerosTexture.UseTexture();
-                Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-                meshList[6]->RenderMesh();
-
-             }
-
-            for (int j = 1; j < 5; j++)
-            {
-                //números 5-8
-                toffsetnumerou += 0.25;
-                toffsetnumerov = -0.33;
-                toffset = glm::vec2(toffsetnumerou, toffsetnumerov);
-                model = glm::mat4(1.0);
-                model = glm::translate(model, glm::vec3(-7.0f - (j * 3.0), 5.0f, -6.0f));
-                model = glm::rotate(model, 90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-                model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-                glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
-                glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-                color = glm::vec3(1.0f, 1.0f, 1.0f);
-                glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-                NumerosTexture.UseTexture();
-                Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-                meshList[6]->RenderMesh();
-            }
-
-        */
-        // número cambiante
-        /*
-        ¿Cómo hacer para que sea a una velocidad visible?
-        */
-        /*
-            toffsetnumerocambiau += 0.25;
-            if (toffsetnumerocambiau > 1.0)
-                toffsetnumerocambiau = 0.0;
-            toffsetnumerov = 0.0;
-            toffset = glm::vec2(toffsetnumerocambiau, toffsetnumerov);
-            model = glm::mat4(1.0);
-            model = glm::translate(model, glm::vec3(-10.0f, 10.0f, -6.0f));
-            model = glm::rotate(model, 90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-            glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
-            glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-            color = glm::vec3(1.0f, 1.0f, 1.0f);
-            glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-            NumerosTexture.UseTexture();
-            Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-            meshList[6]->RenderMesh();
-
-            //cambiar automáticamente entre textura número 1 y número 2
-            toffsetnumerou = 0.0;
-            toffsetnumerov = 0.0;
-            toffset = glm::vec2(toffsetnumerou, toffsetnumerov);
-            model = glm::mat4(1.0);
-            model = glm::translate(model, glm::vec3(-13.0f, 10.0f, -6.0f));
-            model = glm::rotate(model, 90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-            glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
-            glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-            color = glm::vec3(1.0f, 1.0f, 1.0f);
-            glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-            Numero1Texture.UseTexture();
-            //if
-            //Numero1Texture.UseTexture();
-            //Numero2Texture.UseTexture();
-
-            Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-            meshList[5]->RenderMesh();
-        */
 
         glDisable(GL_BLEND);
 
