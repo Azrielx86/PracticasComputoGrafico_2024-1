@@ -21,17 +21,17 @@ Fuentes :
 // #define SKYBOX_SP
 
 #include <cmath>
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <vector>
 
 #include <glew.h>
 #include <glfw3.h>
 
 #include <glm.hpp>
-#include <gtc\matrix_transform.hpp>
-#include <gtc\type_ptr.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
+#include <gtx/string_cast.hpp>
 // para probar el importer
 // #include<assimp/Importer.hpp>
 
@@ -507,6 +507,11 @@ void animate(void)
             movAvion_y += KeyFrame[playIndex].movAvion_yInc;
             giroAvion += KeyFrame[playIndex].giroAvionInc;
             i_curr_steps++;
+#ifdef DEBUG
+            printf("[ MainFunction ] ===== [ Current Frame Increments ] =====\n");
+            printf("Mov: (%f, %f, %f)\n", movAvion_x, movAvion_y, 0.0);
+            printf("[ MainFunction ] ===== [ Current Frame Increments ] =====\n");
+#endif
         }
     }
 }
@@ -619,30 +624,13 @@ int main()
 
     KeyFrameAnimation helicAnimation;
     helicAnimation.setPosition({2.0, 5.0, -3.0});
-    KeyFrameAnimation::Frame frame;
-    frame.mov = {0.0f, 0.0f, 0.0f};
-    frame.rot = {0.0f, 0.0f, 0.0f};
-    helicAnimation.addKeyframe(frame);
-
-    frame.mov = {-1.0f, 2.0f, 0.0f};
-    frame.rot = {0.0f, 0.0f, 0.0f};
-    helicAnimation.addKeyframe(frame);
-
-    frame.mov = {-2.0f, 0.0f, 0.0f};
-    frame.rot = {0.0f, 0.0f, 0.0f};
-    helicAnimation.addKeyframe(frame);
-
-    frame.mov = {-3.0f, -2.0f, 0.0f};
-    frame.rot = {0.0f, 0.0f, 0.0f};
-    helicAnimation.addKeyframe(frame);
-
-    frame.mov = {-3.0f, -2.0f, 0.0f};
-    frame.rot = {0.0f, 180.0f, 0.0f};
-    helicAnimation.addKeyframe(frame);
-
-    frame.mov = {0.0f, 0.0f, 0.0f};
-    frame.rot = {0.0f, 0.0f, 0.0f};
-    helicAnimation.addKeyframe(frame);
+    helicAnimation.addKeyframe({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
+    helicAnimation.addKeyframe({-1.0f, 2.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
+    helicAnimation.addKeyframe({-2.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
+    helicAnimation.addKeyframe({-3.0f, -2.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
+    helicAnimation.addKeyframe({-3.0f, -2.0f, 0.0f}, {0.0f, 180.0f, 0.0f});
+    helicAnimation.addKeyframe({0.0f, 0.0f, 0.0f}, {0.0f, 180.0f, 0.0f});
+    helicAnimation.addKeyframe({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
 
     //---------PARA TENER KEYFRAMES GUARDADOS NO VOLATILES QUE SIEMPRE SE UTILIZARAN SE DECLARAN AQUÍ
 
@@ -749,7 +737,7 @@ int main()
         Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 
         meshList[2]->RenderMesh();
-
+#ifdef VEHICULO
         // Instancia del coche
         model = glm::mat4(1.0);
         model = glm::translate(model, glm::vec3(movCoche - 50.0f, 0.5f, -2.0f));
@@ -796,27 +784,25 @@ int main()
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Llanta_M.RenderModel();
-
-//        model = glm::mat4(1.0);
+#endif
+        //        model = glm::mat4(1.0);
         //        posblackhawk = glm::vec3(posXavion + movAvion_x, posYavion + movAvion_y, posZavion);
-//        posblackhawk = helicAnimation.getPosition() + helicAnimation.getCurrentFrame()->mov;
-//        model = glm::translate(model, posblackhawk);
-//        model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+        //        posblackhawk = helicAnimation.getPosition() + helicAnimation.getCurrentFrame()->mov;
+        //        model = glm::translate(model, posblackhawk);
+        //        model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
         // model = glm::rotate(model, giroAvion * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
         //        model = glm::rotate(model, -90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
         //        model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
 
         model = handler
-                    .setMatrix(glm::mat4 (1.0f))
-                    .translate(helicAnimation.getPosition() + helicAnimation.getCurrentFrame()->movInc)
+                    .setMatrix(glm::mat4(1.0f))
+                    .translate(helicAnimation.getPosition() + helicAnimation.getMovement())
                     .scale(0.3)
-                    .rotateX(-90)
                     .rotateY(helicAnimation.getRotation().y)
+                    .rotateX(-90)
                     .rotateZ(90)
                     .getMatrix();
         Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        // color = glm::vec3(0.0f, 1.0f, 0.0f);
-        // glUniform3fv(uniformColor, 1, glm::value_ptr(color));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Blackhawk_M.RenderModel();
 
@@ -862,6 +848,7 @@ int main()
         glUseProgram(0);
 
         mainWindow.swapBuffers();
+        
     }
 
     return 0;

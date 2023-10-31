@@ -2,46 +2,51 @@
 
 #define MAX_FRAMES 100
 
-#include "gtc/matrix_transform.hpp"
 #include <fstream>
 #include <functional>
+#include <gtc/matrix_transform.hpp>
+#include <gtx/string_cast.hpp>
 #include <ios>
 #include <string>
 #include <vector>
 
+/**
+ * Clase para el control de animaciones por KeyFrames
+ * Permite las siguientes acciones:
+ * - Guardar animaciones
+ * - Reiniciar animacciones
+ * - Interpolacion entre los keyframes
+ * - Reproduccion de las animaciones
+ * - Declaracion de los keyframes
+ */
 class KeyFrameAnimation
 {
   public:
+    explicit KeyFrameAnimation() = default;
+    ~KeyFrameAnimation();
+
     typedef struct _frame
     {
-        /*
-        // Variables para GUARDAR Key Frames
-        float movAvion_x;    // Variable para PosicionX
-        float movAvion_y;    // Variable para PosicionY
-        float movAvion_xInc; // Variable para IncrementoX
-        float movAvion_yInc; // Variable para IncrementoY
-        float giroAvion;
-        float giroAvionInc;
-        */
         glm::vec3 mov = {0, 0, 0};
         glm::vec3 movInc = {0, 0, 0};
         glm::vec3 rot = {0, 0, 0};
         glm::vec3 rotInc = {0, 0, 0};
     } Frame;
 
-    /* declara
-    agregarla al struct
-    salvarla
-    resetearla
-    interpolarla
-    reproducir
-    */
+    /**
+     * Adds an frame to the animation, movement increments will be calculated
+     * later while the animation is playing.
+     * @deprecated Solo usar si se tienen estructuras distintas
+     * @param frame Frame with position and rotation values.
+     */
+    void addKeyframe(KeyFrameAnimation::Frame frame);
+
     /**
      * Adds an frame to the animation, movement increments will be calculated
      * later while the animation is playing.
      * @param frame Frame with position and rotation values.
      */
-    void addKeyframe(KeyFrameAnimation::Frame frame);
+    void addKeyframe(const glm::vec3 &translations, const glm::vec3 &rotations);
 
     // TODO
     void loadFromFile(std::string file);
@@ -58,42 +63,34 @@ class KeyFrameAnimation
     bool play();
 
     /**
-     * Returns the object current position.
-     * @return
+     * @return Object current position.
      */
     [[nodiscard]] const glm::vec3 &getPosition() const;
 
     /**
      * Sets the objetc initial position;
-     * @param pos
+     * @param pos initial position.
      */
     void setPosition(const glm::vec3 &pos);
+
+    /**
+     * @return Current object movements. 
+     */
+    [[nodiscard]] const glm::vec3 &getMovement() const;
+    [[nodiscard]] const glm::vec3 &getRotation() const;
+    [[nodiscard]] const Frame *getCurrentFrame() const;
+    [[nodiscard]] bool isPlaying() const;
 
   private:
     int MaxSteps = 90;
     int CurrSteps = 0;
     int playIndex = 0;
-    int frameIndex = 0;
     bool playing = false;
-
-  public:
-    bool isPlaying() const;
-
-  private:
-    glm::vec3 position;
-    glm::vec3 movement;
-    glm::vec3 rotation;
-
-  public:
-    const glm::vec3 &getRotation() const;
-
-  private:
+    bool reset = false;
+    glm::vec3 position = {0, 0, 0};
+    glm::vec3 movement = {0, 0, 0};
+    glm::vec3 rotation = {0, 0, 0};
     Frame *currentFrame;
-
-  public:
-    [[nodiscard]] const Frame *getCurrentFrame() const;
-
-  private:
     std::vector<Frame *> frames;
 
     /**
