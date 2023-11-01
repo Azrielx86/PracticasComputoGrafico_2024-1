@@ -55,8 +55,8 @@ class KeyFrameAnimation
     /**
      * Resets the animation.
      */
-    void resetAnimation();
 
+    void resetAnimation();
     /**
      * Plays the animation and calculate the interpolations if it's necessary.
      */

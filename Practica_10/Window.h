@@ -1,16 +1,19 @@
 #pragma once
 #include <glew.h>
 #include <glfw3.h>
-#include <stdio.h>
+#include <cstdio>
+#include <utility>
+
 
 class Window
 {
   public:
-    enum CAR_LIGHT
+    typedef struct _key
     {
-        FRONT_LIGHT,
-        BACK_LIGHT
-    };
+        int action;
+        bool pressed;
+        bool firstStroke;
+    } Key;
 
     Window();
     Window(GLint windowWidth, GLint windowHeight);
@@ -24,15 +27,21 @@ class Window
         return glfwWindowShouldClose(mainWindow);
     }
     bool *getsKeys() { return keys; }
+    std::pair<bool, int> *getKeysPairs() { return keyPairs; }
     void swapBuffers() { return glfwSwapBuffers(mainWindow); }
     GLFWwindow *getWindowPointer() { return this->mainWindow; }
-    [[nodiscard]] GLfloat getAnguloCofre() const;
     ~Window();
+
+    static constexpr std::pair<bool, int> keyPressed = std::pair<bool, int>(true, GLFW_PRESS);
+    static constexpr std::pair<bool, int> keyRepeat = std::pair<bool, int>(true, GLFW_REPEAT);
+    static constexpr std::pair<bool, int> keyRelease = std::pair<bool, int>(false, GLFW_RELEASE);
 
   private:
     GLFWwindow *mainWindow;
     GLint width, height;
     bool keys[1024];
+    std::pair<bool, int> keyPairs[1024];
+    Key keyStructs[1024];
     GLint bufferWidth, bufferHeight;
     void createCallbacks();
     GLfloat lastX;
@@ -41,31 +50,31 @@ class Window
     GLfloat yChange;
     GLfloat muevex;
     GLfloat anguloCofre = 0.0f;
-    bool startCoinAnimation = false;
+    bool deleteFrame = false;
     bool resetAnimation = false;
-    bool startHelicAnimation = false;
-    bool startDiceAnimation = false;
+    bool controlMode = false;
+    bool saveFrame = false;
 
   public:
     /**
-     * Tecla O 
+     * Tecla O
      */
-    [[nodiscard]] bool getResetAnimation() const;
-    
+    [[nodiscard]] bool getResetAnimation() const { return resetAnimation; };
+
     /**
-     * Tecla H 
+     * Tecla M
      */
-    [[nodiscard]] bool getStartHelicAnimation() const { return startHelicAnimation; }
-    
+    [[nodiscard]] bool getControlMode() const { return controlMode; }
+
     /**
-     * Tecla U 
+     * Tecla C
      */
-    [[nodiscard]] bool getStartDiceAnimation() const { return startDiceAnimation; }
-    
+    [[nodiscard]] bool getSaveFrame() const { return saveFrame; }
+
     /**
      * Tecla P
      */
-    [[nodiscard]] bool getStartCoinAnimation() const;
+    [[nodiscard]] bool getStartCoinAnimation() const { return deleteFrame; };
 
   private:
     bool toggleMouse = true;

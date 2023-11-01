@@ -9,9 +9,9 @@
 #pragma ide diagnostic ignored "modernize-use-emplace"
 #pragma ide diagnostic ignored "cppcoreguidelines-narrowing-conversions"
 /* Semestre 2024-1
-Animación por keyframes
-La textura del skybox fue conseguida desde la página https ://opengameart.org/content/elyvisions-skyboxes?page=1
-y edité en Gimp rotando 90 grados en sentido antihorario la imagen  sp2_up.png para poder ver continuidad.
+Animaciï¿½n por keyframes
+La textura del skybox fue conseguida desde la pï¿½gina https ://opengameart.org/content/elyvisions-skyboxes?page=1
+y editï¿½ en Gimp rotando 90 grados en sentido antihorario la imagen  sp2_up.png para poder ver continuidad.
 Fuentes :
     https ://www.khronos.org/opengl/wiki/Keyframe_Animation
     http ://what-when-how.com/wp-content/uploads/2012/07/tmpcd0074_thumb.png
@@ -36,6 +36,7 @@ Fuentes :
 #include "Camera.h"
 #include "CommonValues.h"
 #include "DirectionalLight.h"
+#include "Entity.h"
 #include "KeyFrameAnimation.h"
 #include "Material.h"
 #include "Mesh.h"
@@ -49,7 +50,7 @@ Fuentes :
 #include "Window.h"
 const float toRadians = 3.14159265f / 180.0f;
 
-// variables para animación
+// variables para animaciï¿½n
 float movCoche;
 float movOffset;
 float rotllanta;
@@ -111,7 +112,7 @@ static const char *vShader = "shaders/shader_light.vert";
 // Fragment Shader
 static const char *fShader = "shaders/shader_light.frag";
 
-// cálculo del promedio de las normales para sombreado de Phong
+// cï¿½lculo del promedio de las normales para sombreado de Phong
 void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat *vertices, unsigned int verticeCount,
                         unsigned int vLength, unsigned int normalOffset)
 {
@@ -450,10 +451,10 @@ int main()
     Numero1Texture.LoadTextureA();
     Numero2Texture = Texture("Textures/numero2.tga");
     Numero2Texture.LoadTextureA();
-    
+
     Blackhawk_M = Model();
     Blackhawk_M.LoadModel("Models/uh60.obj");
-    
+
     Coin = Model();
     Coin.LoadModel("Models/Coin.obj");
     Pinball = Model();
@@ -461,9 +462,17 @@ int main()
     CristalPinball = Model();
     CristalPinball.LoadModel("Models/Pinball/MaquinaCristal.obj");
     Canica_1 = Model();
-    Canica_1.LoadModel("Models/canica.obj");
+    Canica_1.LoadModel("Models/Pinball/canica.obj");
     Canica_2 = Model();
-    Canica_2.LoadModel("Models/canica.obj");
+    Canica_2.LoadModel("Models/Pinball/canica.obj");
+
+    Entity CanicaEntity;
+    CanicaEntity.declareControl(Entity::RET, GLFW_KEY_DOWN);
+    CanicaEntity.declareControl(Entity::WALK, GLFW_KEY_UP);
+    CanicaEntity.declareControl(Entity::LEFT, GLFW_KEY_LEFT);
+    CanicaEntity.declareControl(Entity::RIGHT, GLFW_KEY_RIGHT);
+    CanicaEntity.declareControl(Entity::UP, GLFW_KEY_SPACE);
+    CanicaEntity.declareControl(Entity::DOWN, GLFW_KEY_LEFT_SHIFT);
 
     std::vector<std::string> skyboxFaces;
 
@@ -488,13 +497,13 @@ int main()
     Material_brillante = Material(4.0f, 256);
     Material_opaco = Material(0.3f, 4);
 
-    // luz direccional, sólo 1 y siempre debe de existir
+    // luz direccional, sï¿½lo 1 y siempre debe de existir
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
-                                 0.3f, 0.3f,
+                                 0.8f, 0.3f,
                                  0.0f, 0.0f, -1.0f);
     // contador de luces puntuales
     unsigned int pointLightCount = 0;
-    // Declaración de primer luz puntual
+    // Declaraciï¿½n de primer luz puntual
     pointLights[0] = PointLight(1.0f, 0.0f, 0.0f,
                                 0.0f, 1.0f,
                                 0.0f, 2.5f, 1.5f,
@@ -531,15 +540,19 @@ int main()
     rotllantaOffset = 10.0f;
     glm::vec3 posblackhawk = glm::vec3(2.0f, 0.0f, 0.0f);
 
-    KeyFrameAnimation helicAnimation;
-    helicAnimation.setPosition({2.0, 5.0, -3.0});
-    helicAnimation.addKeyframe({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
-    helicAnimation.addKeyframe({-1.0f, 2.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
-    helicAnimation.addKeyframe({-2.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
-    helicAnimation.addKeyframe({-3.0f, -2.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
-    helicAnimation.addKeyframe({-3.0f, -2.0f, 0.0f}, {0.0f, 180.0f, 0.0f});
-    helicAnimation.addKeyframe({0.0f, 0.0f, 0.0f}, {0.0f, 180.0f, 0.0f});
-    helicAnimation.addKeyframe({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
+    KeyFrameAnimation ballAnimation;
+
+    /*
+     * Controles:
+     * M - Modo captura o Modo ejecutar animaciÃ³n.
+     * == Modo Captura ==
+     * C - Guarda Frame
+     * R - Elimina Frame
+     * == Modo animacion ==
+     * Space - Ejecuta animaciÃ³n.
+     * R - Reinicia animaciÃ³n.
+     */
+    bool modoCaptura = false;
 
     ////Loop mientras no se cierra la ventana
     while (!mainWindow.getShouldClose())
@@ -554,6 +567,19 @@ int main()
         camera.keyControl(mainWindow.getsKeys(), deltaTime);
         camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 
+        // Control entidades
+        CanicaEntity.move(mainWindow.getsKeys(), deltaTime);
+        ballAnimation.setPosition(CanicaEntity.getPosition());
+
+        if (mainWindow.getKeysPairs()[GLFW_KEY_P] == Window::keyPressed || ballAnimation.isPlaying())
+            ballAnimation.play();
+        
+        if (mainWindow.getKeysPairs()[GLFW_KEY_M] == Window::keyPressed)
+        {
+            modoCaptura = !modoCaptura;
+            printf("Modo captura cambiado! %d\n", modoCaptura);
+        }
+
         // Clear the window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -566,7 +592,7 @@ int main()
         uniformColor = shaderList[0].getColorLocation();
         uniformTextureOffset = shaderList[0].getOffsetLocation();
 
-        // información en el shader de intensidad especular y brillo
+        // informaciï¿½n en el shader de intensidad especular y brillo
         uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
         uniformShininess = shaderList[0].GetShininessLocation();
 
@@ -574,12 +600,12 @@ int main()
         glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
         glUniform3f(uniformEyePosition, camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
 
-        // luz ligada a la cámara de tipo flash
+        // luz ligada a la cï¿½mara de tipo flash
         glm::vec3 lowerLight = camera.getCameraPosition();
         lowerLight.y -= 0.3f;
         spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
 
-        // información al shader de fuentes de iluminación
+        // informaciï¿½n al shader de fuentes de iluminaciï¿½n
         shaderList[0].SetDirectionalLight(&mainLight);
         shaderList[0].SetPointLights(pointLights, pointLightCount);
         shaderList[0].SetSpotLights(spotLights, spotLightCount);
@@ -605,26 +631,14 @@ int main()
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Pinball.RenderModel();
-        
-        toffsetflechau += 0.001;
-        toffsetflechav += 0.0;
-        if (toffsetflechau > 1.0)
-            toffsetflechau = 0.0;
-        toffset = glm::vec2(toffsetflechau, toffsetflechav);
 
-        model = glm::mat4(1.0);
-        model = glm::translate(model, glm::vec3(-2.0f, 1.0f, -6.0f));
-        model = glm::rotate(model, 90 * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-        glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+        model = handler
+                    .setMatrix(glm::mat4(1.0f))
+                    //                    .translate(0.0, 30.0, 0.0)
+                    .translate(CanicaEntity.getPosition())
+                    .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        color = glm::vec3(1.0f, 0.0f, 0.0f);
-        glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-        FlechaTexture.UseTexture();
-        Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[4]->RenderMesh();
-
-        glDisable(GL_BLEND);
+        Canica_1.RenderModel();
 
         glUseProgram(0);
 

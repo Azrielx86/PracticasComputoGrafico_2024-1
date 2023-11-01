@@ -19,6 +19,8 @@ void KeyFrameAnimation::addKeyframe(const glm::vec3 &translations, const glm::ve
 // TODO : retornar bool con (estado de la animación).
 bool KeyFrameAnimation::play()
 {
+    if (frames.size() < 2)
+        return false;
     if (!playing)
     {
         playing = true;

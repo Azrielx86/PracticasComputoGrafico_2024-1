@@ -91,6 +91,8 @@ add_executable(Practica10 E10-318192950.cpp
         Window.h
         KeyFrameAnimation.cpp
         KeyFrameAnimation.h
+        Entity.cpp
+        Entity.h
 )
 
 message(STATUS "Copiando archivos de shader")
