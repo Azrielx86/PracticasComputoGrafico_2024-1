@@ -119,3 +119,61 @@ const glm::vec3 &KeyFrameAnimation::getMovement() const
 {
     return movement;
 }
+
+void KeyFrameAnimation::saveToFile(const std::string &filename) const
+{
+    std::ofstream o(filename);
+    json j;
+
+    // Posicion inicial
+    json initPos;
+    initPos["x"] = position.x;
+    initPos["y"] = position.y;
+    initPos["z"] = position.z;
+    j["pos"] = initPos;
+    // Frames
+    for (const auto &frame : frames)
+    {
+        json jframe, fPos, fRot;
+        fPos["x"] = frame->mov.x;
+        fPos["y"] = frame->mov.y;
+        fPos["z"] = frame->mov.z;
+
+        fRot["x"] = frame->rot.x;
+        fRot["y"] = frame->rot.y;
+        fRot["z"] = frame->rot.z;
+
+        jframe["mov"] = fPos;
+        jframe["rot"] = fRot;
+        j["frames"].push_back(jframe);
+    }
+
+    o << j.dump(4);
+}
+void KeyFrameAnimation::loadFromFile(std::string fileName)
+{
+    std::fstream file(fileName);
+    std::stringstream stream;
+    std::string line;
+    if (file.is_open())
+    {
+        while (std::getline(file, line))
+            stream << line;
+    }
+    auto j = json::parse(stream.str());
+
+    auto pos = j["pos"];
+    glm::vec3 start = {pos.at("x"), pos.at("y"), pos.at("z")};
+    this->setPosition(start);
+
+    for (const auto &frame : j["frames"])
+    {
+        auto mov = frame.at("mov");
+        auto rot = frame.at("rot");
+
+        glm::vec3 vMov = {mov.at("x"), mov.at("y"), mov.at("z")};
+        glm::vec3 vRot = {rot.at("x"), rot.at("y"), rot.at("z")};
+
+        this->addKeyframe(vMov, vRot);
+    }
+}

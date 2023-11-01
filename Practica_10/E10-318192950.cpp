@@ -48,6 +48,13 @@ Fuentes :
 #include "SpotLight.h"
 #include "Texture.h"
 #include "Window.h"
+
+// Librería para JSON
+// https://github.com/nlohmann/json
+#include "json.hpp"
+
+using json = nlohmann::json;
+
 const float toRadians = 3.14159265f / 180.0f;
 
 // variables para animaci�n
@@ -539,6 +546,12 @@ int main()
     rotllanta = 0.0f;
     rotllantaOffset = 10.0f;
     glm::vec3 posblackhawk = glm::vec3(2.0f, 0.0f, 0.0f);
+    
+    /*
+     * Ejemplo para leer desde un archivo
+     * KeyFrameAnimation helicAnimation;
+     * helicAnimation.loadFromFile("HelicopterAnimation.json");
+     */
 
     KeyFrameAnimation ballAnimation;
 
@@ -645,6 +658,10 @@ int main()
         mainWindow.swapBuffers();
     }
 
+//    json jhelic;
+//    KeyFrameAnimation::to_json(jhelic, helicAnimation);
+//    std::cout << jhelic.dump(4) << std::endl;
+    
     return 0;
 }
 

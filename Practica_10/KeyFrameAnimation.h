@@ -8,7 +8,15 @@
 #include <gtx/string_cast.hpp>
 #include <ios>
 #include <string>
+#include <sstream>
+#include <iostream>
 #include <vector>
+
+// Librería para JSON
+// https://github.com/nlohmann/json
+#include "json.hpp"
+
+using json = nlohmann::json;
 
 /**
  * Clase para el control de animaciones por KeyFrames
@@ -49,8 +57,8 @@ class KeyFrameAnimation
     void addKeyframe(const glm::vec3 &translations, const glm::vec3 &rotations);
 
     // TODO
-    void loadFromFile(std::string file);
-    void saveToFile(std::string filename);
+    void saveToFile(const std::string& filename) const;
+    void loadFromFile(std::string fileName);
 
     /**
      * Resets the animation.
@@ -90,7 +98,7 @@ class KeyFrameAnimation
     glm::vec3 position = {0, 0, 0};
     glm::vec3 movement = {0, 0, 0};
     glm::vec3 rotation = {0, 0, 0};
-    Frame *currentFrame;
+    Frame *currentFrame = nullptr;
     std::vector<Frame *> frames;
 
     /**
