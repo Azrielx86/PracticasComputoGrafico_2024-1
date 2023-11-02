@@ -7,9 +7,9 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtx/string_cast.hpp>
 #include <ios>
-#include <string>
-#include <sstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <vector>
 
 // Librería para JSON
@@ -57,8 +57,8 @@ class KeyFrameAnimation
     void addKeyframe(const glm::vec3 &translations, const glm::vec3 &rotations);
 
     // TODO
-    void saveToFile(const std::string& filename) const;
-    void loadFromFile(std::string fileName);
+    void saveToFile(const std::string &filename) const;
+    void loadFromFile(const std::string &fileName);
 
     /**
      * Resets the animation.
@@ -82,7 +82,7 @@ class KeyFrameAnimation
     void setPosition(const glm::vec3 &pos);
 
     /**
-     * @return Current object movements. 
+     * @return Current object movements.
      */
     [[nodiscard]] const glm::vec3 &getMovement() const;
     [[nodiscard]] const glm::vec3 &getRotation() const;

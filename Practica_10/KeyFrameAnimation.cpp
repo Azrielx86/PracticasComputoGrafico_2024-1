@@ -16,7 +16,6 @@ void KeyFrameAnimation::addKeyframe(const glm::vec3 &translations, const glm::ve
         currentFrame = frames.front();
 }
 
-// TODO : retornar bool con (estado de la animación).
 bool KeyFrameAnimation::play()
 {
     if (frames.size() < 2)
@@ -51,7 +50,6 @@ bool KeyFrameAnimation::play()
         currentFrame = frames.at(playIndex);
         ;
 #ifdef DEBUG
-        printf("\x1b[2J\x1b[H");
         printf("[ KeyFrameAnimation ] ===== [ Current Frame Increments ] =====\n");
         printf("Play index: %d\n", playIndex);
         printf("Mov: (%f, %f, %f)\n", movement.x, movement.y, movement.z);
@@ -150,11 +148,15 @@ void KeyFrameAnimation::saveToFile(const std::string &filename) const
 
     o << j.dump(4);
 }
-void KeyFrameAnimation::loadFromFile(std::string fileName)
+void KeyFrameAnimation::loadFromFile(const std::string &fileName)
 {
     std::fstream file(fileName);
     std::stringstream stream;
     std::string line;
+
+    if (!file.good())
+        return; 
+    
     if (file.is_open())
     {
         while (std::getline(file, line))

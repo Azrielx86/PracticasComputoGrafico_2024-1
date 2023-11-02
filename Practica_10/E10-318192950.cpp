@@ -18,6 +18,7 @@ Fuentes :
     */
 // para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
+#define SKYBOX_SP
 // #define SKYBOX_SP
 
 #include <cmath>
@@ -160,237 +161,94 @@ void calcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat
 
 void CreateObjects()
 {
+    // clang-format off
     unsigned int indices[] = {
         0, 3, 1,
         1, 3, 2,
         2, 3, 0,
-        0, 1, 2};
-
+        0, 1, 2
+    };
+    
     GLfloat vertices[] = {
         //	x      y      z			u	  v			nx	  ny    nz
-        -1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, -1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, -1.0f, -0.6f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f};
+        -1.0f, -1.0f, -0.6f,	0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
+        0.0f, -1.0f, 1.0f,		0.5f, 0.0f,		0.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, -0.6f,		1.0f, 0.0f,		0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,		0.5f, 1.0f,		0.0f, 0.0f, 0.0f
+    };
 
     unsigned int floorIndices[] = {
         0, 2, 1,
-        1, 2, 3};
+        1, 2, 3
+    };
 
     GLfloat floorVertices[] = {
-        -10.0f, 0.0f, -10.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f,
-        10.0f, 0.0f, -10.0f, 10.0f, 0.0f, 0.0f, -1.0f, 0.0f,
-        -10.0f, 0.0f, 10.0f, 0.0f, 10.0f, 0.0f, -1.0f, 0.0f,
-        10.0f, 0.0f, 10.0f, 10.0f, 10.0f, 0.0f, -1.0f, 0.0f};
+        -10.0f, 0.0f, -10.0f,	0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
+        10.0f, 0.0f, -10.0f,	10.0f, 0.0f,	0.0f, -1.0f, 0.0f,
+        -10.0f, 0.0f, 10.0f,	0.0f, 10.0f,	0.0f, -1.0f, 0.0f,
+        10.0f, 0.0f, 10.0f,		10.0f, 10.0f,	0.0f, -1.0f, 0.0f
+    };
     unsigned int vegetacionIndices[] = {
         0, 1, 2,
         0, 2, 3,
-        4, 5, 6,
-        4, 6, 7};
-
-    GLfloat vegetacionVertices[] = {
-        -0.5f,
-        -0.5f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.5f,
-        -0.5f,
-        0.0f,
-        1.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.5f,
-        0.5f,
-        0.0f,
-        1.0f,
-        1.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        -0.5f,
-        0.5f,
-        0.0f,
-        0.0f,
-        1.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-
-        0.0f,
-        -0.5f,
-        -0.5f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        -0.5f,
-        0.5f,
-        1.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.5f,
-        0.5f,
-        1.0f,
-        1.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        0.5f,
-        -0.5f,
-        0.0f,
-        1.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-
+        4,5,6,
+        4,6,7
     };
 
+    GLfloat vegetacionVertices[] = {
+        -0.5f, -0.5f, 0.0f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.0f,		1.0f, 0.0f,		0.0f, 0.0f, 0.0f,
+        0.5f, 0.5f, 0.0f,		1.0f, 1.0f,		0.0f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.0f,		0.0f, 1.0f,		0.0f, 0.0f, 0.0f,
+
+        0.0f, -0.5f, -0.5f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
+        0.0f, -0.5f, 0.5f,		1.0f, 0.0f,		0.0f, 0.0f, 0.0f,
+        0.0f, 0.5f, 0.5f,		1.0f, 1.0f,		0.0f, 0.0f, 0.0f,
+        0.0f, 0.5f, -0.5f,		0.0f, 1.0f,		0.0f, 0.0f, 0.0f,
+
+
+    };
+	
+
     unsigned int flechaIndices[] = {
-        0,
-        1,
-        2,
-        0,
-        2,
-        3,
+        0, 1, 2,
+        0, 2, 3,
     };
 
     GLfloat flechaVertices[] = {
-        -0.5f,
-        0.0f,
-        0.5f,
-        0.0f,
-        0.0f,
-        0.0f,
-        -1.0f,
-        0.0f,
-        0.5f,
-        0.0f,
-        0.5f,
-        1.0f,
-        0.0f,
-        0.0f,
-        -1.0f,
-        0.0f,
-        0.5f,
-        0.0f,
-        -0.5f,
-        1.0f,
-        1.0f,
-        0.0f,
-        -1.0f,
-        0.0f,
-        -0.5f,
-        0.0f,
-        -0.5f,
-        0.0f,
-        1.0f,
-        0.0f,
-        -1.0f,
-        0.0f,
+        -0.5f, 0.0f, 0.5f,		0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
+        0.5f, 0.0f, 0.5f,		1.0f, 0.0f,		0.0f, -1.0f, 0.0f,
+        0.5f, 0.0f, -0.5f,		1.0f, 1.0f,		0.0f, -1.0f, 0.0f,
+        -0.5f, 0.0f, -0.5f,		0.0f, 1.0f,		0.0f, -1.0f, 0.0f,
 
     };
 
     unsigned int scoreIndices[] = {
-        0,
-        1,
-        2,
-        0,
-        2,
-        3,
+        0, 1, 2,
+        0, 2, 3,
     };
 
     GLfloat scoreVertices[] = {
-        -0.5f,
-        0.0f,
-        0.5f,
-        0.0f,
-        0.0f,
-        0.0f,
-        -1.0f,
-        0.0f,
-        0.5f,
-        0.0f,
-        0.5f,
-        1.0f,
-        0.0f,
-        0.0f,
-        -1.0f,
-        0.0f,
-        0.5f,
-        0.0f,
-        -0.5f,
-        1.0f,
-        1.0f,
-        0.0f,
-        -1.0f,
-        0.0f,
-        -0.5f,
-        0.0f,
-        -0.5f,
-        0.0f,
-        1.0f,
-        0.0f,
-        -1.0f,
-        0.0f,
+        -0.5f, 0.0f, 0.5f,		0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
+        0.5f, 0.0f, 0.5f,		1.0f, 0.0f,		0.0f, -1.0f, 0.0f,
+        0.5f, 0.0f, -0.5f,		1.0f, 1.0f,		0.0f, -1.0f, 0.0f,
+        -0.5f, 0.0f, -0.5f,		0.0f, 1.0f,		0.0f, -1.0f, 0.0f,
 
     };
 
     unsigned int numeroIndices[] = {
-        0,
-        1,
-        2,
-        0,
-        2,
-        3,
+        0, 1, 2,
+        0, 2, 3,
     };
 
     GLfloat numeroVertices[] = {
-        -0.5f,
-        0.0f,
-        0.5f,
-        0.0f,
-        0.67f,
-        0.0f,
-        -1.0f,
-        0.0f,
-        0.5f,
-        0.0f,
-        0.5f,
-        0.25f,
-        0.67f,
-        0.0f,
-        -1.0f,
-        0.0f,
-        0.5f,
-        0.0f,
-        -0.5f,
-        0.25f,
-        1.0f,
-        0.0f,
-        -1.0f,
-        0.0f,
-        -0.5f,
-        0.0f,
-        -0.5f,
-        0.0f,
-        1.0f,
-        0.0f,
-        -1.0f,
-        0.0f,
+        -0.5f, 0.0f, 0.5f,		0.0f, 0.67f,		0.0f, -1.0f, 0.0f,
+        0.5f, 0.0f, 0.5f,		0.25f, 0.67f,		0.0f, -1.0f, 0.0f,
+        0.5f, 0.0f, -0.5f,		0.25f, 1.0f,		0.0f, -1.0f, 0.0f,
+        -0.5f, 0.0f, -0.5f,		0.0f, 1.0f,		0.0f, -1.0f, 0.0f,
 
     };
+    // clang-format on
 
     Mesh *obj1 = new Mesh();
     obj1->CreateMesh(vertices, indices, 32, 12);
@@ -506,7 +364,7 @@ int main()
 
     // luz direccional, s�lo 1 y siempre debe de existir
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
-                                 0.8f, 0.3f,
+                                 0.5f, 0.3f,
                                  0.0f, 0.0f, -1.0f);
     // contador de luces puntuales
     unsigned int pointLightCount = 0;
@@ -546,7 +404,7 @@ int main()
     rotllanta = 0.0f;
     rotllantaOffset = 10.0f;
     glm::vec3 posblackhawk = glm::vec3(2.0f, 0.0f, 0.0f);
-    
+
     /*
      * Ejemplo para leer desde un archivo
      * KeyFrameAnimation helicAnimation;
@@ -554,6 +412,7 @@ int main()
      */
 
     KeyFrameAnimation ballAnimation;
+    ballAnimation.loadFromFile("AnimacionCanica.json");
 
     /*
      * Controles:
@@ -586,7 +445,7 @@ int main()
 
         if (mainWindow.getKeysPairs()[GLFW_KEY_P] == Window::keyPressed || ballAnimation.isPlaying())
             ballAnimation.play();
-        
+
         if (mainWindow.getKeysPairs()[GLFW_KEY_M] == Window::keyPressed)
         {
             modoCaptura = !modoCaptura;
@@ -647,7 +506,6 @@ int main()
 
         model = handler
                     .setMatrix(glm::mat4(1.0f))
-                    //                    .translate(0.0, 30.0, 0.0)
                     .translate(CanicaEntity.getPosition())
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -658,10 +516,6 @@ int main()
         mainWindow.swapBuffers();
     }
 
-//    json jhelic;
-//    KeyFrameAnimation::to_json(jhelic, helicAnimation);
-//    std::cout << jhelic.dump(4) << std::endl;
-    
     return 0;
 }
 
