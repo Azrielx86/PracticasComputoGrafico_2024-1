@@ -14,6 +14,7 @@ void KeyFrameAnimation::addKeyframe(const glm::vec3 &translations, const glm::ve
     frames.push_back(frame);
     if (currentFrame == nullptr)
         currentFrame = frames.front();
+    printf("Actualmente hay %zu frames\n", frames.size());
 }
 
 bool KeyFrameAnimation::play()
@@ -48,7 +49,6 @@ bool KeyFrameAnimation::play()
     else
     {
         currentFrame = frames.at(playIndex);
-        ;
 #ifdef DEBUG
         printf("[ KeyFrameAnimation ] ===== [ Current Frame Increments ] =====\n");
         printf("Play index: %d\n", playIndex);
@@ -125,9 +125,9 @@ void KeyFrameAnimation::saveToFile(const std::string &filename) const
 
     // Posicion inicial
     json initPos;
-    initPos["x"] = position.x;
-    initPos["y"] = position.y;
-    initPos["z"] = position.z;
+    initPos["x"] = frames[0]->mov.x;
+    initPos["y"] = frames[0]->mov.y;
+    initPos["z"] = frames[0]->mov.z;
     j["pos"] = initPos;
     // Frames
     for (const auto &frame : frames)
@@ -146,7 +146,7 @@ void KeyFrameAnimation::saveToFile(const std::string &filename) const
         j["frames"].push_back(jframe);
     }
 
-    o << j.dump(4);
+    o << j.dump(2);
 }
 void KeyFrameAnimation::loadFromFile(const std::string &fileName)
 {
@@ -155,8 +155,8 @@ void KeyFrameAnimation::loadFromFile(const std::string &fileName)
     std::string line;
 
     if (!file.good())
-        return; 
-    
+        return;
+
     if (file.is_open())
     {
         while (std::getline(file, line))
@@ -166,7 +166,6 @@ void KeyFrameAnimation::loadFromFile(const std::string &fileName)
 
     auto pos = j["pos"];
     glm::vec3 start = {pos.at("x"), pos.at("y"), pos.at("z")};
-    this->setPosition(start);
 
     for (const auto &frame : j["frames"])
     {
@@ -178,4 +177,11 @@ void KeyFrameAnimation::loadFromFile(const std::string &fileName)
 
         this->addKeyframe(vMov, vRot);
     }
+    this->setPosition(this->frames.front()->mov);
+}
+void KeyFrameAnimation::removeLastFrame()
+{
+    if (!frames.empty())
+        frames.erase(frames.end() - 1);
+    printf("Se elimino el ultimo frame (%zu restantes)\n", frames.size());
 }

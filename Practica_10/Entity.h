@@ -8,7 +8,7 @@
 #include <functional>
 #include <glm.hpp>
 
-#define STEP 0.5
+#define STEP 0.3
 
 class Entity
 {
@@ -26,9 +26,11 @@ class Entity
     void move(const bool *keys, float dt);
     void declareControl(Entity::DIRECTION direction, int key);
     [[nodiscard]] const glm::vec3 &getPosition() const;
+    [[nodiscard]] const glm::vec3  &getRotation() const;
 
   protected:
     glm::vec3 position = {0.0f, 0.0f, 0.0f};
+    glm::vec3 rotation = {0.0f, 0.0f, 0.0f};
     std::unordered_map<int, Entity::DIRECTION> controls;
 };
 

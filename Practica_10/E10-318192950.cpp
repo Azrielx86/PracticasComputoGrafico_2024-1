@@ -96,6 +96,8 @@ Model CristalPinball;
 Model Coin;
 Model Canica_1;
 Model Canica_2;
+Model FlipperLeft;
+Model FlipperRight;
 
 Skybox skybox;
 
@@ -330,6 +332,8 @@ int main()
     Canica_1.LoadModel("Models/Pinball/canica.obj");
     Canica_2 = Model();
     Canica_2.LoadModel("Models/Pinball/canica.obj");
+    FlipperLeft = Model();
+    FlipperLeft.LoadModel("Models/Pinball/Flipper.obj");
 
     Entity CanicaEntity;
     CanicaEntity.declareControl(Entity::RET, GLFW_KEY_DOWN);
@@ -411,8 +415,8 @@ int main()
      * helicAnimation.loadFromFile("HelicopterAnimation.json");
      */
 
-    KeyFrameAnimation ballAnimation;
-    ballAnimation.loadFromFile("AnimacionCanica.json");
+    KeyFrameAnimation canicaAnim;
+    canicaAnim.loadFromFile("CanicaAnimacion.json");
 
     /*
      * Controles:
@@ -425,6 +429,48 @@ int main()
      * R - Reinicia animación.
      */
     bool modoCaptura = false;
+
+    mainWindow
+        .addCallback(GLFW_KEY_M,
+                     [&modoCaptura]() -> void
+                     {
+                         modoCaptura = !modoCaptura;
+                         printf("Modo captura: %s\n", modoCaptura ? "true" : "false");
+                     })
+        // Callbacks del modo captura
+        .addCallback(GLFW_KEY_C,
+                     [&canicaAnim, &CanicaEntity, &modoCaptura]() -> void
+                     {
+                         if (!modoCaptura)
+                             return;
+                         printf("Frame capturado\n");
+                         canicaAnim.addKeyframe(CanicaEntity.getPosition(), CanicaEntity.getRotation());
+                     })
+        .addCallback(GLFW_KEY_R,
+                     [&canicaAnim, &modoCaptura] -> void
+                     {
+                         if (!modoCaptura)
+                             return;
+                         printf("Frame Eliminado\n");
+                         canicaAnim.removeLastFrame();
+                     })
+        .addCallback(GLFW_KEY_G,
+                     [&canicaAnim, &modoCaptura] -> void
+                     {
+                         if (!modoCaptura)
+                             return;
+                         printf("Animacion guardada.\n");
+                         canicaAnim.saveToFile("CanicaAnimacion.json");
+                     })
+        // Callbacks del modo reproduccion
+        .addCallback(GLFW_KEY_SPACE,
+                     [&canicaAnim, &modoCaptura]() -> void
+                     {
+                         if (modoCaptura)
+                             return;
+                         if (!canicaAnim.isPlaying())
+                             canicaAnim.play();
+                     });
 
     ////Loop mientras no se cierra la ventana
     while (!mainWindow.getShouldClose())
@@ -440,17 +486,11 @@ int main()
         camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 
         // Control entidades
-        CanicaEntity.move(mainWindow.getsKeys(), deltaTime);
-        ballAnimation.setPosition(CanicaEntity.getPosition());
+        if (modoCaptura)
+            CanicaEntity.move(mainWindow.getsKeys(), deltaTime);
 
-        if (mainWindow.getKeysPairs()[GLFW_KEY_P] == Window::keyPressed || ballAnimation.isPlaying())
-            ballAnimation.play();
-
-        if (mainWindow.getKeysPairs()[GLFW_KEY_M] == Window::keyPressed)
-        {
-            modoCaptura = !modoCaptura;
-            printf("Modo captura cambiado! %d\n", modoCaptura);
-        }
+        if (canicaAnim.isPlaying())
+            canicaAnim.play();
 
         // Clear the window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -506,10 +546,16 @@ int main()
 
         model = handler
                     .setMatrix(glm::mat4(1.0f))
-                    .translate(CanicaEntity.getPosition())
+                    .translate(modoCaptura ? CanicaEntity.getPosition() : canicaAnim.getPosition() + canicaAnim.getMovement())
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         Canica_1.RenderModel();
+
+        model = handler.setMatrix(glm::mat4(1.0f))
+                    .rotateZ(20)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        FlipperLeft.RenderModel();
 
         glUseProgram(0);
 

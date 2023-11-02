@@ -7,10 +7,9 @@ Window::Window()
     for (size_t i = 0; i < 1024; i++)
     {
         keys[i] = 0;
-        keyPairs[i] = std::pair<bool, int>(false, GLFW_RELEASE);
         keyStructs[i].action = GLFW_RELEASE;
-        keyStructs[i].pressed = false;
-        keyStructs[i].firstStroke = false;
+        keyStructs[i].repeat = false;
+        keyStructs[i].callback = nullptr;
     }
 }
 Window::Window(GLint windowWidth, GLint windowHeight)
@@ -102,87 +101,45 @@ GLfloat Window::getYChange()
 void Window::ManejaTeclado(GLFWwindow *window, int key, int code, int action, int mode)
 {
     Window *theWindow = static_cast<Window *>(glfwGetWindowUserPointer(window));
+    if (key == GLFW_KEY_UNKNOWN)
+        return;
 
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    theWindow->keyStructs[key].action = action;
+
+    for (const auto &k : theWindow->keyStructs)
     {
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    }
-    if (key == GLFW_KEY_Y)
-    {
-        theWindow->muevex -= 1.0;
-    }
-    if (key == GLFW_KEY_U)
-    {
-        theWindow->muevex += 1.0;
+        if (k.action == GLFW_PRESS || (k.action == GLFW_REPEAT && k.repeat))
+            if (k.callback != nullptr)
+                k.callback();
     }
 
-    // Liberar mouse
     if (key == GLFW_KEY_T && action == GLFW_PRESS)
     {
         theWindow->toggleMouse = !theWindow->toggleMouse;
         theWindow->mouseMode();
     }
-
+    
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(window, GL_TRUE);
+    }
+    
     /*
-     * Controles:
-     * M - Modo captura o Modo ejecutar animación.
-     * == Modo Captura ==
-     * C - Guarda Frame
-     * R - Elimina Frame
-     * == Modo animacion ==
-     * Space - Ejecuta animación.
-     * R - Reinicia animación.
-     */
-    //    if (key == GLFW_KEY_M && action == GLFW_PRESS)
-    //        theWindow->controlMode = true;
-    //    if (key == GLFW_KEY_M && action == GLFW_RELEASE)
-    //        theWindow->controlMode = false;
-    //
-    //    if (key == GLFW_KEY_M && action == GLFW_PRESS)
-    //        theWindow->controlMode = true;
-    //    if (key == GLFW_KEY_M && action == GLFW_RELEASE)
-    //        theWindow->controlMode = false;
-    //
-    //    if (key == GLFW_KEY_M && action == GLFW_PRESS)
-    //        theWindow->controlMode = true;
-    //    if (key == GLFW_KEY_M && action == GLFW_RELEASE)
-    //        theWindow->controlMode = false;
-    //
-    //    if (key == GLFW_KEY_M && action == GLFW_PRESS)
-    //        theWindow->controlMode = true;
-    //    if (key == GLFW_KEY_M && action == GLFW_RELEASE)
-    //        theWindow->controlMode = false;
-
-    // todo : Clase o struct Key
-    /*
-     * bool active;
-     * enum action;
-     *
-     * De esta crear un arreglo en Input
-     *
+     * para el futuro:
      * https://stackoverflow.com/questions/46631814/handling-multiple-keys-input-at-once-with-glfw
      */
-    
+
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
         {
             theWindow->keys[key] = true;
-            theWindow->keyPairs[key].second = theWindow->keyPairs[key].first ? GLFW_REPEAT : GLFW_PRESS;
-            theWindow->keyPairs[key].first = true;
-            
             // printf("se presiono la tecla %d'\n", key);
         }
         else if (action == GLFW_RELEASE)
         {
             theWindow->keys[key] = false;
-            theWindow->keyPairs[key].first = false;
-            theWindow->keyPairs[key].second = action;
             // printf("se solto la tecla %d'\n", key);
-        }
-        else
-        {
-            theWindow->keyPairs[key].second = action;
         }
     }
 }
@@ -211,4 +168,11 @@ Window::~Window()
 {
     glfwDestroyWindow(mainWindow);
     glfwTerminate();
+}
+
+Window &Window::addCallback(int key, const std::function<void()> &callback, bool repeat)
+{
+    keyStructs[key].callback = callback;
+    keyStructs[key].repeat = repeat;
+    return *this;
 }

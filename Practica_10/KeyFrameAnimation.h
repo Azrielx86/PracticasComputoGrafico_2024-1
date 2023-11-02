@@ -48,6 +48,11 @@ class KeyFrameAnimation
      * @param frame Frame with position and rotation values.
      */
     void addKeyframe(KeyFrameAnimation::Frame frame);
+    
+    /**
+     * Removes the last frame on the animation
+     */
+    void removeLastFrame();
 
     /**
      * Adds an frame to the animation, movement increments will be calculated
@@ -56,15 +61,23 @@ class KeyFrameAnimation
      */
     void addKeyframe(const glm::vec3 &translations, const glm::vec3 &rotations);
 
-    // TODO
+    /**
+     * Saves the animation on a .json file
+     * @param filename Name of the output file
+     */
     void saveToFile(const std::string &filename) const;
+    
+    /**
+     * Loads an animation from a .json file
+     * @param fileName Name of the input file
+     */
     void loadFromFile(const std::string &fileName);
 
     /**
      * Resets the animation.
      */
-
     void resetAnimation();
+    
     /**
      * Plays the animation and calculate the interpolations if it's necessary.
      */

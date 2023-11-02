@@ -1,9 +1,9 @@
 #pragma once
+#include <cstdio>
+#include <functional>
 #include <glew.h>
 #include <glfw3.h>
-#include <cstdio>
 #include <utility>
-
 
 class Window
 {
@@ -11,8 +11,8 @@ class Window
     typedef struct _key
     {
         int action;
-        bool pressed;
-        bool firstStroke;
+        std::function<void()> callback;
+        bool repeat;
     } Key;
 
     Window();
@@ -27,20 +27,19 @@ class Window
         return glfwWindowShouldClose(mainWindow);
     }
     bool *getsKeys() { return keys; }
-    std::pair<bool, int> *getKeysPairs() { return keyPairs; }
+    Key *getKeyMap() { return keyStructs; }
     void swapBuffers() { return glfwSwapBuffers(mainWindow); }
     GLFWwindow *getWindowPointer() { return this->mainWindow; }
     ~Window();
 
-    static constexpr std::pair<bool, int> keyPressed = std::pair<bool, int>(true, GLFW_PRESS);
-    static constexpr std::pair<bool, int> keyRepeat = std::pair<bool, int>(true, GLFW_REPEAT);
-    static constexpr std::pair<bool, int> keyRelease = std::pair<bool, int>(false, GLFW_RELEASE);
+    //    static constexpr std::pair<bool, int> keyPressed = std::pair<bool, int>(true, GLFW_PRESS);
+    //    static constexpr std::pair<bool, int> keyRepeat = std::pair<bool, int>(true, GLFW_REPEAT);
+    //    static constexpr std::pair<bool, int> keyRelease = std::pair<bool, int>(false, GLFW_RELEASE);
 
   private:
     GLFWwindow *mainWindow;
     GLint width, height;
     bool keys[1024];
-    std::pair<bool, int> keyPairs[1024];
     Key keyStructs[1024];
     GLint bufferWidth, bufferHeight;
     void createCallbacks();
@@ -75,6 +74,8 @@ class Window
      * Tecla P
      */
     [[nodiscard]] bool getStartCoinAnimation() const { return deleteFrame; };
+
+    Window &addCallback(int key, const std::function<void()>& callback, bool repeat = false);
 
   private:
     bool toggleMouse = true;

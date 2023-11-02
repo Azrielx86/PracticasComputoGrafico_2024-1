@@ -44,3 +44,7 @@ void Entity::move(const bool *keys, float dt)
         }
     }
 }
+const glm::vec3 &Entity::getRotation() const
+{
+    return rotation;
+}
