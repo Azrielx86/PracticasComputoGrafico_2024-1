@@ -49,7 +49,8 @@ bool KeyFrameAnimation::play()
     else
     {
         currentFrame = frames.at(playIndex);
-#ifdef DEBUG
+#ifndef DEBUG
+        printf("\x1b[2J\x1b[H");
         printf("[ KeyFrameAnimation ] ===== [ Current Frame Increments ] =====\n");
         printf("Play index: %d\n", playIndex);
         printf("Mov: (%f, %f, %f)\n", movement.x, movement.y, movement.z);
@@ -72,8 +73,8 @@ void KeyFrameAnimation::interpolate()
     auto keyframe = frames.at(playIndex);
     auto nextFrame = frames.at(playIndex + 1);
 
-    keyframe->movInc += (nextFrame->mov - keyframe->mov) / (float)MaxSteps;
-    keyframe->rotInc += (nextFrame->rot - keyframe->rot) / (float)MaxSteps;
+    keyframe->movInc = (nextFrame->mov - keyframe->mov) / (float)MaxSteps;
+    keyframe->rotInc = (nextFrame->rot - keyframe->rot) / (float)MaxSteps;
 }
 
 void KeyFrameAnimation::resetAnimation()
@@ -81,6 +82,7 @@ void KeyFrameAnimation::resetAnimation()
     currentFrame = frames.at(0);
     position = currentFrame->mov;
     rotation = currentFrame->rot;
+    movement = {0, 0, 0};
 }
 
 const glm::vec3 &KeyFrameAnimation::getPosition() const
@@ -120,64 +122,79 @@ const glm::vec3 &KeyFrameAnimation::getMovement() const
 
 void KeyFrameAnimation::saveToFile(const std::string &filename) const
 {
-    std::ofstream o(filename);
-    json j;
-
-    // Posicion inicial
-    json initPos;
-    initPos["x"] = frames[0]->mov.x;
-    initPos["y"] = frames[0]->mov.y;
-    initPos["z"] = frames[0]->mov.z;
-    j["pos"] = initPos;
-    // Frames
-    for (const auto &frame : frames)
+    try
     {
-        json jframe, fPos, fRot;
-        fPos["x"] = frame->mov.x;
-        fPos["y"] = frame->mov.y;
-        fPos["z"] = frame->mov.z;
+        std::ofstream o(filename);
+        json j;
 
-        fRot["x"] = frame->rot.x;
-        fRot["y"] = frame->rot.y;
-        fRot["z"] = frame->rot.z;
+        // Posicion inicial
+        json initPos;
+        initPos["x"] = frames[0]->mov.x;
+        initPos["y"] = frames[0]->mov.y;
+        initPos["z"] = frames[0]->mov.z;
+        j["pos"] = initPos;
+        // Frames
+        for (const auto &frame : frames)
+        {
+            json jframe, fPos, fRot;
+            fPos["x"] = frame->mov.x;
+            fPos["y"] = frame->mov.y;
+            fPos["z"] = frame->mov.z;
 
-        jframe["mov"] = fPos;
-        jframe["rot"] = fRot;
-        j["frames"].push_back(jframe);
+            fRot["x"] = frame->rot.x;
+            fRot["y"] = frame->rot.y;
+            fRot["z"] = frame->rot.z;
+
+            jframe["mov"] = fPos;
+            jframe["rot"] = fRot;
+            j["frames"].push_back(jframe);
+        }
+
+        o << j.dump(2);
     }
-
-    o << j.dump(2);
+    catch (std::exception &ex)
+    {
+        std::cerr << ex.what();
+    }
 }
 void KeyFrameAnimation::loadFromFile(const std::string &fileName)
 {
-    std::fstream file(fileName);
-    std::stringstream stream;
-    std::string line;
-
-    if (!file.good())
-        return;
-
-    if (file.is_open())
+    try
     {
-        while (std::getline(file, line))
-            stream << line;
+
+        std::fstream file(fileName);
+        std::stringstream stream;
+        std::string line;
+
+        if (!file.good())
+            return;
+
+        if (file.is_open())
+        {
+            while (std::getline(file, line))
+                stream << line;
+        }
+        auto j = json::parse(stream.str());
+
+        auto pos = j["pos"];
+        glm::vec3 start = {pos.at("x"), pos.at("y"), pos.at("z")};
+
+        for (const auto &frame : j["frames"])
+        {
+            auto mov = frame.at("mov");
+            auto rot = frame.at("rot");
+
+            glm::vec3 vMov = {mov.at("x"), mov.at("y"), mov.at("z")};
+            glm::vec3 vRot = {rot.at("x"), rot.at("y"), rot.at("z")};
+
+            this->addKeyframe(vMov, vRot);
+        }
+        this->setPosition(this->frames.front()->mov);
     }
-    auto j = json::parse(stream.str());
-
-    auto pos = j["pos"];
-    glm::vec3 start = {pos.at("x"), pos.at("y"), pos.at("z")};
-
-    for (const auto &frame : j["frames"])
+    catch (std::exception &ex)
     {
-        auto mov = frame.at("mov");
-        auto rot = frame.at("rot");
-
-        glm::vec3 vMov = {mov.at("x"), mov.at("y"), mov.at("z")};
-        glm::vec3 vRot = {rot.at("x"), rot.at("y"), rot.at("z")};
-
-        this->addKeyframe(vMov, vRot);
+        std::cerr << ex.what();
     }
-    this->setPosition(this->frames.front()->mov);
 }
 void KeyFrameAnimation::removeLastFrame()
 {

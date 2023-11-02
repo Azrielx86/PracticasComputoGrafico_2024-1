@@ -296,7 +296,7 @@ int main()
     CreateObjects();
     CreateShaders();
 
-    camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.5f, 0.5f);
+    camera = Camera(glm::vec3(0.0f, 60.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.5f, 0.5f);
 
     ModelMatrix handler(glm::mat4(1.0f));
 
@@ -334,7 +334,9 @@ int main()
     Canica_2.LoadModel("Models/Pinball/canica.obj");
     FlipperLeft = Model();
     FlipperLeft.LoadModel("Models/Pinball/Flipper.obj");
-
+    FlipperRight = Model();
+    FlipperRight.LoadModel("Models/Pinball/Flipper.obj");
+    
     Entity CanicaEntity;
     CanicaEntity.declareControl(Entity::RET, GLFW_KEY_DOWN);
     CanicaEntity.declareControl(Entity::WALK, GLFW_KEY_UP);
@@ -491,6 +493,8 @@ int main()
 
         if (canicaAnim.isPlaying())
             canicaAnim.play();
+        else
+            canicaAnim.resetAnimation();
 
         // Clear the window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -552,10 +556,19 @@ int main()
         Canica_1.RenderModel();
 
         model = handler.setMatrix(glm::mat4(1.0f))
-                    .rotateZ(20)
+                    .translate(-58, 49, 10)
+                    .rotateZ(6)
                     .getMatrix();
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         FlipperLeft.RenderModel();
+        
+        model = handler.setMatrix(glm::mat4(1.0f))
+                    .translate(-58, 49, -19)
+                    .rotateY(180)
+                    .rotateZ(-6)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        FlipperRight.RenderModel();
 
         glUseProgram(0);
 
