@@ -65,7 +65,7 @@ else ()
     include_directories(/usr/include/stb)
 endif ()
 
-add_executable(Practica10 E10-318192950.cpp
+add_executable(Practica10 P10-318192950.cpp
         Camera.cpp
         DirectionalLight.cpp
         Light.cpp

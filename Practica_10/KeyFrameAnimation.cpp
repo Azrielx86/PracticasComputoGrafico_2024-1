@@ -79,6 +79,8 @@ void KeyFrameAnimation::interpolate()
 
 void KeyFrameAnimation::resetAnimation()
 {
+    if (frames.empty())
+        return;
     currentFrame = frames.at(0);
     position = currentFrame->mov;
     rotation = currentFrame->rot;
