@@ -82,20 +82,6 @@ Texture brickTexture;
 Texture dirtTexture;
 Texture plainTexture;
 Texture pisoTexture;
-Texture AgaveTexture;
-Texture FlechaTexture;
-Texture NumerosTexture;
-Texture Numero1Texture;
-Texture Numero2Texture;
-
-Model Blackhawk_M;
-Model Pinball;
-Model CristalPinball;
-Model Coin;
-Model Canica_1;
-Model Canica_2;
-Model FlipperLeft;
-Model FlipperRight;
 
 Skybox skybox;
 
@@ -306,34 +292,7 @@ int main()
     plainTexture.LoadTextureA();
     pisoTexture = Texture("Textures/piso.tga");
     pisoTexture.LoadTextureA();
-    AgaveTexture = Texture("Textures/Agave.tga");
-    AgaveTexture.LoadTextureA();
-    FlechaTexture = Texture("Textures/flechas.tga");
-    FlechaTexture.LoadTextureA();
-    NumerosTexture = Texture("Textures/numerosbase.tga");
-    NumerosTexture.LoadTextureA();
-    Numero1Texture = Texture("Textures/numero1.tga");
-    Numero1Texture.LoadTextureA();
-    Numero2Texture = Texture("Textures/numero2.tga");
-    Numero2Texture.LoadTextureA();
 
-    Blackhawk_M = Model();
-    Blackhawk_M.LoadModel("Models/uh60.obj");
-
-    Coin = Model();
-    Coin.LoadModel("Models/Coin.obj");
-    Pinball = Model();
-    Pinball.LoadModel("Models/Pinball/MaquinaPinball.obj");
-    CristalPinball = Model();
-    CristalPinball.LoadModel("Models/Pinball/MaquinaCristal.obj");
-    Canica_1 = Model();
-    Canica_1.LoadModel("Models/Pinball/canica.obj");
-    Canica_2 = Model();
-    Canica_2.LoadModel("Models/Pinball/canica.obj");
-    FlipperLeft = Model();
-    FlipperLeft.LoadModel("Models/Pinball/Flipper.obj");
-    FlipperRight = Model();
-    FlipperRight.LoadModel("Models/Pinball/Flipper.obj");
     
     Entity CanicaEntity;
     CanicaEntity.declareControl(Entity::RET, GLFW_KEY_DOWN);
@@ -352,23 +311,18 @@ int main()
     skyboxFaces.push_back("Textures/Skybox/sp2_up.png");
     skyboxFaces.push_back("Textures/Skybox/sp2_bk.png");
     skyboxFaces.push_back("Textures/Skybox/sp2_ft.png");
-    skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
-    skyboxFaces.push_back("Textures/Skybox/cupertin-lake_lf.tga");
-    skyboxFaces.push_back("Textures/Skybox/cupertin-lake_dn.tga");
-    skyboxFaces.push_back("Textures/Skybox/cupertin-lake_up.tga");
-    skyboxFaces.push_back("Textures/Skybox/cupertin-lake_bk.tga");
-    skyboxFaces.push_back("Textures/Skybox/cupertin-lake_ft.tga");
+    skybox = Skybox(skyboxFaces);
 #else
 // https://sketchfab.com/3d-models/sky-box-8k-night-forest-scene-with-aurora-sky-a626c2f3eda14177b07f9c345a17df60
-    skyboxFaces.push_back("Textures/Skybox/px.png");
     skyboxFaces.push_back("Textures/Skybox/nx.png");
-    skyboxFaces.push_back("Textures/Skybox/pz.png");
-    skyboxFaces.push_back("Textures/Skybox/nz.png");
-    skyboxFaces.push_back("Textures/Skybox/py.png");
+    skyboxFaces.push_back("Textures/Skybox/px.png");
     skyboxFaces.push_back("Textures/Skybox/ny.png");
+    skyboxFaces.push_back("Textures/Skybox/py.png");
+    skyboxFaces.push_back("Textures/Skybox/nz.png");
+    skyboxFaces.push_back("Textures/Skybox/pz.png");
+    skybox = Skybox(skyboxFaces, true);
 #endif
 
-    skybox = Skybox(skyboxFaces);
 
     Material_brillante = Material(4.0f, 256);
     Material_opaco = Material(0.3f, 4);
@@ -546,34 +500,6 @@ int main()
         pisoTexture.UseTexture();
         Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[2]->RenderMesh();
-
-        model = handler.setMatrix(glm::mat4(1.0f))
-                    .translate(0.0, -1.0, 0.0)
-                    .getMatrix();
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        Pinball.RenderModel();
-
-        model = handler
-                    .setMatrix(glm::mat4(1.0f))
-                    .translate(modoCaptura ? CanicaEntity.getPosition() : canicaAnim.getPosition() + canicaAnim.getMovement())
-                    .getMatrix();
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        Canica_1.RenderModel();
-
-        model = handler.setMatrix(glm::mat4(1.0f))
-                    .translate(-58, 49, 10)
-                    .rotateZ(6)
-                    .getMatrix();
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        FlipperLeft.RenderModel();
-        
-        model = handler.setMatrix(glm::mat4(1.0f))
-                    .translate(-58, 49, -19)
-                    .rotateY(180)
-                    .rotateZ(-6)
-                    .getMatrix();
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        FlipperRight.RenderModel();
 
         glUseProgram(0);
 
