@@ -103,7 +103,7 @@ class KeyFrameAnimation
     [[nodiscard]] bool isPlaying() const;
 
   private:
-    int MaxSteps = 90;
+    int MaxSteps = 255;
     int CurrSteps = 0;
     int playIndex = 0;
     bool playing = false;

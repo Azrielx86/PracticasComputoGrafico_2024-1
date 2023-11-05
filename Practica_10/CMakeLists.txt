@@ -101,6 +101,11 @@ message(STATUS "Copiando archivos de modelos")
 file(COPY Models DESTINATION ${CMAKE_BINARY_DIR})
 message(STATUS "Copiando archivos de texturas")
 file(COPY Textures DESTINATION ${CMAKE_BINARY_DIR})
+
+message(STATUS "Copiando animaciones")
+file(COPY CarAnimation.json DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY CanicaAnimacion.json DESTINATION ${CMAKE_BINARY_DIR})
+
 if (UNIX)
     target_link_libraries(Practica10 glfw OpenGL::GL GLEW assimp::assimp)
 else ()

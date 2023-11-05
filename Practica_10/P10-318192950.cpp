@@ -50,6 +50,7 @@ Fuentes :
 
 // Librería para JSON
 // https://github.com/nlohmann/json
+#include "LightCollection.h"
 #include "json.hpp"
 
 using json = nlohmann::json;
@@ -62,15 +63,6 @@ float movOffset;
 float rotllanta;
 float rotllantaOffset;
 bool avanza;
-float toffsetflechau = 0.0f;
-float toffsetflechav = 0.0f;
-float toffsetnumerou = 0.0f;
-float toffsetnumerov = 0.0f;
-float toffsetnumerocambiau = 0.0;
-float angulovaria = 0.0f;
-
-// variables para keyframes
-float reproduciranimacion, habilitaranimacion, guardoFrame, reinicioFrame, ciclo, ciclo2, contador = 0;
 
 Window mainWindow;
 std::vector<Mesh *> meshList;
@@ -84,6 +76,10 @@ Texture plainTexture;
 Texture pisoTexture;
 
 Skybox skybox;
+
+float anguloRuedas;
+Model car, wheel;
+Model cone;
 
 // materiales
 Material Material_brillante;
@@ -99,6 +95,9 @@ DirectionalLight mainLight;
 // para declarar varias luces de tipo pointlight
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
+
+KeyFrameAnimation carAnimation;
+Entity carEntity;
 
 // Vertex Shader
 static const char *vShader = "shaders/shader_light.vert";
@@ -293,14 +292,13 @@ int main()
     pisoTexture = Texture("Textures/piso.tga");
     pisoTexture.LoadTextureA();
 
-    
-    Entity CanicaEntity;
-    CanicaEntity.declareControl(Entity::RET, GLFW_KEY_DOWN);
-    CanicaEntity.declareControl(Entity::WALK, GLFW_KEY_UP);
-    CanicaEntity.declareControl(Entity::LEFT, GLFW_KEY_LEFT);
-    CanicaEntity.declareControl(Entity::RIGHT, GLFW_KEY_RIGHT);
-    CanicaEntity.declareControl(Entity::UP, GLFW_KEY_SPACE);
-    CanicaEntity.declareControl(Entity::DOWN, GLFW_KEY_LEFT_SHIFT);
+    //    Entity CanicaEntity;
+    //    CanicaEntity.declareControl(Entity::RET, GLFW_KEY_DOWN);
+    //    CanicaEntity.declareControl(Entity::WALK, GLFW_KEY_UP);
+    //    CanicaEntity.declareControl(Entity::LEFT, GLFW_KEY_LEFT);
+    //    CanicaEntity.declareControl(Entity::RIGHT, GLFW_KEY_RIGHT);
+    //    CanicaEntity.declareControl(Entity::UP, GLFW_KEY_SPACE);
+    //    CanicaEntity.declareControl(Entity::DOWN, GLFW_KEY_LEFT_SHIFT);
 
     std::vector<std::string> skyboxFaces;
 
@@ -313,7 +311,7 @@ int main()
     skyboxFaces.push_back("Textures/Skybox/sp2_ft.png");
     skybox = Skybox(skyboxFaces);
 #else
-// https://sketchfab.com/3d-models/sky-box-8k-night-forest-scene-with-aurora-sky-a626c2f3eda14177b07f9c345a17df60
+    // https://sketchfab.com/3d-models/sky-box-8k-night-forest-scene-with-aurora-sky-a626c2f3eda14177b07f9c345a17df60
     skyboxFaces.push_back("Textures/Skybox/nx.png");
     skyboxFaces.push_back("Textures/Skybox/px.png");
     skyboxFaces.push_back("Textures/Skybox/ny.png");
@@ -323,6 +321,14 @@ int main()
     skybox = Skybox(skyboxFaces, true);
 #endif
 
+    car = Model();
+    car.LoadModel("Models/BMW.obj");
+
+    wheel = Model();
+    wheel.LoadModel("Models/BMW_wheel.obj");
+
+    cone = Model();
+    cone.LoadModel("Models/cone.obj");
 
     Material_brillante = Material(4.0f, 256);
     Material_opaco = Material(0.3f, 4);
@@ -334,11 +340,11 @@ int main()
     // contador de luces puntuales
     unsigned int pointLightCount = 0;
     // Declaraci�n de primer luz puntual
-    pointLights[0] = PointLight(1.0f, 0.0f, 0.0f,
-                                0.0f, 1.0f,
-                                0.0f, 2.5f, 1.5f,
-                                0.3f, 0.2f, 0.1f);
-    pointLightCount++;
+    //    pointLights[0] = PointLight(1.0f, 0.0f, 0.0f,
+    //                                0.0f, 1.0f,
+    //                                0.0f, 2.5f, 1.5f,
+    //                                0.3f, 0.2f, 0.1f);
+    //    pointLightCount++;
 
     unsigned int spotLightCount = 0;
     // linterna
@@ -350,14 +356,26 @@ int main()
                               5.0f);
     spotLightCount++;
 
-    // luz fija
-    spotLights[1] = SpotLight(0.0f, 0.0f, 1.0f,
+    spotLights[1] = SpotLight(0.8f, 0.8f, 1.0f,
                               1.0f, 2.0f,
-                              5.0f, 10.0f, 0.0f,
-                              0.0f, -5.0f, 0.0f,
-                              1.0f, 0.0f, 0.0f,
-                              15.0f);
+                              5.0f, 15.0f, 0.0f,
+                              -5.0f, 0.0f, 0.0f,
+                              1.0f, 0.05f, 0.002f,
+                              35.0f);
+
     spotLightCount++;
+
+    spotLights[2] = SpotLight(0.8f, 0.8f, 1.0f,
+                              1.0f, 2.0f,
+                              -5.0f, 15.0f, 0.0f,
+                              -5.0f, 0.0f, 0.0f,
+                              1.0f, 0.05f, 0.002f,
+                              35.0f);
+
+    spotLightCount++;
+
+    LightCollectionBuilder<SpotLight> spLightBuilder1(spotLightCount);
+    LightCollection<SpotLight> spotLightCollection1 = spLightBuilder1.addFromArray(spotLights, spotLightCount).build();
 
     GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
            uniformSpecularIntensity = 0, uniformShininess = 0, uniformTextureOffset = 0;
@@ -376,8 +394,7 @@ int main()
      * helicAnimation.loadFromFile("HelicopterAnimation.json");
      */
 
-    KeyFrameAnimation canicaAnim;
-    canicaAnim.loadFromFile("CanicaAnimacion.json");
+    carAnimation.loadFromFile("CarAnimation.json");
 
     /*
      * Controles:
@@ -392,6 +409,60 @@ int main()
     bool modoCaptura = false;
 
     mainWindow
+        .addCallback(
+            GLFW_KEY_UP,
+            [&modoCaptura]() -> void
+            {
+                if (!modoCaptura)
+                    return;
+                carEntity.moveX(10 * deltaTime);
+            },
+            true)
+        .addCallback(
+            GLFW_KEY_LEFT,
+            [&modoCaptura]() -> void
+            {
+                if (!modoCaptura)
+                    return;
+                carEntity.moveZ(-10 * deltaTime);
+            },
+            true)
+        .addCallback(
+            GLFW_KEY_DOWN,
+            [&modoCaptura]() -> void
+            {
+                if (!modoCaptura)
+                    return;
+                carEntity.moveX(-10 * deltaTime);
+            },
+            true)
+        .addCallback(
+            GLFW_KEY_RIGHT,
+            [&modoCaptura]() -> void
+            {
+                if (!modoCaptura)
+                    return;
+                carEntity.moveZ(10 * deltaTime);
+            },
+            true)
+        .addCallback(
+            GLFW_KEY_K,
+            [&modoCaptura]() -> void
+            {
+                if (!modoCaptura)
+                    return;
+                carEntity.rotateY(25 * deltaTime);
+            },
+            true)
+        .addCallback(
+            GLFW_KEY_L,
+            [&modoCaptura]() -> void
+            {
+                if (!modoCaptura)
+                    return;
+                carEntity.rotateY(-25 * deltaTime);
+            },
+            true)
         .addCallback(GLFW_KEY_M,
                      [&modoCaptura]() -> void
                      {
@@ -400,37 +471,37 @@ int main()
                      })
         // Callbacks del modo captura
         .addCallback(GLFW_KEY_C,
-                     [&canicaAnim, &CanicaEntity, &modoCaptura]() -> void
+                     [&modoCaptura]() -> void
                      {
                          if (!modoCaptura)
                              return;
                          printf("Frame capturado\n");
-                         canicaAnim.addKeyframe(CanicaEntity.getPosition(), CanicaEntity.getRotation());
+                         carAnimation.addKeyframe(carEntity.getPosition(), carEntity.getRotation());
                      })
         .addCallback(GLFW_KEY_R,
-                     [&canicaAnim, &modoCaptura] -> void
+                     [&modoCaptura] -> void
                      {
                          if (!modoCaptura)
                              return;
                          printf("Frame Eliminado\n");
-                         canicaAnim.removeLastFrame();
+                         carAnimation.removeLastFrame();
                      })
         .addCallback(GLFW_KEY_G,
-                     [&canicaAnim, &modoCaptura] -> void
+                     [&modoCaptura] -> void
                      {
                          if (!modoCaptura)
                              return;
                          printf("Animacion guardada.\n");
-                         canicaAnim.saveToFile("CanicaAnimacion.json");
+                         carAnimation.saveToFile("CarAnimation.json");
                      })
         // Callbacks del modo reproduccion
         .addCallback(GLFW_KEY_SPACE,
-                     [&canicaAnim, &modoCaptura]() -> void
+                     [&modoCaptura]() -> void
                      {
                          if (modoCaptura)
                              return;
-                         if (!canicaAnim.isPlaying())
-                             canicaAnim.play();
+                         if (!carAnimation.isPlaying())
+                             carAnimation.play();
                      });
 
     ////Loop mientras no se cierra la ventana
@@ -446,14 +517,14 @@ int main()
         camera.keyControl(mainWindow.getsKeys(), deltaTime);
         camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 
-        // Control entidades
-        if (modoCaptura)
-            CanicaEntity.move(mainWindow.getsKeys(), deltaTime);
+        //        // Control entidades
+        //        if (modoCaptura)
+        //            carEntity.move(mainWindow.getsKeys(), deltaTime);
 
-        if (canicaAnim.isPlaying())
-            canicaAnim.play();
+        if (carAnimation.isPlaying())
+            carAnimation.play();
         else
-            canicaAnim.resetAnimation();
+            carAnimation.resetAnimation();
 
         // Clear the window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -483,7 +554,7 @@ int main()
         // informaci�n al shader de fuentes de iluminaci�n
         shaderList[0].SetDirectionalLight(&mainLight);
         shaderList[0].SetPointLights(pointLights, pointLightCount);
-        shaderList[0].SetSpotLights(spotLights, spotLightCount);
+        shaderList[0].SetSpotLights(spotLightCollection1.getLightArray(), spotLightCollection1.getCurrentCount());
 
         glm::mat4 model(1.0);
         glm::mat4 modelaux(1.0);
@@ -492,7 +563,7 @@ int main()
 
         glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
         model = glm::mat4(1.0);
-        model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
         model = glm::scale(model, glm::vec3(30.0f, 1.0f, 30.0f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         glUniform3fv(uniformColor, 1, glm::value_ptr(color));
@@ -501,8 +572,68 @@ int main()
         Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[2]->RenderMesh();
 
-        glUseProgram(0);
+        model = handler.setMatrix(glm::mat4(1.0))
+                    .translate(modoCaptura ? carEntity.getPosition() : carAnimation.getPosition() + carAnimation.getMovement())
+                    .rotateY(modoCaptura ? carEntity.getRotation().y : carAnimation.getRotation().y)
+                    .saveActualState(modelaux) // modelaux = model;
+                    .scale(0.4, 0.4, 0.4)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        car.RenderModel();
+        glDisable(GL_BLEND);
 
+        // Rueda derecha trasera
+        model = handler.setMatrix(modelaux)
+                    .translate(-3.65932, 1.0601, 2.52948)
+                    .rotateZ(anguloRuedas)
+                    .scale(0.4, 0.4, 0.4)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        wheel.RenderModel();
+
+        // Rueda izquierda trasera
+        model = handler.setMatrix(modelaux)
+                    .translate(-3.65932, 1.0601, -2.52948)
+                    .rotateZ(anguloRuedas)
+                    .rotateX(-180)
+                    .scale(0.4, 0.4, 0.4)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        wheel.RenderModel();
+
+        // Rueda derecha delantera
+        model = handler.setMatrix(modelaux)
+                    .translate(5.19296, 1.05874, 2.52948)
+                    .rotateZ(anguloRuedas)
+                    .scale(0.4, 0.4, 0.4)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        wheel.RenderModel();
+
+        // Rueda izquierda delantera
+        model = handler.setMatrix(modelaux)
+                    .translate(5.19296, 1.05874, -2.52948)
+                    .rotateZ(anguloRuedas)
+                    .rotateX(-180)
+                    .scale(0.4, 0.4, 0.4)
+                    .getMatrix();
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        wheel.RenderModel();
+
+        // Conos
+        for (int i = 0; i < 5; ++i)
+        {
+            model = handler.setMatrix(glm::mat4(1.0f))
+                        .translate(10 + (25 * i), 0, 3 * sin(i))
+                        .scale(2)
+                        .getMatrix();
+            glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+            cone.RenderModel();
+        }
+
+        glUseProgram(0);
         mainWindow.swapBuffers();
     }
 
