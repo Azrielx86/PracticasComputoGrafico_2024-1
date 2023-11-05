@@ -522,7 +522,10 @@ int main()
         //            carEntity.move(mainWindow.getsKeys(), deltaTime);
 
         if (carAnimation.isPlaying())
+        {
+            anguloRuedas += 25;
             carAnimation.play();
+        }
         else
             carAnimation.resetAnimation();
 
